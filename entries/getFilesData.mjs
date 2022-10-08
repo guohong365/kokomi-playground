@@ -1,6 +1,8 @@
 import { readdir, writeFile } from "fs/promises";
 
-const BASEPATH = "./entries";
+const BASEPATH = ".";
+
+const IGNOREPATH = ["node_modules"];
 
 // https://stackoverflow.com/a/24594123
 const getDirectories = async (source) =>
@@ -8,7 +10,9 @@ const getDirectories = async (source) =>
     .filter((dirent) => dirent.isDirectory())
     .map((dirent) => dirent.name);
 
-const folders = await getDirectories(BASEPATH);
+const folders = (await getDirectories(BASEPATH)).filter(
+  (item) => !IGNOREPATH.includes(item)
+);
 
 const data = {
   entries: folders,
