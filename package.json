@@ -1,4 +1,7 @@
 {
+  "scripts": {
+    "updateIndex": "node entries/getFilesData.mjs"
+  },
   "devDependencies": {
     "@types/three": "^0.144.0",
     "gsap": "^3.11.1",

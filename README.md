@@ -26,8 +26,8 @@ powered by kokomi.js
 
 entries/index.html 是所有作品的目录页
 
-如需同步更新，在 entries 目录下运行以下命令即可
+运行以下命令即可
 
 ```sh
-node getFilesData.mjs
+npm run updateIndex
 ```
