@@ -65,8 +65,8 @@ class Sketch extends kokomi.Base {
       offsetY = THREE.MathUtils.lerp(offsetY, y, 0.1);
 
       gs.forEach((g) => {
-        g.rotation.x = -0.3 * offsetY;
-        g.rotation.y = 0.3 * offsetX;
+        g.rotation.x = -0.1 * offsetY;
+        g.rotation.y = 0.1 * offsetX;
       });
     });
 
