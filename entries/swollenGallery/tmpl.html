@@ -15,18 +15,35 @@
         overflow: visible;
         overflow-x: hidden;
     }
+
+    .gallery {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .gallery .gallery-item {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .gallery .gallery-item img {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: block;
+        width: 40rem;
+    }
 </style>
-<div class="flex flex-col">
-    <div class="relative w-screen h-screen">
-        <img class="absolute hv-center w-100 cursor-pointer" src="https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg"
-            crossorigin="anonymous" alt="" />
+<div class="gallery">
+    <div class="gallery-item">
+        <img src="https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg" crossorigin="anonymous" alt="" />
     </div>
-    <div class="relative w-screen h-screen">
-        <img class="absolute hv-center w-100 cursor-pointer" src="https://s2.loli.net/2022/09/08/wSYFN2izrMLulxh.jpg"
-            crossorigin="anonymous" alt="" />
+    <div class="gallery-item">
+        <img src="https://s2.loli.net/2022/09/08/wSYFN2izrMLulxh.jpg" crossorigin="anonymous" alt="" />
     </div>
-    <div class="relative w-screen h-screen">
-        <img class="absolute hv-center w-100 cursor-pointer" src="https://s2.loli.net/2022/09/08/wX7tYIB9FCl1nQm.jpg"
-            crossorigin="anonymous" alt="" />
+    <div class="gallery-item">
+        <img src="https://s2.loli.net/2022/09/08/wX7tYIB9FCl1nQm.jpg" crossorigin="anonymous" alt="" />
     </div>
 </div>
