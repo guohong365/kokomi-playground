@@ -15,6 +15,7 @@ class Sketch extends kokomi.Base {
     });
     await gallary.addExisting();
 
+    // horizontal infinite scroll
     const wheelScroller = new kokomi.WheelScroller();
     wheelScroller.listenForScroll();
 
