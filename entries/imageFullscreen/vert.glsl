@@ -10,8 +10,7 @@ uniform float uProgress;
 
 vec3 fullscreen(vec3 p){
     // Scale to view size
-    vec2 scaleToViewSize=iResolution/uMeshSize-1.;
-    vec2 scale=vec2(1.+scaleToViewSize*uProgress);
+    vec2 scale=mix(vec2(1.),iResolution/uMeshSize,uProgress);
     p.xy*=scale;
     
     // Move towards center
