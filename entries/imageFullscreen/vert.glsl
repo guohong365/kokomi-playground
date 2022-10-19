@@ -8,7 +8,7 @@ uniform vec2 uMeshSize;
 uniform vec2 uMeshPosition;
 uniform float uProgress;
 
-vec3 distort(vec3 p){
+vec3 fullscreen(vec3 p){
     // Scale to view size
     vec2 scaleToViewSize=iResolution/uMeshSize-1.;
     vec2 scale=vec2(1.+scaleToViewSize*uProgress);
@@ -27,7 +27,7 @@ vec3 distort(vec3 p){
 void main(){
     vec3 p=position;
     
-    p=distort(p);
+    p=fullscreen(p);
     
     gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
     
