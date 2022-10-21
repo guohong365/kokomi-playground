@@ -39,16 +39,19 @@ vec3 fullscreen(vec3 p){
     // copy uv
     vec2 newUv=uv;
     
-    // scale to view size
-    vec2 scale=mix(vec2(1.),iResolution/uMeshSize,uProgress);
-    p.xy*=scale;
-    
     // get progress
     float pr=getProgress2(uProgress,uv);
     
+    // scale to view size
+    vec2 scale=mix(vec2(1.),iResolution/uMeshSize,pr);
+    p.xy*=scale;
+    
     // other transforms
     p=flipX(p,pr);
-    newUv=flipUvX(newUv,pr);
+    
+    float latestStart=.5;
+    float stepVal=latestStart-pow(latestStart,3.);
+    newUv=flipUvX(newUv,step(stepVal,pr));
     
     // get uv
     vUv=newUv;
