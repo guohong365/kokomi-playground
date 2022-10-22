@@ -2,17 +2,21 @@ import * as kokomi from "kokomi.js";
 import * as THREE from "three";
 import gsap from "gsap";
 import * as dat from "lil";
+import popmotion from "popmotion";
 
 class Sketch extends kokomi.Base {
   async create() {
-    const screenCamera = new kokomi.ScreenCamera(this);
+    const screenCamera = new kokomi.ScreenCamera(this, {
+      near: 0.001,
+      far: 10000,
+    });
     screenCamera.addExisting();
 
     const params = {
       progress: 0,
-      direction: 0.5,
-      offset: 1000,
+      direction: 1,
       waveIntensity: 0,
+      offset: 1000,
     };
     this.params = params;
 
@@ -31,6 +35,12 @@ class Sketch extends kokomi.Base {
         },
         uWaveIntensity: {
           value: params.waveIntensity,
+        },
+      },
+      makuConfig: {
+        segments: {
+          width: 60,
+          height: 60,
         },
       },
     });
@@ -52,8 +62,8 @@ class Sketch extends kokomi.Base {
         .to(
           mesh.material.uniforms.uDirection,
           {
-            value: 1,
-            duration,
+            value: 0,
+            duration: 0,
             ease,
           },
           0
@@ -81,8 +91,8 @@ class Sketch extends kokomi.Base {
         .to(
           mesh.material.uniforms.uDirection,
           {
-            value: 0.5,
-            duration,
+            value: 1,
+            duration: 0,
             ease,
           },
           0
@@ -91,7 +101,7 @@ class Sketch extends kokomi.Base {
           mesh.material.uniforms.uWaveIntensity,
           {
             value: 0,
-            duration: 0,
+            duration,
             ease,
           },
           0
