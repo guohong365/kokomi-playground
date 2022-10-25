@@ -142,12 +142,19 @@ class ParticleQuad extends kokomi.Component {
 
 class Sketch extends kokomi.Base {
   async create() {
+    // utils
+    const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
+
+    await kokomi.preloadImages();
+
     // --swiper--
     const swiper = new Swiper(".swiper", {
       direction: "vertical",
       mousewheel: true,
     });
     window.swiper = swiper;
+
+    // return;
 
     // --webgl--
     document.querySelectorAll("img").forEach((el) => {
@@ -176,5 +183,44 @@ class Sketch extends kokomi.Base {
     // particles
     const pq = new ParticleQuad(this, pqConfig);
     pq.addExisting();
+
+    // text anime delay
+    const barSlideInTexts = document.querySelectorAll(".bar-slide-in");
+    barSlideInTexts.forEach((el) => {
+      el.style.setProperty("--bar-slide-in-delay", "0.8s");
+    });
+
+    // check gallery image loaded
+    // A bit tricky cuz of this: https://github.com/mrdoob/three.js/issues/23164
+    const checkGalleryImageLoaded = () => {
+      return new Promise((resolve) => {
+        this.update(() => {
+          if (
+            cg.gallary.makuGroup.makus
+              .map((maku) => {
+                return maku.mesh.material.uniforms.uTexture.value.image
+                  ?.complete;
+              })
+              .every((item) => item)
+          ) {
+            resolve(true);
+          }
+        });
+      });
+    };
+
+    await checkGalleryImageLoaded();
+
+    // start
+    document.querySelector(".loader-screen").classList.add("hollow");
+
+    await sleep(500);
+
+    document.querySelector("body").style.overflow = "visible";
+    document.querySelector("body").style.overflowX = "hidden";
+
+    gsap.to(".gallery,#sketch", {
+      opacity: 1,
+    });
   }
 }

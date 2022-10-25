@@ -1,3 +1,4 @@
+<!-- 素材来源：https://lycoris-recoil.com/ -->
 <style>
     body {
         overflow: visible;
@@ -13,6 +14,7 @@
         background: transparent;
     }
 
+    /* swiper */
     .swiper {
         width: 100vw;
         height: 100vh;
@@ -21,6 +23,266 @@
     .swiper-slide {
         width: 100vw;
         height: 100vh;
+    }
+
+    /* text-anime */
+    .intro-text-1 {
+        --target-bar-color: #f0555a;
+    }
+
+    .intro-text.intro-text-1 .intro-text-name {
+        --target-text-color: #f0555a;
+    }
+
+    .intro-text-2 {
+        --target-bar-color: #2a96fa;
+    }
+
+    .intro-text.intro-text-2 .intro-text-name {
+        --target-text-color: #2a96fa;
+    }
+
+    .intro-text-3 {
+        --target-bar-color: #ffe76c;
+    }
+
+    .intro-text.intro-text-3 .intro-text-name {
+        --target-text-color: #ffe76c;
+    }
+
+    .bar-slide-in {
+        --bar-slide-in-delay: 0s;
+        --bar-slide-in-text-animation: slide-in-out-text 0.6s calc(var(--bar-slide-in-delay) + 0.8s) both;
+        --bar-slide-in-animation: slide-in-out 1.2s var(--bar-slide-in-delay) cubic-bezier(0.75, 0, 0, 1) forwards;
+
+        position: relative;
+        display: inline-flex;
+        color: transparent;
+        /* animation: var(--bar-slide-in-text-animation); */
+    }
+
+    .bar-slide-in::before {
+        position: absolute;
+        content: '';
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: var(--target-bar-color);
+        transform: scaleX(0);
+        transform-origin: left;
+        /* animation: var(--bar-slide-in-animation); */
+    }
+
+    .swiper-slide-active .bar-slide-in {
+        animation: var(--bar-slide-in-text-animation);
+    }
+
+    .swiper-slide-active .bar-slide-in::before {
+        animation: var(--bar-slide-in-animation);
+    }
+
+    @keyframes slide-in-out-text {
+        from {
+            color: transparent;
+        }
+
+        to {
+            color: var(--target-text-color, black);
+        }
+    }
+
+    @keyframes slide-in-out {
+        50% {
+            transform: scaleX(1);
+            transform-origin: left;
+        }
+
+        50.1% {
+            transform-origin: right;
+        }
+
+        100% {
+            transform: scaleX(0);
+            transform-origin: right;
+        }
+    }
+
+    /* loader */
+    body {
+        overflow: hidden;
+    }
+
+    .gallery,
+    #sketch {
+        opacity: 0;
+    }
+
+    .c-loader {
+        position: relative;
+        display: flex;
+        width: 170px;
+        height: 20px;
+    }
+
+    .c-loader__item {
+        position: absolute;
+        left: 75px;
+        display: block;
+        width: 20px;
+        height: 20px;
+        backface-visibility: hidden;
+    }
+
+    .c-loader__item::before {
+        position: absolute;
+        content: '';
+        width: 100%;
+        height: 100%;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+    }
+
+    .c-loader__item:nth-child(1) {
+        transform: translateX(-60px);
+        z-index: 4;
+    }
+
+    .c-loader__item:nth-child(2) {
+        transform: translateX(-30px);
+        z-index: 3;
+    }
+
+    .c-loader__item:nth-child(3) {
+        transform: translateX(0px);
+        z-index: 2;
+    }
+
+    .c-loader__item:nth-child(4) {
+        transform: translateX(30px);
+        z-index: 1;
+    }
+
+    .c-loader__item:nth-child(5) {
+        transform: translateX(60px);
+        z-index: 0;
+    }
+
+    .c-loader__item:nth-child(1)::before {
+        animation: loader 1.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite 0s;
+    }
+
+    .c-loader__item:nth-child(2)::before {
+        animation: loader 1.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite 0.08s;
+    }
+
+    .c-loader__item:nth-child(3)::before {
+        animation: loader 1.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite 0.16s;
+    }
+
+    .c-loader__item:nth-child(4)::before {
+        animation: loader 1.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite 0.24s;
+    }
+
+    .c-loader__item:nth-child(5)::before {
+        animation: loader 1.4s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite 0.32s;
+    }
+
+    .c-loader__item:nth-child(1)::before {
+        background: #f0555a;
+    }
+
+    .c-loader__item:nth-child(2)::before {
+        background: #2a96fa;
+    }
+
+    .c-loader__item:nth-child(3)::before {
+        background: #00b4aa;
+    }
+
+    .c-loader__item:nth-child(4)::before {
+        background: #ffe76c;
+    }
+
+    .c-loader__item:nth-child(5)::before {
+        background: #7a5668;
+    }
+
+    @keyframes loader {
+        0% {
+            top: 0;
+        }
+
+        5% {
+            top: 4px;
+            filter: blur(0.1px);
+            margin-left: -2px;
+            width: 24px;
+            height: 16px;
+        }
+
+        10% {
+            top: 4px;
+            filter: blur(0.1px);
+            margin-left: -1px;
+            width: 22px;
+            height: 18px;
+        }
+
+        15% {
+            top: -17px;
+            filter: blur(0.3px);
+            margin-left: 1px;
+            width: 18px;
+            height: 22px;
+        }
+
+        22% {
+            top: -34px;
+            filter: blur(0.2px);
+            margin-left: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        29% {
+            top: -17px;
+            filter: blur(0.3px);
+            margin-left: 1px;
+            width: 18px;
+            height: 22px;
+        }
+
+        34% {
+            top: 0;
+            filter: blur(0.2px);
+            margin-left: 1px;
+            width: 18px;
+            height: 22px;
+        }
+
+        40% {
+            top: 4px;
+            filter: blur(0.1px);
+            margin-left: -1px;
+            width: 22px;
+            height: 18px;
+        }
+
+        43% {
+            top: 0;
+            filter: blur(0px);
+            margin-left: 0;
+            width: 20px;
+            height: 20px;
+        }
+
+        100% {
+            top: 0;
+            margin-left: 0;
+        }
     }
 </style>
 <!-- <img src="
@@ -41,16 +303,27 @@ https://s2.loli.net/2022/10/22/7SOzEtIHnlC1ZQ9.jpg
 https://s2.loli.net/2022/10/22/eHL7TvgxlMfUEiz.jpg
 https://s2.loli.net/2022/10/22/J7KmFMYoRtbZndc.jpg
 " alt="" /> -->
-<div class="relative w-screen h-screen">
-    <img class="webgl-fixed fixed z-5 top-8 left-8 h-8 block" src="https://s2.loli.net/2022/10/24/8upTOIFqkQ1eR6d.png"
-        crossorigin="anonymous" alt="" />
+<div class="fixed z-5 loader-screen w-screen h-screen transition-all duration-300">
+    <div class="absolute hv-center">
+        <div class="c-loader">
+            <div class="c-loader__item"></div>
+            <div class="c-loader__item"></div>
+            <div class="c-loader__item"></div>
+            <div class="c-loader__item"></div>
+            <div class="c-loader__item"></div>
+        </div>
+    </div>
+</div>
+<div class="gallery relative w-screen h-screen">
+    <img crossorigin="anonymous" class="webgl-fixed fixed z-5 top-8 left-8 h-8 block"
+        src="https://s2.loli.net/2022/10/24/8upTOIFqkQ1eR6d.png" alt="" />
     <div class="fixed z-5 top-8 right-8">
         <div class="flex flex-col space-y-2">
-            <img src="https://s2.loli.net/2022/10/22/SL5DMaWIblZHjTu.png"
+            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/SL5DMaWIblZHjTu.png"
                 class="webgl-fixed avatar w-12 h-12 cursor-pointer" onclick="window.swiper.slideTo(0)" alt="" />
-            <img src="https://s2.loli.net/2022/10/22/j7UsYIQ4FcizoHJ.png"
+            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/j7UsYIQ4FcizoHJ.png"
                 class="webgl-fixed avatar w-12 h-12 cursor-pointer" onclick="window.swiper.slideTo(1)" alt="" />
-            <img src="https://s2.loli.net/2022/10/22/fu4FSDGNLV5EYeb.png"
+            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/fu4FSDGNLV5EYeb.png"
                 class="webgl-fixed avatar w-12 h-12 cursor-pointer" onclick="window.swiper.slideTo(2)" alt="" />
         </div>
     </div>
@@ -58,33 +331,34 @@ https://s2.loli.net/2022/10/22/J7KmFMYoRtbZndc.jpg
         <div class="swiper-wrapper">
             <div class="swiper-slide">
                 <div class="relative w-screen h-screen">
-                    <img src="https://s2.loli.net/2022/10/22/U92e6oqug4mpP5k.png"
+                    <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/U92e6oqug4mpP5k.png"
                         class="absolute top-8 right-80 w-86 block" alt="" />
                     <div class="absolute bottom-20 left-60">
                         <div class="flex items-center space-x-2">
-                            <img src="https://s2.loli.net/2022/10/22/CIRYrPjSzK2h9cT.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/CIRYrPjSzK2h9cT.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
-                            <img src="https://s2.loli.net/2022/10/22/rU8TwRbYX7BgP4z.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/rU8TwRbYX7BgP4z.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
-                            <img src="https://s2.loli.net/2022/10/22/rhEXIHubnpkMi76.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/rhEXIHubnpkMi76.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
                         </div>
                     </div>
-                    <div class="intro-text absolute top-32 left-100">
+                    <div class="intro-text intro-text-1 absolute top-32 left-100">
                         <div class="flex flex-col space-y-8 w-100">
-                            <div class="flex flex-col space-y-2">
-                                <div class="text-5xl tracking-widest" style="color: #f0555a;">锦木千束</div>
-                                <div class="text-2xl">CV: 安济知佳</div>
+                            <div class="flex flex-col items-start space-y-2">
+                                <div class="intro-text-name bar-slide-in text-5xl tracking-widest">
+                                    锦木千束</div>
+                                <div class="bar-slide-in text-2xl">CV: 安济知佳</div>
                             </div>
-                            <div class="leading-loose">
-                                <div>
+                            <div class="space-y-2">
+                                <div class="bar-slide-in">
                                     实际上是历代最强的莉可丽丝。
                                 </div>
-                                <div>
+                                <div class="bar-slide-in">
                                     她热衷于解决DA所不处理的人民的问题。
                                 </div>
-                                <div>作为自称莉可莉可咖啡店的看板娘而充满活力地工作着。</div>
-                                <div>
+                                <div class="bar-slide-in">作为自称莉可莉可咖啡店的看板娘而充满活力地工作着。</div>
+                                <div class="bar-slide-in">
                                     年龄：17岁 生日：9月23日 血型：AB型
                                 </div>
                             </div>
@@ -94,33 +368,33 @@ https://s2.loli.net/2022/10/22/J7KmFMYoRtbZndc.jpg
             </div>
             <div class="swiper-slide">
                 <div class="relative w-screen h-screen">
-                    <img src="https://s2.loli.net/2022/10/22/4ybfhkICmUYpE5A.png"
+                    <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/4ybfhkICmUYpE5A.png"
                         class="absolute top-8 right-80 w-86 block" alt="" />
                     <div class="absolute bottom-20 left-60">
                         <div class="flex items-center space-x-2">
-                            <img src="https://s2.loli.net/2022/10/22/5g8JbDhQOHsSpdL.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/5g8JbDhQOHsSpdL.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
-                            <img src="https://s2.loli.net/2022/10/22/osPXp7GMleQYRC2.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/osPXp7GMleQYRC2.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
-                            <img src="https://s2.loli.net/2022/10/22/PqC6lKx7UahcQAW.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/PqC6lKx7UahcQAW.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
                         </div>
                     </div>
-                    <div class="intro-text absolute top-32 left-100">
+                    <div class="intro-text intro-text-2 absolute top-32 left-100">
                         <div class="flex flex-col space-y-8 w-100">
-                            <div class="flex flex-col space-y-2">
-                                <div class="text-5xl tracking-widest" style="color: #2a96fa;">井之上泷奈</div>
-                                <div class="text-2xl">CV: 若山诗音</div>
+                            <div class="flex flex-col items-start space-y-2">
+                                <div class="intro-text-name bar-slide-in text-5xl tracking-widest">井之上泷奈</div>
+                                <div class="bar-slide-in text-2xl">CV: 若山诗音</div>
                             </div>
-                            <div class="leading-loose">
-                                <div>
+                            <div class="space-y-2">
+                                <div class="bar-slide-in">
                                     尽管是一位优秀的莉可丽丝，但她出于某种原因也在莉可莉可咖啡店工作。
                                 </div>
-                                <div>
+                                <div class="bar-slide-in">
                                     她比较理性，讨厌浪费，对千束不像莉可丽丝这一点也感到不满。
                                 </div>
-                                <div>想在莉可莉可咖啡店里弄出一番成果来。</div>
-                                <div>
+                                <div class="bar-slide-in">想在莉可莉可咖啡店里弄出一番成果来。</div>
+                                <div class="bar-slide-in">
                                     年龄：16岁 生日：8月2日 血型：A型
                                 </div>
                             </div>
@@ -130,33 +404,33 @@ https://s2.loli.net/2022/10/22/J7KmFMYoRtbZndc.jpg
             </div>
             <div class="swiper-slide">
                 <div class="relative w-screen h-screen">
-                    <img src="https://s2.loli.net/2022/10/22/2fcEAqFZpsuhoI6.png"
+                    <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/2fcEAqFZpsuhoI6.png"
                         class="absolute top-8 right-80 w-86 block" alt="" />
                     <div class="absolute bottom-20 left-60">
                         <div class="flex items-center space-x-2">
-                            <img src="https://s2.loli.net/2022/10/22/7SOzEtIHnlC1ZQ9.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/7SOzEtIHnlC1ZQ9.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
-                            <img src="https://s2.loli.net/2022/10/22/eHL7TvgxlMfUEiz.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/eHL7TvgxlMfUEiz.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
-                            <img src="https://s2.loli.net/2022/10/22/J7KmFMYoRtbZndc.jpg"
+                            <img crossorigin="anonymous" src="https://s2.loli.net/2022/10/22/J7KmFMYoRtbZndc.jpg"
                                 class="h-30 block cursor-pointer" alt="" />
                         </div>
                     </div>
-                    <div class="intro-text absolute top-32 left-100">
+                    <div class="intro-text intro-text-3 absolute top-32 left-100">
                         <div class="flex flex-col space-y-8 w-100">
-                            <div class="flex flex-col space-y-2">
-                                <div class="text-5xl tracking-widest" style="color: #ffe76c;">胡桃</div>
-                                <div class="text-2xl">CV: 久野美咲</div>
+                            <div class="flex flex-col items-start space-y-2">
+                                <div class="intro-text-name bar-slide-in text-5xl tracking-widest">胡桃</div>
+                                <div class="bar-slide-in text-2xl">CV: 久野美咲</div>
                             </div>
-                            <div class="leading-loose">
-                                <div>
+                            <div class="space-y-2">
+                                <div class="bar-slide-in">
                                     最强黑客[Wallnut]。
                                 </div>
-                                <div>
+                                <div class="bar-slide-in">
                                     虽然她看起来很年轻，但她的年龄是未知的，能跟米卡等人进行成人般的对话。
                                 </div>
-                                <div>为了逃避追杀，暂时会在莉可莉可咖啡店里待上一阵子。</div>
-                                <div>
+                                <div class="bar-slide-in">为了逃避追杀，暂时会在莉可莉可咖啡店里待上一阵子。</div>
+                                <div class="bar-slide-in">
                                     年龄：?岁 生日：12月16日 血型：AB型
                                 </div>
                             </div>
