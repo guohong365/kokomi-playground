@@ -145,6 +145,21 @@ class Sketch extends kokomi.Base {
     // utils
     const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
 
+    // functions
+    const start = async () => {
+      document.querySelector(".loader-screen").classList.add("hollow");
+
+      await sleep(500);
+
+      document.querySelector("body").style.overflow = "visible";
+      document.querySelector("body").style.overflowX = "hidden";
+
+      gsap.to(".gallery,#sketch", {
+        opacity: 1,
+      });
+    };
+
+    // main
     await kokomi.preloadImages();
 
     // --swiper--
@@ -154,6 +169,7 @@ class Sketch extends kokomi.Base {
     });
     window.swiper = swiper;
 
+    // await start();
     // return;
 
     // --webgl--
@@ -212,15 +228,6 @@ class Sketch extends kokomi.Base {
     await checkGalleryImageLoaded();
 
     // start
-    document.querySelector(".loader-screen").classList.add("hollow");
-
-    await sleep(500);
-
-    document.querySelector("body").style.overflow = "visible";
-    document.querySelector("body").style.overflowX = "hidden";
-
-    gsap.to(".gallery,#sketch", {
-      opacity: 1,
-    });
+    await start();
   }
 }
