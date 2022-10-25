@@ -26,8 +26,17 @@ class CharacterGallery extends kokomi.Component {
       maku.mesh.material.transparent = true;
     });
   }
+  connectSwiper(swiper) {
+    this.swiper = swiper;
+  }
   update() {
     if (this.gallary.makuGroup) {
+      // swiper
+      if (this.swiper) {
+        this.gallary.scroller.scroll.target = -this.swiper.translate;
+      }
+
+      // scroll
       this.gallary.makuGroup.makus.forEach((maku) => {
         if (maku.el.classList.contains("webgl-fixed")) {
           // fixed element
@@ -38,18 +47,6 @@ class CharacterGallery extends kokomi.Component {
         }
       });
     }
-  }
-  addSwiper() {
-    // swiper
-    const swiper = new Swiper(".swiper", {
-      direction: "vertical",
-      mousewheel: true,
-    });
-    this.swiper = swiper;
-
-    this.base.update(() => {
-      this.gallary.scroller.scroll.target = -this.swiper.translate;
-    });
   }
 }
 
@@ -145,6 +142,18 @@ class ParticleQuad extends kokomi.Component {
 
 class Sketch extends kokomi.Base {
   async create() {
+    // --swiper--
+    const swiper = new Swiper(".swiper", {
+      direction: "vertical",
+      mousewheel: true,
+    });
+    window.swiper = swiper;
+
+    // --webgl--
+    document.querySelectorAll("img").forEach((el) => {
+      el.classList.add("opacity-0");
+    });
+
     const screenCamera = new kokomi.ScreenCamera(this);
     screenCamera.addExisting();
 
@@ -162,7 +171,7 @@ class Sketch extends kokomi.Base {
     // gallery
     const cg = new CharacterGallery(this, cgConfig);
     await cg.addExisting();
-    cg.addSwiper();
+    cg.connectSwiper(swiper);
 
     // particles
     const pq = new ParticleQuad(this, pqConfig);
