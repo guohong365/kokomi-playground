@@ -28,8 +28,28 @@ class CharacterGallery extends kokomi.Component {
   }
   update() {
     if (this.gallary.makuGroup) {
-      this.gallary.makuGroup.makus.forEach((maku) => {});
+      this.gallary.makuGroup.makus.forEach((maku) => {
+        if (maku.el.classList.contains("webgl-fixed")) {
+          // fixed element
+          maku.setPosition(0);
+        } else {
+          // scroll element
+          maku.setPosition(this.gallary.scroller.scroll.current);
+        }
+      });
     }
+  }
+  addSwiper() {
+    // swiper
+    const swiper = new Swiper(".swiper", {
+      direction: "vertical",
+      mousewheel: true,
+    });
+    this.swiper = swiper;
+
+    this.base.update(() => {
+      this.gallary.scroller.scroll.target = -this.swiper.translate;
+    });
   }
 }
 
@@ -142,6 +162,7 @@ class Sketch extends kokomi.Base {
     // gallery
     const cg = new CharacterGallery(this, cgConfig);
     await cg.addExisting();
+    cg.addSwiper();
 
     // particles
     const pq = new ParticleQuad(this, pqConfig);
