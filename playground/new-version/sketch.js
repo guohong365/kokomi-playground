@@ -30,7 +30,6 @@ class CharacterGallery extends kokomi.Component {
   }
   update() {
     if (this.gallary.makuGroup) {
-      // swiper
       if (this.swiper) {
         this.gallary.scroller.scroll.target = -this.swiper.translate;
       }
@@ -117,9 +116,11 @@ class ParticleQuad extends kokomi.Component {
           value: rt.texture,
         },
       },
+      materialParams: {
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+      },
     });
-    sqPf.mesh.material.transparent = true;
-    sqPf.mesh.material.blending = THREE.AdditiveBlending;
     sqPf.mesh.position.z -= 1;
     this.sqPf = sqPf;
   }
@@ -212,6 +213,8 @@ class Sketch extends kokomi.Base {
     mg.addExisting();
 
     await cg.gallary.checkImagesLoaded();
+
+    await kokomi.preloadSDFFont();
 
     // start
     await start();
