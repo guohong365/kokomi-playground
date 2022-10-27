@@ -10,5 +10,6 @@ void main(){
     vec2 p=vUv;
     vec4 tex=texture(uTexture,p);
     vec4 col=tex;
-    gl_FragColor=col;
+    // gl_FragColor=col;
+    csm_DiffuseColor=col;
 }

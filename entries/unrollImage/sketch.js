@@ -22,12 +22,11 @@ class Sketch extends kokomi.Base {
           value: THREE.MathUtils.degToRad(15),
         },
       },
+      materialParams: {
+        transparent: true,
+      },
     });
     await gallary.addExisting();
-
-    gallary.makuGroup.makus.forEach((maku) => {
-      maku.mesh.material.transparent = true;
-    });
 
     const doTransition = (mesh) => {
       gsap.to(mesh.material.uniforms.uProgress, {

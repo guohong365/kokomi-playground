@@ -7,45 +7,32 @@ class CharacterGallery extends kokomi.Component {
   constructor(base, config) {
     super(base);
 
-    const { color = "#f0555a" } = config;
+    const { scroller } = config;
 
     const gallary = new kokomi.Gallery(base, {
       vertexShader,
       fragmentShader,
-      isScrollPositionSync: false,
       makuConfig: {
         meshSizeType: "scale",
       },
+      materialParams: {
+        transparent: true,
+      },
+      scroller,
     });
     this.gallary = gallary;
   }
   async addExisting() {
     await this.gallary.addExisting();
-
-    this.gallary.makuGroup.makus.forEach((maku) => {
-      maku.mesh.material.transparent = true;
-    });
   }
   connectSwiper(swiper) {
     this.swiper = swiper;
   }
   update() {
     if (this.gallary.makuGroup) {
-      // swiper
       if (this.swiper) {
         this.gallary.scroller.scroll.target = -this.swiper.translate;
       }
-
-      // scroll
-      this.gallary.makuGroup.makus.forEach((maku) => {
-        if (maku.el.classList.contains("webgl-fixed")) {
-          // fixed element
-          maku.setPosition(0);
-        } else {
-          // scroll element
-          maku.setPosition(this.gallary.scroller.scroll.current);
-        }
-      });
     }
   }
 }
@@ -129,9 +116,11 @@ class ParticleQuad extends kokomi.Component {
           value: rt.texture,
         },
       },
+      materialParams: {
+        transparent: true,
+        blending: THREE.AdditiveBlending,
+      },
     });
-    sqPf.mesh.material.transparent = true;
-    sqPf.mesh.material.blending = THREE.AdditiveBlending;
     sqPf.mesh.position.z -= 1;
     this.sqPf = sqPf;
   }
@@ -142,14 +131,11 @@ class ParticleQuad extends kokomi.Component {
 
 class Sketch extends kokomi.Base {
   async create() {
-    // utils
-    const sleep = (time) => new Promise((resolve) => setTimeout(resolve, time));
-
     // functions
     const start = async () => {
       document.querySelector(".loader-screen").classList.add("hollow");
 
-      await sleep(500);
+      await kokomi.sleep(500);
 
       document.querySelector("body").style.overflow = "visible";
       document.querySelector("body").style.overflowX = "hidden";
@@ -173,10 +159,6 @@ class Sketch extends kokomi.Base {
     // return;
 
     // --webgl--
-    document.querySelectorAll("img").forEach((el) => {
-      el.classList.add("opacity-0");
-    });
-
     const screenCamera = new kokomi.ScreenCamera(this);
     screenCamera.addExisting();
 
@@ -191,8 +173,20 @@ class Sketch extends kokomi.Base {
       bgPointSize: 75,
     };
 
+    // scroller
+    const scroller = new kokomi.NormalScroller();
+    scroller.scroll.ease = 0.025;
+    scroller.listenForScroll();
+
     // gallery
-    const cg = new CharacterGallery(this, cgConfig);
+    document.querySelectorAll("img").forEach((el) => {
+      el.classList.add("opacity-0");
+    });
+
+    const cg = new CharacterGallery(this, {
+      ...cgConfig,
+      scroller,
+    });
     await cg.addExisting();
     cg.connectSwiper(swiper);
 
@@ -206,26 +200,19 @@ class Sketch extends kokomi.Base {
       el.style.setProperty("--bar-slide-in-delay", "0.8s");
     });
 
-    // check gallery image loaded
-    // A bit tricky cuz of this: https://github.com/mrdoob/three.js/issues/23164
-    const checkGalleryImageLoaded = () => {
-      return new Promise((resolve) => {
-        this.update(() => {
-          if (
-            cg.gallary.makuGroup.makus
-              .map((maku) => {
-                return maku.mesh.material.uniforms.uTexture.value.image
-                  ?.complete;
-              })
-              .every((item) => item)
-          ) {
-            resolve(true);
-          }
-        });
-      });
-    };
+    // text mesh group
+    document.querySelectorAll(".webgl-text").forEach((el) => {
+      el.classList.add("hollow");
+    });
 
-    await checkGalleryImageLoaded();
+    const mg = new kokomi.MojiGroup(this, {
+      vertexShader: vertexShader4,
+      fragmentShader: fragmentShader4,
+      scroller,
+    });
+    mg.addExisting();
+
+    await cg.gallary.checkImagesLoaded();
 
     // start
     await start();

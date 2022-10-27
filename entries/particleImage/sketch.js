@@ -61,13 +61,12 @@ class Sketch extends kokomi.Base {
           value: 100,
         },
       },
+      materialParams: {
+        transparent: true,
+        depthWrite: false,
+      },
     });
     await gallary.addExisting();
-
-    gallary.makuGroup.makus.forEach((maku) => {
-      maku.mesh.material.transparent = true;
-      maku.mesh.material.depthWrite = false;
-    });
 
     this.update(() => {
       if (gallary.makuGroup) {
