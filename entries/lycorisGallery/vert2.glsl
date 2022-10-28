@@ -126,7 +126,7 @@ vec3 distort(vec3 p){
     float noise=cnoise(p)*.5;
     p.x+=cos(iTime*speed+p.x*noise*100.)*.2;
     p.y+=sin(iTime*speed+p.x*noise*100.)*.2;
-    p.z+=cos(iTime*speed+p.x*noise*100.)*.1;
+    p.z+=cos(iTime*speed+p.x*noise*100.)*.5;
     return p;
 }
 

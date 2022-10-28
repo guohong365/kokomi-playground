@@ -93,6 +93,9 @@ class CharacterGallery extends kokomi.Component {
     gsap.to(".avatars", {
       opacity: 0,
     });
+    gsap.set(".close-icon", {
+      pointerEvents: "auto",
+    });
     gsap.to(".close-icon", {
       opacity: 1,
       delay: 0.3,
@@ -115,6 +118,9 @@ class CharacterGallery extends kokomi.Component {
     });
     gsap.to(".avatars", {
       opacity: 1,
+    });
+    gsap.set(".close-icon", {
+      pointerEvents: "none",
     });
     gsap.to(".close-icon", {
       opacity: 0,
@@ -349,11 +355,11 @@ class Sketch extends kokomi.Base {
       },
       pq: {
         color: "#eff6fc",
-        count: 54,
-        size: 75,
+        count: 80,
+        size: 60,
       },
       ct: {
-        shadowColor: "white",
+        shadowColor: "#e7096a",
       },
       sf: {
         strength: 1,
