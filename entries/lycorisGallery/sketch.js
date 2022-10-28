@@ -126,6 +126,102 @@ class ParticleQuad extends kokomi.Component {
   }
 }
 
+class CheckerboardText extends kokomi.Component {
+  constructor(base, config) {
+    super(base);
+
+    const { scroller, shadowColor } = config;
+
+    const mg = new kokomi.MojiGroup(base, {
+      vertexShader: vertexShader4,
+      fragmentShader: fragmentShader4,
+      scroller,
+      uniforms: {
+        uProgress: {
+          value: 0,
+        },
+        uProgress1: {
+          value: 0,
+        },
+        uGridSize: {
+          value: 1,
+        },
+        uShadowColor: {
+          value: new THREE.Color(shadowColor),
+        },
+      },
+    });
+    this.mg = mg;
+  }
+  addExisting() {
+    this.mg.addExisting();
+  }
+  update() {
+    if (this.mg.mojis) {
+      this.mg.mojis.forEach((moji) => {
+        moji.textMesh.mesh.material.uniforms.uGridSize.value =
+          moji.textMesh.mesh._private_text.length;
+      });
+    }
+  }
+  fadeIn(textClass, config = {}) {
+    const { duration = 1.6, stagger = 0.05, delay = 0 } = config;
+
+    if (this.mg.mojis) {
+      this.mg.mojis.forEach((moji) => {
+        if (!moji.el.classList.contains(textClass)) {
+          return;
+        }
+        const totalDuration = duration;
+        const t1 = gsap.timeline();
+        const uniforms = moji.textMesh.mesh.material.uniforms;
+        t1.to(uniforms.uProgress, {
+          value: 1,
+          duration: totalDuration,
+          delay,
+        });
+        t1.to(
+          uniforms.uProgress1,
+          {
+            value: 1,
+            duration: totalDuration,
+            delay,
+          },
+          stagger
+        );
+      });
+    }
+  }
+  fadeOut(textClass, config = {}) {
+    const { duration = 0.8, stagger = 0.05, delay = 0 } = config;
+
+    if (this.mg.mojis) {
+      this.mg.mojis.forEach((moji) => {
+        if (!moji.el.classList.contains(textClass)) {
+          return;
+        }
+        const totalDuration = duration;
+        const t1 = gsap.timeline();
+        const uniforms = moji.textMesh.mesh.material.uniforms;
+        t1.to(
+          uniforms.uProgress1,
+          {
+            value: 0,
+            duration: totalDuration,
+            delay,
+          },
+          stagger
+        );
+        t1.to(uniforms.uProgress, {
+          value: 0,
+          duration: totalDuration,
+          delay,
+        });
+      });
+    }
+  }
+}
+
 class SwellFilter extends kokomi.Component {
   constructor(base) {
     super(base);
@@ -140,9 +236,26 @@ class SwellFilter extends kokomi.Component {
       },
     });
     this.ce = ce;
+    this.progress = 0;
   }
   addExisting() {
     this.ce.addExisting();
+  }
+  update() {
+    const pr = this.progress;
+    const pr2 = THREE.MathUtils.mapLinear(pr, 0, 1, -1, 1);
+    const pr3 = 1 - Math.abs(pr2);
+    this.ce.customPass.material.uniforms.uProgress.value = pr3;
+  }
+  anime(strength = 1) {
+    const t1 = gsap.timeline();
+    t1.set(this, {
+      progress: strength,
+    }).to(this, {
+      progress: 0,
+      duration: 1.25,
+      ease: "power1.inOut",
+    });
   }
 }
 
@@ -160,6 +273,9 @@ class Sketch extends kokomi.Base {
         color: "#eff6fc",
         count: 54,
         size: 75,
+      },
+      ct: {
+        shadowColor: "white",
       },
       sf: {
         strength: 0.15,
@@ -224,56 +340,29 @@ class Sketch extends kokomi.Base {
       el.style.setProperty("--bar-slide-in-delay", "0.8s");
     });
 
-    // text mesh group
+    // checkerboard text
     document.querySelectorAll(".webgl-text").forEach((el) => {
       el.classList.add("hollow");
     });
 
-    const mg = new kokomi.MojiGroup(this, {
-      vertexShader: vertexShader4,
-      fragmentShader: fragmentShader4,
+    const ct = new CheckerboardText(this, {
       scroller,
+      ...config.ct,
     });
-    mg.addExisting();
+    ct.addExisting();
 
     // swell filter
-    const params = {
-      progress: 0,
-    };
-
     const sf = new SwellFilter(this);
     sf.addExisting();
-
-    this.update(() => {
-      const pr = params.progress;
-      const pr2 = THREE.MathUtils.mapLinear(pr, 0, 1, -1, 1);
-      const pr3 = 1 - Math.abs(pr2);
-      sf.ce.customPass.material.uniforms.uProgress.value = pr3;
-    });
 
     // swell filter transition
     let isTransitionEnabled = false;
 
-    const sfAnime = () => {
-      const t1 = gsap.timeline();
-      t1.set(params, {
-        progress: config.sf.strength,
-      }).to(params, {
-        progress: 0,
-        duration: 1.25,
-        ease: "power1.inOut",
-      });
-    };
-
     this.update(() => {
       if (isTransitionEnabled) {
-        sfAnime();
+        sf.anime(config.sf.strength);
         isTransitionEnabled = false;
       }
-    });
-
-    swiper.on("slideChange", (e) => {
-      isTransitionEnabled = true;
     });
 
     // load images
@@ -281,5 +370,24 @@ class Sketch extends kokomi.Base {
 
     // start
     await start();
+
+    // swiper
+    let activeIndex = swiper.activeIndex;
+
+    ct.fadeIn(`intro-text-${activeIndex + 1}`);
+
+    swiper.on("slideChange", (e) => {
+      // swell
+      isTransitionEnabled = true;
+
+      // checkerboard text
+      ct.fadeOut(`intro-text-${activeIndex + 1}`);
+
+      activeIndex = swiper.activeIndex;
+
+      ct.fadeIn(`intro-text-${activeIndex + 1}`, {
+        delay: 0.2,
+      });
+    });
   }
 }
