@@ -325,10 +325,27 @@ class SwellFilter extends kokomi.Component {
         uProgress: {
           value: 0,
         },
+        uMaskRadius: {
+          value: 100,
+        },
+        uDevicePixelRatio: {
+          value: window.devicePixelRatio,
+        },
+        uMouse: {
+          value: new THREE.Vector2(0, 0),
+        },
+        uMouseSpeed: {
+          value: 0,
+        },
       },
     });
     this.ce = ce;
     this.progress = 0;
+
+    this.offsetX = 0;
+    this.offsetY = 0;
+
+    this.targetSpeed = 0;
   }
   addExisting() {
     this.ce.addExisting();
@@ -336,10 +353,35 @@ class SwellFilter extends kokomi.Component {
   update() {
     const pr = this.progress;
     this.ce.customPass.material.uniforms.uProgress.value = pr;
+
+    this.RGBShift();
   }
   scroll(delta) {
     const scrollSpeed = Math.abs(delta / 50);
     this.progress = THREE.MathUtils.lerp(this.progress, scrollSpeed, 0.1);
+  }
+  RGBShift() {
+    const { x, y } = this.base.interactionManager.mouse;
+    this.offsetX = THREE.MathUtils.lerp(this.offsetX, x, 0.1);
+    this.offsetY = THREE.MathUtils.lerp(this.offsetY, y, 0.1);
+    this.ce.customPass.material.uniforms.uMouse.value = new THREE.Vector2(
+      this.offsetX,
+      this.offsetY
+    );
+
+    // mouse speed
+    const hoverDelta = new THREE.Vector2(
+      this.base.iMouse.mouseDOMDelta.x / window.innerWidth,
+      this.base.iMouse.mouseDOMDelta.y / window.innerHeight
+    );
+
+    const mouseSpeed = Math.hypot(hoverDelta.x, hoverDelta.y);
+    this.targetSpeed = THREE.MathUtils.lerp(this.targetSpeed, mouseSpeed, 0.1);
+    this.ce.customPass.material.uniforms.uMouseSpeed.value = Math.min(
+      this.targetSpeed,
+      0.05
+    );
+    this.targetSpeed *= 0.999;
   }
 }
 
