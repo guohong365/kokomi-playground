@@ -12,29 +12,113 @@ class CharacterGallery extends kokomi.Component {
     const gallary = new kokomi.Gallery(base, {
       vertexShader,
       fragmentShader,
-      makuConfig: {
-        meshSizeType: "scale",
-      },
       materialParams: {
         transparent: true,
       },
       scroller,
       elList: [...document.querySelectorAll("img:not(.webgl-fixed)")],
+      uniforms: {
+        uMeshSize: {
+          value: new THREE.Vector2(0, 0),
+        },
+        uMeshPosition: {
+          value: new THREE.Vector2(0, 0),
+        },
+        uProgress: {
+          value: 0,
+        },
+      },
     });
     this.gallary = gallary;
+
+    this.currentFullscreenMesh = null;
   }
   async addExisting() {
     await this.gallary.addExisting();
+
+    this.gallary.makuGroup.makus.forEach((maku) => {
+      maku.el.addEventListener("click", () => {
+        if (!maku.el.classList.contains("webgl-img-fullscreen")) {
+          return;
+        }
+        if (!this.currentFullscreenMesh) {
+          const progress = maku.mesh.material.uniforms.uProgress.value;
+          if (progress < 0.5) {
+            this.doTransition(maku.mesh);
+            this.currentFullscreenMesh = maku.mesh;
+          }
+        }
+      });
+    });
+
+    window.addEventListener("click", () => {
+      if (this.currentFullscreenMesh) {
+        const progress =
+          this.currentFullscreenMesh.material.uniforms.uProgress.value;
+        if (progress > 0.01) {
+          this.undoTransition(this.currentFullscreenMesh);
+          this.currentFullscreenMesh = null;
+        }
+      }
+    });
   }
   connectSwiper(swiper) {
     this.swiper = swiper;
   }
   update() {
     if (this.gallary.makuGroup) {
+      // swiper
       if (this.swiper) {
         this.gallary.scroller.scroll.target = -this.swiper.translate;
       }
+
+      // mesh info
+      this.gallary.makuGroup.makus.forEach((maku) => {
+        maku.mesh.material.uniforms.uMeshSize.value = new THREE.Vector2(
+          maku.el.clientWidth,
+          maku.el.clientHeight
+        );
+        maku.mesh.material.uniforms.uMeshPosition.value = new THREE.Vector2(
+          maku.mesh.position.x,
+          maku.mesh.position.y
+        );
+      });
     }
+  }
+  doTransition(mesh) {
+    document.body.classList.add("overflow-hidden");
+    gsap.set(".avatars", {
+      pointerEvents: "none",
+    });
+    gsap.to(".avatars", {
+      opacity: 0,
+    });
+    gsap.to(".close-icon", {
+      opacity: 1,
+      delay: 0.3,
+    });
+    gsap.to(mesh.material.uniforms.uProgress, {
+      value: 1,
+      duration: 1,
+      ease: "power2.out",
+    });
+  }
+  undoTransition(mesh) {
+    document.body.classList.remove("overflow-hidden");
+    gsap.to(mesh.material.uniforms.uProgress, {
+      value: 0,
+      duration: 1,
+      ease: "power2.inOut",
+    });
+    gsap.set(".avatars", {
+      pointerEvents: "auto",
+    });
+    gsap.to(".avatars", {
+      opacity: 1,
+    });
+    gsap.to(".close-icon", {
+      opacity: 0,
+    });
   }
 }
 
