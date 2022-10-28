@@ -245,19 +245,11 @@ class SwellFilter extends kokomi.Component {
   }
   update() {
     const pr = this.progress;
-    const pr2 = THREE.MathUtils.mapLinear(pr, 0, 1, -1, 1);
-    const pr3 = 1 - Math.abs(pr2);
     this.ce.customPass.material.uniforms.uProgress.value = pr;
   }
-  anime(strength = 1) {
-    const t1 = gsap.timeline();
-    t1.set(this, {
-      progress: strength,
-    }).to(this, {
-      progress: 0,
-      duration: 1.25,
-      ease: "power1.inOut",
-    });
+  scroll(delta) {
+    const scrollSpeed = Math.abs(delta / 50);
+    this.progress = THREE.MathUtils.lerp(this.progress, scrollSpeed, 0.1);
   }
 }
 
@@ -360,10 +352,8 @@ class Sketch extends kokomi.Base {
     const sf = new SwellFilter(this);
     sf.addExisting();
 
-    // swell filter transition
     this.update(() => {
-      const scrollSpeed = Math.abs(scroller.scroll.delta / 50);
-      sf.progress = THREE.MathUtils.lerp(sf.progress, scrollSpeed, 0.1);
+      sf.scroll(scroller.scroll.delta);
     });
 
     // load images
@@ -378,10 +368,6 @@ class Sketch extends kokomi.Base {
     ct.fadeIn(`intro-text-${activeIndex + 1}`);
 
     swiper.on("slideChange", (e) => {
-      // swell filter
-      // isTransitionEnabled = true;
-
-      // checkerboard text
       ct.fadeOut(`webgl-text`);
 
       activeIndex = swiper.activeIndex;
