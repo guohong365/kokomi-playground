@@ -143,6 +143,9 @@ class CheckerboardText extends kokomi.Component {
         uProgress1: {
           value: 0,
         },
+        uGrid: {
+          value: new THREE.Vector2(3, 6),
+        },
         uGridSize: {
           value: 1,
         },

@@ -12,6 +12,8 @@ class Sketch extends kokomi.Base {
     const params = {
       text: "HELLO WORLD",
       fontSize: 0.5,
+      gridX: 5,
+      gridY: 10,
       progress: 0,
       progress1: 0,
       baseDuration: 0.2,
@@ -68,6 +70,9 @@ class Sketch extends kokomi.Base {
         },
         uProgress1: {
           value: params.progress1,
+        },
+        uGrid: {
+          value: new THREE.Vector2(params.gridX, params.gridY),
         },
         uGridSize: {
           value: params.text.length,

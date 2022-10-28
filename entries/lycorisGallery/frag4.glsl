@@ -30,6 +30,7 @@ varying vec2 vUv;
 
 uniform float uProgress;
 uniform float uProgress1;
+uniform vec2 uGrid;
 uniform float uGridSize;
 uniform vec3 uTextColor;
 uniform vec3 uShadowColor;
@@ -46,7 +47,7 @@ void main(){
     vec2 p=vUv;
     
     // pattern
-    vec2 grid=vec2(5.,10.);
+    vec2 grid=uGrid;
     grid.x*=uGridSize;
     vec2 gridP=vec2(floor(grid.x*p.x),floor(grid.y*p.y));
     float pattern=noise(gridP);
