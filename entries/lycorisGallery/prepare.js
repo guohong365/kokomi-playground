@@ -19,4 +19,11 @@ const prepare = async () => {
   const fragText4 = await fetchText(`./frag4.glsl?v=${Math.random()}`);
   const fragmentShader4 = fragText4;
   window.fragmentShader4 = fragmentShader4;
+
+  const vertText5 = await fetchText(`./vert5.glsl?v=${Math.random()}`);
+  const vertexShader5 = vertText5;
+  window.vertexShader5 = vertexShader5;
+  const fragText5 = await fetchText(`./frag5.glsl?v=${Math.random()}`);
+  const fragmentShader5 = fragText5;
+  window.fragmentShader5 = fragmentShader5;
 };

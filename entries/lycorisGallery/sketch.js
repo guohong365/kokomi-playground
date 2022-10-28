@@ -19,6 +19,7 @@ class CharacterGallery extends kokomi.Component {
         transparent: true,
       },
       scroller,
+      elList: [...document.querySelectorAll("img:not(.webgl-fixed)")],
     });
     this.gallary = gallary;
   }
@@ -125,6 +126,26 @@ class ParticleQuad extends kokomi.Component {
   }
 }
 
+class SwellFilter extends kokomi.Component {
+  constructor(base) {
+    super(base);
+
+    const ce = new kokomi.CustomEffect(base, {
+      vertexShader: vertexShader5,
+      fragmentShader: fragmentShader5,
+      uniforms: {
+        uProgress: {
+          value: 0,
+        },
+      },
+    });
+    this.ce = ce;
+  }
+  addExisting() {
+    this.ce.addExisting();
+  }
+}
+
 class Sketch extends kokomi.Base {
   async create() {
     // config
@@ -139,6 +160,9 @@ class Sketch extends kokomi.Base {
         color: "#eff6fc",
         count: 54,
         size: 75,
+      },
+      sf: {
+        strength: 0.15,
       },
     };
 
@@ -179,7 +203,7 @@ class Sketch extends kokomi.Base {
     scroller.listenForScroll();
 
     // gallery
-    document.querySelectorAll("img").forEach((el) => {
+    document.querySelectorAll("img:not(.webgl-fixed)").forEach((el) => {
       el.classList.add("opacity-0");
     });
 
@@ -212,6 +236,47 @@ class Sketch extends kokomi.Base {
     });
     mg.addExisting();
 
+    // swell filter
+    const params = {
+      progress: 0,
+    };
+
+    const sf = new SwellFilter(this);
+    sf.addExisting();
+
+    this.update(() => {
+      const pr = params.progress;
+      const pr2 = THREE.MathUtils.mapLinear(pr, 0, 1, -1, 1);
+      const pr3 = 1 - Math.abs(pr2);
+      sf.ce.customPass.material.uniforms.uProgress.value = pr3;
+    });
+
+    // swell filter transition
+    let isTransitionEnabled = false;
+
+    const sfAnime = () => {
+      const t1 = gsap.timeline();
+      t1.set(params, {
+        progress: config.sf.strength,
+      }).to(params, {
+        progress: 0,
+        duration: 1.25,
+        ease: "power1.inOut",
+      });
+    };
+
+    this.update(() => {
+      if (isTransitionEnabled) {
+        sfAnime();
+        isTransitionEnabled = false;
+      }
+    });
+
+    swiper.on("slideChange", (e) => {
+      isTransitionEnabled = true;
+    });
+
+    // load images
     await cg.gallary.checkImagesLoaded();
 
     // start
