@@ -158,14 +158,13 @@ class CheckerboardText extends kokomi.Component {
   }
   addExisting() {
     this.mg.addExisting();
-  }
-  update() {
-    if (this.mg.mojis) {
-      this.mg.mojis.forEach((moji) => {
-        moji.textMesh.mesh.material.uniforms.uGridSize.value =
-          moji.textMesh.mesh._private_text.length;
-      });
-    }
+
+    this.mg.mojis.forEach((moji) => {
+      moji.textMesh.mesh.material.uniforms.uGridSize.value =
+        moji.textMesh.mesh._private_text.length;
+
+      moji.textMesh.mesh.letterSpacing = 0.05;
+    });
   }
   fadeIn(textClass, config = {}) {
     const { duration = 1.6, stagger = 0.05, delay = 0 } = config;
@@ -248,7 +247,7 @@ class SwellFilter extends kokomi.Component {
     const pr = this.progress;
     const pr2 = THREE.MathUtils.mapLinear(pr, 0, 1, -1, 1);
     const pr3 = 1 - Math.abs(pr2);
-    this.ce.customPass.material.uniforms.uProgress.value = pr3;
+    this.ce.customPass.material.uniforms.uProgress.value = pr;
   }
   anime(strength = 1) {
     const t1 = gsap.timeline();
@@ -281,7 +280,7 @@ class Sketch extends kokomi.Base {
         shadowColor: "white",
       },
       sf: {
-        strength: 0.15,
+        strength: 1,
       },
     };
 
@@ -306,6 +305,9 @@ class Sketch extends kokomi.Base {
     const swiper = new Swiper(".swiper", {
       direction: "vertical",
       mousewheel: true,
+      freeMode: {
+        sticky: true,
+      },
     });
     window.swiper = swiper;
 
@@ -359,13 +361,9 @@ class Sketch extends kokomi.Base {
     sf.addExisting();
 
     // swell filter transition
-    let isTransitionEnabled = false;
-
     this.update(() => {
-      if (isTransitionEnabled) {
-        sf.anime(config.sf.strength);
-        isTransitionEnabled = false;
-      }
+      const scrollSpeed = Math.abs(scroller.scroll.delta / 50);
+      sf.progress = THREE.MathUtils.lerp(sf.progress, scrollSpeed, 0.1);
     });
 
     // load images
@@ -380,11 +378,11 @@ class Sketch extends kokomi.Base {
     ct.fadeIn(`intro-text-${activeIndex + 1}`);
 
     swiper.on("slideChange", (e) => {
-      // swell
-      isTransitionEnabled = true;
+      // swell filter
+      // isTransitionEnabled = true;
 
       // checkerboard text
-      ct.fadeOut(`intro-text-${activeIndex + 1}`);
+      ct.fadeOut(`webgl-text`);
 
       activeIndex = swiper.activeIndex;
 

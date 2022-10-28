@@ -16,7 +16,7 @@ vec2 centerUv(vec2 uv){
 vec2 distort(vec2 p){
     vec2 cp=centerUv(p);
     float center=distance(p,vec2(.5));
-    vec2 offset=cp*(1.-center)*uProgress*.35;
+    vec2 offset=cp*(1.-center)*uProgress;
     p-=offset;
     return p;
 }
