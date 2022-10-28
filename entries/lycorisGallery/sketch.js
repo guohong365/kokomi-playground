@@ -100,11 +100,7 @@ class ParticleQuad extends kokomi.Component {
       rtCamera,
     });
 
-    const pf = new ParticlesFly(base, {
-      color: config.bgPointColor,
-      count: config.bgPointCount,
-      size: config.bgPointSize,
-    });
+    const pf = new ParticlesFly(base, config);
     rtScene.add(pf.cm.points);
 
     const sqPf = new kokomi.CustomMesh(base, {
@@ -131,6 +127,21 @@ class ParticleQuad extends kokomi.Component {
 
 class Sketch extends kokomi.Base {
   async create() {
+    // config
+    const config = {
+      scroller: {
+        ease: 0.025,
+      },
+      cg: {
+        color: "#f0555a",
+      },
+      pq: {
+        color: "#eff6fc",
+        count: 54,
+        size: 75,
+      },
+    };
+
     // functions
     const start = async () => {
       document.querySelector(".loader-screen").classList.add("hollow");
@@ -162,20 +173,9 @@ class Sketch extends kokomi.Base {
     const screenCamera = new kokomi.ScreenCamera(this);
     screenCamera.addExisting();
 
-    // config
-    const cgConfig = {
-      color: "#f0555a",
-    };
-
-    const pqConfig = {
-      bgPointColor: "#eff6fc",
-      bgPointCount: 54,
-      bgPointSize: 75,
-    };
-
     // scroller
     const scroller = new kokomi.NormalScroller();
-    scroller.scroll.ease = 0.025;
+    scroller.scroll.ease = config.scroller.ease;
     scroller.listenForScroll();
 
     // gallery
@@ -184,14 +184,14 @@ class Sketch extends kokomi.Base {
     });
 
     const cg = new CharacterGallery(this, {
-      ...cgConfig,
+      ...config.cg,
       scroller,
     });
     await cg.addExisting();
     cg.connectSwiper(swiper);
 
     // particles
-    const pq = new ParticleQuad(this, pqConfig);
+    const pq = new ParticleQuad(this, config.pq);
     pq.addExisting();
 
     // text anime delay

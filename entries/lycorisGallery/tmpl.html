@@ -516,3 +516,48 @@
     </div>
 </div>
 <script src="https://unpkg.com/swiper@8.4.4/swiper-bundle.min.js"></script>
+<script>
+    const makeResponsive = () => {
+        const clamp = (num, lower, upper) =>
+            Math.max(
+                Math.min(Number(num), Math.max(lower, upper)),
+                Math.min(lower, upper)
+            );
+
+        // 基准宽度
+        const baseWidth = 1536;
+
+        // 基准字体大小
+        const baseSize = 16;
+
+        // 最小字体大小
+        const minSize = 10;
+
+        // 设置 rem 函数
+        const setRem = () => {
+            // 当前页面宽度相对于基准宽度的缩放比例
+            const scale = document.documentElement.clientWidth / baseWidth;
+            // 设置目标字体大小
+            const target = baseSize * scale;
+            // 限制字体大小
+            const fontSize = clamp(target, minSize, Infinity);
+            document.documentElement.style.fontSize = `${fontSize}px`;
+        };
+
+        // 执行setRem
+        const doSetRem = () => {
+            setRem();
+            window.addEventListener("resize", setRem);
+        };
+
+        // 还原rem
+        const resetRem = () => {
+            document.documentElement.style.fontSize = `${16}px`;
+            window.removeEventListener("resize", setRem);
+        };
+
+        doSetRem();
+    }
+
+    makeResponsive();
+</script>
