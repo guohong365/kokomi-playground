@@ -365,14 +365,14 @@ class Sketch extends kokomi.Base {
     // swiper
     let activeIndex = swiper.activeIndex;
 
-    ct.fadeIn(`intro-text-${activeIndex + 1}`);
+    ct.fadeIn(`checkerboard-text-${activeIndex + 1}`);
 
     swiper.on("slideChange", (e) => {
       ct.fadeOut(`webgl-text`);
 
       activeIndex = swiper.activeIndex;
 
-      ct.fadeIn(`intro-text-${activeIndex + 1}`, {
+      ct.fadeIn(`checkerboard-text-${activeIndex + 1}`, {
         delay: 0.2,
       });
     });
