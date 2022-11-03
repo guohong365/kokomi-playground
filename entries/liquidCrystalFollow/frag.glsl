@@ -2,22 +2,8 @@ uniform vec2 uMouse1;
 uniform vec2 uMouse2;
 uniform float uSize;
 uniform vec2 uAspect;
-uniform float uDistortionFrequency;
-uniform float uDistortionStrength;
-uniform float uDistortionSpeed;
-uniform float uDisplacementFrequency;
-uniform float uDisplacementScale;
-uniform float uDisplacementStrength;
-uniform float uFresnelOffset;
-uniform float uFresnelMultiplier;
-uniform float uFresnelPower;
-uniform samplerCube tMap;
-uniform float uMiddleFresnelOpacity;
-uniform float uRefraction;
-uniform float uRefractionColorShift;
-uniform sampler2D tRender;
-uniform sampler2D tRenderHover;
-uniform float uRenderHoverOpacity;
+
+uniform samplerCube uCubemap;
 
 #define SHOW_ISOLINE 0
 
@@ -73,6 +59,7 @@ vec3 getRayDirection(vec2 p,vec3 ro,vec3 ta,float fl){
 }
 
 // lighting
+// https://learnopengl.com/Lighting/Basic-Lighting
 
 float saturate(float a){
     return clamp(a,0.,1.);
@@ -188,6 +175,12 @@ vec3 toGamma(vec3 v){
 
 vec4 toGamma(vec4 v){
     return vec4(toGamma(v.rgb),v.a);
+}
+
+// sdf
+float sdSphere(vec3 p,float s)
+{
+    return length(p)-s;
 }
 
 // noise
@@ -326,49 +319,25 @@ vec4 RGBShift(sampler2D t,vec2 rUv,vec2 gUv,vec2 bUv){
 // transforms
 
 vec3 distort(vec3 p){
-    float t=iTime*uDistortionSpeed;
-    float distortFreq=uDistortionFrequency/uDisplacementScale;
-    float distortStr=uDistortionStrength;
+    float t=iTime*.5;
     
-    vec3 dp=p+cnoise(vec3(p*distortFreq*distortStr+t));
+    float distortStr=1.6;
+    vec3 distortP=p+cnoise(vec3(p*PI*distortStr+t));
+    float perlinStr=cnoise(vec3(distortP*PI*distortStr*.1));
     
-    float dispFreq=uDisplacementFrequency/uDisplacementScale;
-    float perlinStrength=cnoise(vec3(dp*dispFreq*distortStr));
+    vec3 dispP=p;
+    dispP+=(p*perlinStr*.1);
     
-    vec3 displacedPosition=p;
-    float dispStr=uDisplacementStrength;
-    displacedPosition+=(p*perlinStrength*dispStr);
-    
-    return displacedPosition;
-}
-
-vec3 orthogonal(vec3 v){
-    return normalize(abs(v.x)>abs(v.z)?vec3(-v.y,v.x,0.)
-    :vec3(0.,-v.z,v.y));
-}
-
-vec3 fixNormal(vec3 position,vec3 distortedPosition,vec3 normal,float offset){
-    vec3 tangent=orthogonal(normal);
-    vec3 bitangent=normalize(cross(normal,tangent));
-    vec3 neighbour1=position+tangent*offset;
-    vec3 neighbour2=position+bitangent*offset;
-    vec3 displacedNeighbour1=distort(neighbour1);
-    vec3 displacedNeighbour2=distort(neighbour2);
-    vec3 displacedTangent=displacedNeighbour1-distortedPosition;
-    vec3 displacedBitangent=displacedNeighbour2-distortedPosition;
-    vec3 displacedNormal=normalize(cross(displacedTangent,displacedBitangent));
-    return displacedNormal;
-}
-
-// sdf
-float sdSphere(vec3 p,float s)
-{
-    return length(p)-s;
+    return dispP;
 }
 
 vec2 map(in vec3 pos)
 {
     vec2 res=vec2(1e10,0.);
+    
+    // pos=rotate(pos,vec3(1.,1.,1.),iTime);
+    
+    pos=distort(pos);
     
     vec2 m1=uMouse1.xy;
     m1*=uAspect;
@@ -396,7 +365,7 @@ vec2 raycast(in vec3 ro,in vec3 rd,in float tMax){
     for(int i=0;i<4;i++)
     {
         vec3 p=ro+t*rd;
-        vec2 h=map(distort(p));
+        vec2 h=map(p);
         if(h.x<.001||t>(tMax+GLOW))
         {
             break;
@@ -432,6 +401,7 @@ vec3 drawIsoline(vec3 col,vec3 pos){
 }
 
 vec3 material(in vec3 col,in vec3 pos,in float m,in vec3 nor){
+    // col=vec3(1.);
     col=vec3(0.);
     
     if(m==114514.){
@@ -446,59 +416,50 @@ vec3 material(in vec3 col,in vec3 pos,in float m,in vec3 nor){
 vec3 lighting(in vec3 col,in vec3 pos,in vec3 rd,in vec3 nor,in float t,in vec2 screenUv){
     vec3 lin=col;
     
-    vec3 coords=vec3(uMouse1*iResolution.xy,0.);
-    vec3 viewDir=normalize(vec3(0.,0.,0.)-vec3(coords.x/(iResolution.x*.25),coords.y/(iResolution.y*.25),-2.));
+    // diffuse
+    // vec3 lig=normalize(vec3(1.,2.,3.));
+    // float dif=dot(nor,lig)*.5+.5;
+    // lin=col*dif;
+    
+    vec3 m=vec3(uMouse1*iResolution.xy,0.);
+    vec3 viewDir=normalize(vec3(0.)-vec3(m.x/(iResolution.x*.25),m.y/(iResolution.y*.25),-2.));
     vec3 I=normalize(nor.xyz-viewDir);
     float distanceMouse=distance(uMouse1,vec2(0.))*.1;
     
-    // refract
-    vec3 refracted=refract(vec3(0.,0.,-2.),nor,1./2.);
-    screenUv+=refracted.xy*uRefraction*.35;
-    
     // fresnel
-    float fOffset=uFresnelOffset*(1.-distanceMouse*2.);
-    float f=fOffset+fresnel(0.,1.,1.,I,nor)*uFresnelMultiplier;
-    float f2=fOffset+fresnel(1.,1.,1.,rd,nor)*uFresnelMultiplier;
-    vec3 fresnelColor=vec3(saturate(pow(f-.8,3.)));
-    lin=blendScreen(lin,fresnelColor);
+    float fOffset=-1.4*(1.-distanceMouse*2.);
+    float f=fOffset+fresnel(0.,1.,1.,I,nor)*1.44;
+    float f2=fOffset+fresnel(1.,1.,1.,rd,nor)*1.44;
+    vec3 fCol=vec3(saturate(pow(f-.8,3.)));
+    lin=blendScreen(lin,fCol);
     
     // cube
-    vec3 cubeTex=texture(tMap,vec3(screenUv,0.)).rgb;
-    vec3 texCube=saturation(cubeTex,6.);
-    vec3 texCubeFresnel=blendScreen(mix(vec3(0.,0.,0.),texCube,fresnelColor),fresnelColor);
-    // lin=blendScreen(lin,texCubeFresnel);
+    vec3 cubeTex=texture(uCubemap,vec3(screenUv,0.)).rgb;
+    vec3 cubeTexSat=saturation(cubeTex,6.);
+    vec3 cubeTexF=blendScreen(mix(vec3(0.),cubeTexSat,fCol),fCol);
+    lin=blendScreen(lin,cubeTexF);
     
     // iridescence
     vec3 iri=vec3(0.);
     float iriSrength=10.;
-    iri.r=smoothstep(texCubeFresnel.r*iriSrength,0.,.5);
-    iri.g=smoothstep(texCubeFresnel.g*iriSrength,0.,.5);
-    iri.b=smoothstep(texCubeFresnel.b*iriSrength,0.,.5);
+    iri.r=smoothstep(cubeTexF.r*iriSrength,0.,.5);
+    iri.g=smoothstep(cubeTexF.g*iriSrength,0.,.5);
+    iri.b=smoothstep(cubeTexF.b*iriSrength,0.,.5);
     lin=blendScreen(lin,iri);
     
     vec3 iri2=vec3(0.);
-    iri2.r=smoothstep(0.,.25,texCubeFresnel.r);
-    iri2.g=smoothstep(0.,.25,texCubeFresnel.r);
-    iri2.b=smoothstep(0.,.25,texCubeFresnel.r);
+    iri2.r=smoothstep(0.,.25,cubeTexF.r);
+    iri2.g=smoothstep(0.,.25,cubeTexF.r);
+    iri2.b=smoothstep(0.,.25,cubeTexF.r);
     lin=blendScreen(lin,iri2);
     
     // middle fresnel
     vec3 mf=vec3(0.);
-    float fresnelFactor=pow(f+f2,uFresnelPower);
-    float invertFresnelFactor=-fresnelFactor+3.;
-    mf=vec3(invertFresnelFactor);
-    mf*=uMiddleFresnelOpacity;
+    float fFactor=pow(f+f2,1.24);
+    float invertFFactor=-fFactor+3.;
+    mf=vec3(invertFFactor);
+    mf*=.1;
     lin=blendScreen(lin,mf);
-    
-    // RGB Shift
-    float offset=(.01*nor.x*.15+.002)*uRefractionColorShift;
-    vec2 rUv=vec2(screenUv.x,screenUv.y+offset);
-    vec2 gUv=vec2(screenUv.x,screenUv.y);
-    vec2 bUv=vec2(screenUv.x,screenUv.y-offset);
-    vec3 refractedColor=RGBShift(tRender,rUv,gUv,bUv).xyz;
-    vec4 toImg=texture(tRenderHover,screenUv);
-    vec3 background=mix(refractedColor,toImg.rgb,uRenderHoverOpacity);
-    lin=blendScreen(lin,background);
     
     return lin;
 }
@@ -516,14 +477,10 @@ vec4 render(in vec3 ro,in vec3 rd,in vec2 screenUv){
         
         vec3 nor=calcNormal(pos);
         
-        vec3 dp=distort(pos);
-        
-        vec3 fNor=fixNormal(pos,dp,nor,.005);
-        
         vec3 result=vec3(0.);
-        result=material(result,pos,m,fNor);
+        result=material(result,pos,m,nor);
+        result=lighting(result,pos,rd,nor,t,screenUv);
         
-        result=lighting(result,pos,rd,fNor,t,screenUv);
         col=vec4(result,1.);
     }
     
