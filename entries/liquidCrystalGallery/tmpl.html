@@ -1,0 +1,197 @@
+<style>
+    body {
+        background: black;
+    }
+
+    #sketch {
+        position: fixed;
+        z-index: 0;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+    }
+
+    /* swiper */
+    .swiper {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    .swiper-slide {
+        width: 100vw;
+        height: 100vh;
+    }
+
+    #sketch,
+    .main-scene {
+        opacity: 0;
+    }
+
+    .loading span {
+        animation: blur 1.5s calc(var(--i) / 5 * 1s) alternate infinite;
+    }
+
+    @keyframes blur {
+        to {
+            filter: blur(5px);
+        }
+    }
+</style>
+<div class="fixed z-5 loader-screen w-screen h-screen transition-all duration-300 bg-black">
+    <div class="absolute hv-center">
+        <div class="loading text-white text-3xl tracking-widest">
+            <span style="--i: 0">L</span>
+            <span style="--i: 1">O</span>
+            <span style="--i: 2">A</span>
+            <span style="--i: 3">D</span>
+            <span style="--i: 4">I</span>
+            <span style="--i: 5">N</span>
+            <span style="--i: 6">G</span>
+        </div>
+    </div>
+</div>
+<div class="main-scene">
+    <div class="swiper">
+        <div class="swiper-wrapper">
+            <div class="swiper-slide">
+                <div class="relative w-screen h-screen">
+                    <div class="absolute top-12 left-24">
+                        <div class="webgl-text webgl-fixed text-white tracking-wide text-xl"
+                            data-webgl-text-color="#ffffff">
+                            alphardex</div>
+                    </div>
+                    <div class="absolute hv-center">
+                        <div class="flex flex-col items-start leading-none whitespace-no-wrap space-y-8">
+                            <div class="webgl-text text-2xl text-white" data-webgl-text-color="#ffffff">I'm
+                            </div>
+                            <div class="webgl-text text-7xl text-white" data-webgl-text-color="#ffffff">A CREATIVE
+                                DEVELOPER
+                            </div>
+                        </div>
+                    </div>
+                    <div class="absolute h-center bottom-12">
+                        <div id="scroll-hint" class="webgl-text text-white" data-webgl-text-color="#ffffff">Scroll To
+                            View More</div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="relative w-screen h-screen">
+                    <div class="absolute top-0 left-0">
+                        <img class="webgl-img w-screen h-screen" data-webgl-img-id="1" data-webgl-mouse-follow="1"
+                            data-webgl-mouse-offset-x="0" data-webgl-mouse-offset-y="0"
+                            src="https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg" crossorigin="anonymous" alt="" />
+                    </div>
+                    <div class="absolute v-center left-30">
+                        <div class="flex flex-col items-start leading-none whitespace-no-wrap space-y-8">
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">I mainly focus
+                                on CSS and WebGL.
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">Creating cool 3D
+                                effects is
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">my favorite
+                                thing.
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">I made
+                                kokomi.js, which is
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">
+                                a nice library to create 3D effects.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="relative w-screen h-screen">
+                    <div class="absolute top-0 left-0">
+                        <img class="webgl-img w-screen h-screen" data-webgl-img-id="2" data-webgl-mouse-follow="1"
+                            data-webgl-mouse-offset-x="-0.2" data-webgl-mouse-offset-y="0"
+                            src="https://s2.loli.net/2022/11/03/ehAaUtrXv9xNmMD.jpg" crossorigin="anonymous" alt="" />
+                    </div>
+                    <div class="absolute v-center right-30">
+                        <div class="flex flex-col items-start leading-none whitespace-no-wrap space-y-8">
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">This kind of
+                                effect
+                                is
+                                called Raymarching.
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">It's a way to
+                                generate procedural
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">3D shapes with
+                                only Maths.
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">This ball
+                                actually is two mixed sphere sdfs
+                            </div>
+                            <div class="webgl-text text-3xl text-white" data-webgl-text-color="#ffffff">
+                                which are distorted by classic perlin noise.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="swiper-slide">
+                <div class="relative w-screen h-screen">
+                    <div class="absolute hv-center">
+                        <div class="flex flex-col items-start leading-none whitespace-no-wrap space-y-8">
+                            <div class="webgl-text text-2xl text-white" data-webgl-text-color="#ffffff">That's end, just
+                                play the ball with your mouse :)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="webgl-snap-point webgl-snap-point-1 fixed v-center right-80 w-60 h-60"></div>
+    <div class="webgl-snap-point webgl-snap-point-2 fixed v-center left-80 w-60 h-60"></div>
+</div>
+<script src="https://unpkg.com/swiper@8.4.4/swiper-bundle.min.js"></script>
+<script>
+    const makeResponsive = () => {
+        const clamp = (num, lower, upper) =>
+            Math.max(
+                Math.min(Number(num), Math.max(lower, upper)),
+                Math.min(lower, upper)
+            );
+
+        // 基准宽度
+        const baseWidth = 1536;
+
+        // 基准字体大小
+        const baseSize = 16;
+
+        // 最小字体大小
+        const minSize = 10;
+
+        // 设置 rem 函数
+        const setRem = () => {
+            // 当前页面宽度相对于基准宽度的缩放比例
+            const scale = document.documentElement.clientWidth / baseWidth;
+            // 设置目标字体大小
+            const target = baseSize * scale;
+            // 限制字体大小
+            const fontSize = clamp(target, minSize, Infinity);
+            document.documentElement.style.fontSize = `${fontSize}px`;
+        };
+
+        // 执行setRem
+        const doSetRem = () => {
+            setRem();
+            window.addEventListener("resize", setRem);
+        };
+
+        // 还原rem
+        const resetRem = () => {
+            document.documentElement.style.fontSize = `${16}px`;
+            window.removeEventListener("resize", setRem);
+        };
+
+        doSetRem();
+    }
+
+    makeResponsive();
+</script>
