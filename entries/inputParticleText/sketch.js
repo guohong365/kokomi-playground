@@ -8,7 +8,7 @@ class Sketch extends kokomi.Base {
     this.camera.position.set(0, 0, 2);
 
     const params = {
-      count: 10000,
+      count: 6000,
       color1: "#d1a657",
       color2: "#62b1cf",
       size: 15,
