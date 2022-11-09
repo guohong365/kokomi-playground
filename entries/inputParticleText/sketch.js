@@ -62,7 +62,7 @@ class Sketch extends kokomi.Base {
         str,
         font,
         {
-          size: 0.5,
+          size: 0.4,
           height: 0.2,
           curveSegments: 120,
           bevelEnabled: true,
