@@ -1,3 +1,40 @@
+<style>
+    body {
+        background: black;
+    }
+
+    #sketch {
+        opacity: 0;
+    }
+
+    .loading {
+        display: flex;
+        letter-spacing: 0.5rem;
+    }
+
+    .loading span {
+        animation: shrink 2s calc(var(--i) / 10 * 1s) infinite;
+    }
+
+    @keyframes shrink {
+        50% {
+            transform: scale(0);
+        }
+    }
+</style>
+<div class="fixed z-5 top-0 left-0 loader-screen w-screen h-screen transition-all duration-300 bg-black">
+    <div class="absolute hv-center">
+        <div class="loading text-white text-3xl tracking-widest">
+            <span style="--i: 0">L</span>
+            <span style="--i: 1">O</span>
+            <span style="--i: 2">A</span>
+            <span style="--i: 3">D</span>
+            <span style="--i: 4">I</span>
+            <span style="--i: 5">N</span>
+            <span style="--i: 6">G</span>
+        </div>
+    </div>
+</div>
 <div class="absolute top-0 left-0 w-screen h-screen overflow-hidden pointer-events-none">
     <div class="absolute hv-center">
         <div class="webgl-text text-white whitespace-no-wrap opacity-0 pointer-events-auto" style="font-size: 13em;"

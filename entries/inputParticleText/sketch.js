@@ -5,6 +5,16 @@ import * as dat from "lil";
 
 class Sketch extends kokomi.Base {
   async create() {
+    const start = async () => {
+      document.querySelector(".loader-screen").classList.add("hollow");
+
+      await kokomi.sleep(500);
+
+      gsap.to("#sketch", {
+        opacity: 1,
+      });
+    };
+
     this.camera.position.set(0, 0, 2);
 
     const params = {
@@ -133,5 +143,7 @@ class Sketch extends kokomi.Base {
     document.addEventListener("keyup", () => {
       createTextByEl();
     });
+
+    await start();
   }
 }
