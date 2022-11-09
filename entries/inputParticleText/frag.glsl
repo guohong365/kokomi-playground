@@ -26,7 +26,7 @@ void main(){
     vec2 p=gl_PointCoord;
     
     vec3 color=uColor1;
-    if(vColorId>.2&&vColorId<.4){
+    if(vColorId>.3&&vColorId<.5){
         color=uColor2;
     }
     
@@ -34,7 +34,7 @@ void main(){
     
     float shape=spot(p,.1,2.5);
     
-    float alpha=1.-saturate(abs(vPosition.y*1.6));
+    float alpha=1.-saturate(abs(vPosition.y*1.2));
     shape*=alpha;
     
     if(vTransparent>uTransparentRate){

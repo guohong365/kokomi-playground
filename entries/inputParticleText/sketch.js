@@ -5,7 +5,7 @@ import * as dat from "lil";
 
 class Sketch extends kokomi.Base {
   async create() {
-    this.camera.position.set(0, 0, 1);
+    this.camera.position.set(0, 0, 2);
 
     const params = {
       count: 10000,
@@ -62,7 +62,7 @@ class Sketch extends kokomi.Base {
         str,
         font,
         {
-          size: 0.4,
+          size: 0.6,
           height: 0.2,
           curveSegments: 120,
           bevelEnabled: true,
@@ -112,8 +112,8 @@ class Sketch extends kokomi.Base {
       }
       const mat2 = material.clone();
       mat2.uniforms.uDepth.value = 1;
-      mat2.uniforms.uTransparentRate.value = 0.3;
-      mat2.uniforms.uPointSize.value = params.size * 3;
+      mat2.uniforms.uTransparentRate.value = 0.35;
+      mat2.uniforms.uPointSize.value = params.size * 2;
       this.update(() => {
         uj.injectShadertoyUniforms(mat2.uniforms);
       });
