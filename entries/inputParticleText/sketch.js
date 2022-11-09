@@ -83,7 +83,7 @@ class Sketch extends kokomi.Base {
       t3d.mesh.geometry.center();
 
       const sampledPos = kokomi.sampleParticlesPositionFromMesh(
-        t3d.mesh.geometry.toNonIndexed(),
+        t3d.mesh.geometry,
         params.count
       );
 
