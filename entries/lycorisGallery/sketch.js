@@ -414,9 +414,6 @@ class Sketch extends kokomi.Base {
 
       await kokomi.sleep(500);
 
-      document.querySelector("body").style.overflow = "visible";
-      document.querySelector("body").style.overflowX = "hidden";
-
       gsap.to(".gallery,#sketch", {
         opacity: 1,
       });
