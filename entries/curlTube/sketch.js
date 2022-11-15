@@ -137,6 +137,9 @@ class Sketch extends kokomi.Base {
     const planeMaterial = scatterMaterial.clone();
     planeMaterial.uniforms.uScatterDivider.value = params.planeScatterDivider;
     planeMaterial.uniforms.uIsPlane.value = 1;
+    this.update(() => {
+      uj.injectShadertoyUniforms(planeMaterial.uniforms);
+    });
 
     const planeGeometry = new THREE.PlaneGeometry(100, 100);
     const plane = new THREE.Mesh(planeGeometry, planeMaterial);
