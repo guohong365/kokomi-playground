@@ -6,9 +6,7 @@ varying vec2 vUv;
 
 varying vec3 vWorldPosition;
 
-uniform float uTime;
 uniform vec2 uMouse;
-uniform vec2 uResolution;
 uniform vec3 uSpotLight;
 uniform float uScatterDivider;
 uniform float uScatterPow;
@@ -57,7 +55,7 @@ void main(){
     
     // tube movement
     if(uIsTube==1.){
-        float tubeMovement=sin(vUv.x*5.+uTime*uVelocity);
+        float tubeMovement=sin(vUv.x*5.+iTime*uVelocity);
         if(tubeMovement<uTubeThreshold){
             discard;
         }

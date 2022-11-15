@@ -29,19 +29,15 @@ class Sketch extends kokomi.Base {
     };
 
     // scatter mat
+    const uj = new kokomi.UniformInjector(this);
     const scatterMaterial = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       side: THREE.DoubleSide,
       uniforms: {
-        uTime: {
-          value: 0,
-        },
+        ...uj.shadertoyUniforms,
         uMouse: {
           value: new THREE.Vector2(0, 0),
-        },
-        uResolution: {
-          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
         },
         uSpotLight: {
           value: new THREE.Vector3(0, 0, 0),
@@ -75,11 +71,17 @@ class Sketch extends kokomi.Base {
         },
       },
     });
+    this.update(() => {
+      uj.injectShadertoyUniforms(scatterMaterial.uniforms);
+    });
 
     // tube mat
     const tubeMaterial = scatterMaterial.clone();
     tubeMaterial.uniforms.uScatterDivider.value = params.tubeScatterDivider;
     tubeMaterial.uniforms.uIsTube.value = 1;
+    this.update(() => {
+      uj.injectShadertoyUniforms(tubeMaterial.uniforms);
+    });
 
     const createCurve = ({
       startPoint = new THREE.Vector3(0, 0, 0),
@@ -155,10 +157,6 @@ class Sketch extends kokomi.Base {
 
     // anime
     this.update(() => {
-      const t = this.clock.elapsedTime;
-
-      tubeMaterial.uniforms.uTime.value = t;
-
       tubeMaterial.uniforms.uSpotLight.value = mp;
       planeMaterial.uniforms.uSpotLight.value = mp;
 

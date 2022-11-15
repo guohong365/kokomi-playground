@@ -7,7 +7,6 @@ varying vec2 vUv;
 uniform float cameraNear;
 uniform float cameraFar;
 uniform sampler2D uDepth;
-uniform float uTime;
 uniform float uDepthScale;
 
 varying float vDepth;
@@ -140,7 +139,7 @@ float snoise(vec3 v)
                 float depth=readDepth(uDepth,newUv,cameraNear,cameraFar);
                 vec3 pos=position;
                 pos.z+=(1.-depth)*uDepthScale;
-                pos.y+=.01*snoise(vec3(newUv*30.,uTime/2.));
+                pos.y+=.01*snoise(vec3(newUv*30.,iTime/2.));
                 vec4 modelPosition=modelMatrix*vec4(pos,1.);
                 vec4 viewPosition=viewMatrix*modelPosition;
                 vec4 projectedPosition=projectionMatrix*viewPosition;

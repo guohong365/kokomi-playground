@@ -27,11 +27,13 @@ class Sketch extends kokomi.Base {
     const rtCamera = new THREE.PerspectiveCamera(40, 1, 2.1, 3);
     rtCamera.position.set(0, 0, 2);
 
+    const uj = new kokomi.UniformInjector(this);
     const depthMaterial = new THREE.ShaderMaterial({
       vertexShader,
       fragmentShader,
       side: THREE.DoubleSide,
       uniforms: {
+        ...uj.shadertoyUniforms,
         uDepth: {
           value: rt.depthTexture,
         },
@@ -40,9 +42,6 @@ class Sketch extends kokomi.Base {
         },
         cameraFar: {
           value: rtCamera.far,
-        },
-        uTime: {
-          value: 0,
         },
         uDepthScale: {
           value: params.depthScale,
@@ -54,6 +53,9 @@ class Sketch extends kokomi.Base {
           value: new THREE.Color(params.lineColor),
         },
       },
+    });
+    this.update(() => {
+      uj.injectShadertoyUniforms(depthMaterial.uniforms);
     });
 
     // shape
@@ -94,7 +96,6 @@ class Sketch extends kokomi.Base {
       if (shapeMesh) {
         shapeMesh.position.z = params.faceZ + 0.2 * Math.sin(t);
       }
-      depthMaterial.uniforms.uTime.value = t;
     });
   }
 }

@@ -7,7 +7,6 @@ varying vec2 vUv;
 attribute vec3 aPositionShape2;
 attribute vec3 aJitter;
 
-uniform float uTime;
 uniform float uChromaticBlur;
 
 const float PI=3.14159265359;

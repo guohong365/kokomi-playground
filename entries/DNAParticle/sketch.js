@@ -36,14 +36,8 @@ class Sketch extends kokomi.Base {
       depthWrite: false,
       blending: THREE.AdditiveBlending,
       uniforms: {
-        uTime: {
-          value: 0,
-        },
         uMouse: {
           value: new THREE.Vector2(0, 0),
-        },
-        uResolution: {
-          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
         },
         uColor1: {
           value: new THREE.Color(params.color1),
@@ -79,9 +73,6 @@ class Sketch extends kokomi.Base {
       vertexShader: vertexShader2,
       fragmentShader: fragmentShader2,
       uniforms: {
-        uResolution: {
-          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
-        },
         uCAMaxDistortion: {
           value: caParams.CAMaxDistortion,
         },
