@@ -82,9 +82,9 @@ void main(){
     float lineShape1=lines(baseUv,.5);
     float lineShape2=lines(baseUv,.1);
     
-    vec3 color1=vec3(224.,148.,66.)/255.;
-    vec3 color2=vec3(120.,158.,113.)/255.;
-    vec3 color3=vec3(0.,0.,0.)/255.;
+    vec3 color1=vec3(.878,.580,.259);
+    vec3 color2=vec3(.471,.620,.443);
+    vec3 color3=vec3(0.,0.,0.);
     
     vec3 colorMix1=mix(color1,color2,lineShape1);
     vec3 colorMix2=mix(colorMix1,color3,lineShape2);
