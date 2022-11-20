@@ -208,7 +208,7 @@ class FragmentWorld extends kokomi.Component {
       ease: "power3.inOut",
     });
   }
-  async dash(duration = 3500) {
+  async dash(duration = 3500, cb) {
     if (this.isDashing) {
       return;
     }
@@ -218,6 +218,10 @@ class FragmentWorld extends kokomi.Component {
     this.speedUp();
 
     await kokomi.sleep(duration);
+
+    if (cb) {
+      cb();
+    }
 
     this.speedDown();
   }
