@@ -163,6 +163,7 @@ class FragmentWorld extends kokomi.Component {
       fgsContainer.add(fg.g);
       return fg;
     });
+    this.fgs = fgs;
 
     // clone group for infinite loop
     const fgsContainer2 = new THREE.Group().copy(fgsContainer.clone());
@@ -220,6 +221,16 @@ class FragmentWorld extends kokomi.Component {
 
     this.speedDown();
   }
+  changeTexture(name) {
+    this.fgs.forEach((fg) => {
+      fg.frags.forEach((frag) => {
+        const tex = this.base.am.items[name];
+        tex.wrapS = THREE.RepeatWrapping;
+        tex.wrapT = THREE.RepeatWrapping;
+        frag.mesh.material.uniforms.uTexture.value = tex;
+      });
+    });
+  }
 }
 
 class Sketch extends kokomi.Base {
@@ -244,15 +255,21 @@ class Sketch extends kokomi.Base {
 
     const resourceList = [
       {
-        name: "tex",
+        name: "tex1",
         type: "texture",
         path: "https://s2.loli.net/2022/11/19/cqOho3ZKCXfTdzw.jpg",
+      },
+      {
+        name: "tex2",
+        type: "texture",
+        path: "https://s2.loli.net/2022/11/20/8E6yHP9kAawc7Wr.jpg",
       },
     ];
 
     const am = new kokomi.AssetManager(this, resourceList);
+    this.am = am;
     am.on("ready", async () => {
-      const tex = am.items["tex"];
+      const tex = am.items["tex1"];
       tex.wrapS = THREE.RepeatWrapping;
       tex.wrapT = THREE.RepeatWrapping;
 
