@@ -352,7 +352,7 @@ class Sketch extends kokomi.Base {
 
         shuffleText(".shuffle-text-6");
 
-        await kokomi.sleep(5000);
+        await kokomi.sleep(6000);
 
         gsap.to(".scene-2", {
           opacity: 0,
