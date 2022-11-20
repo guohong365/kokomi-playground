@@ -177,6 +177,7 @@ class FragmentWorld extends kokomi.Component {
     this.floatDistance = 0;
     this.floatSpeed = 1;
     this.floatMaxDistance = 1;
+    this.isDashing = false;
   }
   addExisting() {
     this.base.scene.add(this.totalG);
@@ -191,6 +192,33 @@ class FragmentWorld extends kokomi.Component {
     if (this.totalG) {
       this.totalG.position.y = y;
     }
+  }
+  speedUp() {
+    gsap.to(this, {
+      floatSpeed: 40,
+      duration: 4,
+      ease: "power2.in",
+    });
+  }
+  speedDown() {
+    gsap.to(this, {
+      floatSpeed: 1,
+      duration: 4,
+      ease: "power3.inOut",
+    });
+  }
+  async dash(duration = 3500) {
+    if (this.isDashing) {
+      return;
+    }
+
+    this.isDashing = true;
+
+    this.speedUp();
+
+    await kokomi.sleep(duration);
+
+    this.speedDown();
   }
 }
 
