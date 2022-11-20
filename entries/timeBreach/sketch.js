@@ -245,18 +245,6 @@ class Sketch extends kokomi.Base {
     this.camera.far = 10000;
     this.camera.updateProjectionMatrix();
 
-    new kokomi.OrbitControls(this);
-
-    const start = async () => {
-      document.querySelector(".loader-screen").classList.add("hollow");
-
-      await kokomi.sleep(500);
-
-      gsap.to("#sketch", {
-        opacity: 1,
-      });
-    };
-
     const resourceList = [
       {
         name: "tex1",
@@ -312,6 +300,7 @@ class Sketch extends kokomi.Base {
         material,
       });
       fw.addExisting();
+      this.fw = fw;
 
       // postprocessing
       const ce = new kokomi.CustomEffect(this, {
@@ -324,6 +313,93 @@ class Sketch extends kokomi.Base {
         },
       });
       ce.addExisting();
+
+      // DOM
+      const shuffleText = (sel) => {
+        gsap.set(sel, {
+          display: "block",
+        });
+        const st = new ShuffleText(document.querySelector(sel));
+        st.start();
+      };
+
+      const start = async () => {
+        document.querySelector(".loader-screen").classList.add("hollow");
+
+        await kokomi.sleep(500);
+
+        gsap.to("#sketch", {
+          opacity: 1,
+        });
+
+        await kokomi.sleep(1000);
+
+        await startScene1();
+      };
+
+      const startScene2 = async () => {
+        gsap.set(".scene-2", {
+          display: "block",
+        });
+
+        shuffleText(".shuffle-text-4");
+
+        await kokomi.sleep(1000);
+
+        shuffleText(".shuffle-text-5");
+
+        await kokomi.sleep(1000);
+
+        shuffleText(".shuffle-text-6");
+
+        await kokomi.sleep(5000);
+
+        gsap.to(".scene-2", {
+          opacity: 0,
+          pointerEvents: "none",
+        });
+      };
+
+      const startScene1 = async () => {
+        gsap.set(".scene-1", {
+          display: "block",
+        });
+
+        shuffleText(".shuffle-text-1");
+
+        await kokomi.sleep(1000);
+
+        shuffleText(".shuffle-text-2");
+
+        await kokomi.sleep(1000);
+
+        shuffleText(".shuffle-text-3");
+
+        await kokomi.sleep(1000);
+
+        gsap.to(".dash-btn", {
+          opacity: 1,
+          pointerEvents: "auto",
+        });
+
+        document
+          .querySelector(".dash-btn")
+          .addEventListener("click", async () => {
+            gsap.set(".dash-btn", {
+              pointerEvents: "none",
+            });
+            gsap.to(".scene-1", {
+              opacity: 0,
+              pointerEvents: "none",
+              display: "none",
+            });
+            await this.fw.dash(5000, () => {
+              this.fw.changeTexture("tex2");
+            });
+            await kokomi.sleep(5000);
+            await startScene2();
+          });
+      };
 
       await start();
     });
