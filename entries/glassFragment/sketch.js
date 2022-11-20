@@ -4,7 +4,7 @@ import gsap from "gsap";
 import * as dat from "lil";
 
 class Fragment extends kokomi.Component {
-  constructor(base, config) {
+  constructor(base, config = {}) {
     super(base);
 
     const { material, points } = config;
@@ -55,7 +55,7 @@ class Fragment extends kokomi.Component {
 }
 
 class FragmentGroup extends kokomi.Component {
-  constructor(base, config) {
+  constructor(base, config = {}) {
     super(base);
 
     const { material, layerId = 0, polygons } = config;
@@ -140,6 +140,60 @@ const generatePolygons = (config = {}) => {
   return polygons;
 };
 
+class FragmentWorld extends kokomi.Component {
+  constructor(base, config = {}) {
+    super(base);
+
+    const { material } = config;
+
+    const fgsContainer = new THREE.Group();
+    this.base.scene.add(fgsContainer);
+    fgsContainer.position.copy(new THREE.Vector3(-0.36, 0.36, 0.1));
+
+    // fragment groups
+    const polygons = generatePolygons();
+
+    const fgs = [...Array(2).keys()].map((item, i) => {
+      const fg = new FragmentGroup(this.base, {
+        material,
+        layerId: i,
+        polygons,
+      });
+      fg.addExisting();
+      fgsContainer.add(fg.g);
+      return fg;
+    });
+
+    // clone group for infinite loop
+    const fgsContainer2 = new THREE.Group().copy(fgsContainer.clone());
+    fgsContainer2.position.y = fgsContainer.position.y - 1;
+
+    const totalG = new THREE.Group();
+    totalG.add(fgsContainer);
+    totalG.add(fgsContainer2);
+    this.totalG = totalG;
+
+    // anime
+    this.floatDistance = 0;
+    this.floatSpeed = 1;
+    this.floatMaxDistance = 1;
+  }
+  addExisting() {
+    this.base.scene.add(this.totalG);
+  }
+  update() {
+    this.floatDistance += this.floatSpeed;
+
+    const y = this.floatDistance * 0.001;
+    if (y > this.floatMaxDistance) {
+      this.floatDistance = 0;
+    }
+    if (this.totalG) {
+      this.totalG.position.y = y;
+    }
+  }
+}
+
 class Sketch extends kokomi.Base {
   create() {
     this.camera.position.set(0, 0, 1.5);
@@ -204,48 +258,11 @@ class Sketch extends kokomi.Base {
         },
       });
 
-      const fgsContainer = new THREE.Group();
-      this.scene.add(fgsContainer);
-      fgsContainer.position.copy(new THREE.Vector3(-0.36, 0.36, 0.1));
-
-      // fragment groups
-      const polygons = generatePolygons();
-
-      const fgs = [...Array(2).keys()].map((item, i) => {
-        const fg = new FragmentGroup(this, {
-          material,
-          layerId: i,
-          polygons,
-        });
-        fg.addExisting();
-        fgsContainer.add(fg.g);
-        return fg;
+      // fragment world
+      const fw = new FragmentWorld(this, {
+        material,
       });
-
-      // clone group for infinite loop
-      const fgsContainer2 = new THREE.Group().copy(fgsContainer.clone());
-      fgsContainer2.position.y = fgsContainer.position.y - 1;
-
-      const totalG = new THREE.Group();
-      this.scene.add(totalG);
-      totalG.add(fgsContainer);
-      totalG.add(fgsContainer2);
-
-      // anime
-      let floatDistance = 0;
-      let floatSpeed = 1;
-      let floatMaxDistance = 1;
-
-      this.update(() => {
-        // float
-        floatDistance += floatSpeed;
-
-        const y = floatDistance * 0.001;
-        if (y > floatMaxDistance) {
-          floatDistance = 0;
-        }
-        totalG.position.y = y;
-      });
+      fw.addExisting();
 
       // postprocessing
       const ce = new kokomi.CustomEffect(this, {
