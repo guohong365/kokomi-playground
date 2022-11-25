@@ -67,7 +67,7 @@ class Sketch extends kokomi.Base {
     gallary.makuGroup.makus.forEach((maku) => {
       this.interactionManager.add(maku.mesh);
 
-      maku.mesh.addEventListener("click", () => {
+      maku.el.addEventListener("click", () => {
         if (!currentFullscreenMesh) {
           const progress = maku.mesh.material.uniforms.uProgress.value;
           if (progress < 0.5) {
