@@ -16,16 +16,16 @@ class Sketch extends kokomi.Base {
       lineColor: "#4EC0E9",
     };
 
-    // depth mat
-    // From: three.js\examples\webgl_depth_texture.html
-    const rt = new THREE.WebGLRenderTarget(
-      window.innerWidth,
-      window.innerHeight
-    );
-    rt.depthTexture = new THREE.DepthTexture(1, 1);
-
     const rtCamera = new THREE.PerspectiveCamera(40, 1, 2.1, 3);
     rtCamera.position.set(0, 0, 2);
+
+    // depth mat
+    // From: three.js\examples\webgl_depth_texture.html
+    const rt = new kokomi.RenderTexture(this, {
+      rtScene: this.scene,
+      rtCamera,
+    });
+    rt.fbo.rt.depthTexture = new THREE.DepthTexture(1, 1);
 
     const uj = new kokomi.UniformInjector(this);
     const depthMaterial = new THREE.ShaderMaterial({
@@ -35,7 +35,7 @@ class Sketch extends kokomi.Base {
       uniforms: {
         ...uj.shadertoyUniforms,
         uDepth: {
-          value: rt.depthTexture,
+          value: rt.fbo.rt.depthTexture,
         },
         cameraNear: {
           value: rtCamera.near,
@@ -88,10 +88,6 @@ class Sketch extends kokomi.Base {
 
     // anime
     this.update(() => {
-      this.renderer.setRenderTarget(rt);
-      this.renderer.render(this.scene, rtCamera);
-      this.renderer.setRenderTarget(null);
-
       const t = this.clock.elapsedTime;
       if (shapeMesh) {
         shapeMesh.position.z = params.faceZ + 0.2 * Math.sin(t);
