@@ -121,7 +121,7 @@ void main(){
     
     N=distortNormal(N);
     
-    vec4 tex=texture2D(uTexture,p);
+    vec4 tex=texture(uTexture,p);
     
     vec4 col=tex;
     

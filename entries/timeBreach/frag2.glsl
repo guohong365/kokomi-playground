@@ -9,9 +9,9 @@ varying vec2 vUv;
 uniform float uRGBShift;
 
 vec4 RGBShift(sampler2D t,vec2 rUv,vec2 gUv,vec2 bUv){
-    vec4 color1=texture2D(t,rUv);
-    vec4 color2=texture2D(t,gUv);
-    vec4 color3=texture2D(t,bUv);
+    vec4 color1=texture(t,rUv);
+    vec4 color2=texture(t,gUv);
+    vec4 color3=texture(t,bUv);
     vec4 color=vec4(color1.r,color2.g,color3.b,color2.a);
     return color;
 }
