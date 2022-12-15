@@ -295,8 +295,13 @@ class CheckerboardText extends kokomi.Component {
         const totalDuration = duration;
         const t1 = gsap.timeline();
         const uniforms = moji.textMesh.mesh.material.uniforms;
+        t1.to(uniforms.uProgress1, {
+          value: 0,
+          duration: totalDuration,
+          delay,
+        });
         t1.to(
-          uniforms.uProgress1,
+          uniforms.uProgress,
           {
             value: 0,
             duration: totalDuration,
@@ -304,11 +309,6 @@ class CheckerboardText extends kokomi.Component {
           },
           stagger
         );
-        t1.to(uniforms.uProgress, {
-          value: 0,
-          duration: totalDuration,
-          delay,
-        });
       });
     }
   }
