@@ -35,16 +35,20 @@ class ImageTunnel extends kokomi.Component {
 
     this.isRunning = false;
   }
+  addMesh() {
+    const matClone = this.mat.clone();
+    const mesh = new THREE.Mesh(this.geo, matClone);
+    this.base.scene.add(mesh);
+    return mesh;
+  }
   addImage(url) {
     return new Promise((resolve) => {
       new THREE.TextureLoader().load(
         url,
         (res) => {
-          const matClone = this.mat.clone();
-          const mesh = new THREE.Mesh(this.geo, matClone);
-          mesh.material.uniforms.uTexture.value = res;
-          this.base.scene.add(mesh);
+          const mesh = this.addMesh();
           this.meshs.push(mesh);
+          mesh.material.uniforms.uTexture.value = res;
           resolve(mesh);
         },
         () => {},
@@ -134,6 +138,11 @@ class Sketch extends kokomi.Base {
       document.querySelector(".loader-screen").classList.add("hollow");
     });
     await at.addExisting();
+
+    // test single mesh
+    // at.emit("ready");
+    // const mesh = at.addMesh();
+    // mesh.position.z = -1025;
 
     // test add image at rand pos
     // await kokomi.sleep(1000);
