@@ -7,7 +7,7 @@ class ImageTunnel extends kokomi.Component {
   constructor(base, config = {}) {
     super(base);
 
-    const { urls, speed = 1, imageSize = 5 } = config;
+    const { urls = [], speed = 1, imageSize = 5 } = config;
     this.urls = urls;
     this.speed = speed;
     this.imageSize = imageSize;
