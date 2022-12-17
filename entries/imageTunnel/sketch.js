@@ -7,28 +7,17 @@ class ImageTunnel extends kokomi.Component {
   constructor(base, config = {}) {
     super(base);
 
-    const { urls } = config;
+    const { urls, speed = 1, imageSize = 5 } = config;
     this.urls = urls;
+    this.speed = speed;
+    this.imageSize = imageSize;
 
-    const uj = new kokomi.UniformInjector(this.base);
-    this.uj = uj;
-
-    const mat = new THREE.ShaderMaterial({
-      vertexShader,
-      fragmentShader,
-      uniforms: {
-        ...uj.shadertoyUniforms,
-        uTexture: {
-          value: null,
-        },
-      },
-      transparent: true,
-      depthWrite: false,
+    const mat = new THREE.MeshPhongMaterial({
       side: THREE.DoubleSide,
     });
     this.mat = mat;
 
-    const geo = new THREE.PlaneGeometry(10, 10);
+    const geo = new THREE.CircleGeometry(this.imageSize, 64);
     this.geo = geo;
 
     this.meshs = [];
@@ -48,7 +37,7 @@ class ImageTunnel extends kokomi.Component {
         (res) => {
           const mesh = this.addMesh();
           this.meshs.push(mesh);
-          mesh.material.uniforms.uTexture.value = res;
+          mesh.material.map = res;
           resolve(mesh);
         },
         () => {},
@@ -68,13 +57,12 @@ class ImageTunnel extends kokomi.Component {
     this.run();
   }
   update() {
-    if (this.uj && this.mat && this.meshs) {
+    if (this.mat && this.meshs) {
       if (!this.isRunning) {
         return;
       }
       this.meshs.forEach((mesh) => {
-        this.uj.injectShadertoyUniforms(mesh.material.uniforms);
-        mesh.position.z = (mesh.position.z - 2) % 2000;
+        mesh.position.z = (mesh.position.z - 2 * this.speed) % 2000;
       });
     }
   }
@@ -114,17 +102,17 @@ class ImageTunnel extends kokomi.Component {
 
 class Sketch extends kokomi.Base {
   async create() {
-    const camera = new THREE.PerspectiveCamera(
-      60,
-      window.innerWidth / window.innerHeight,
-      0.1,
-      10000
-    );
-    this.camera = camera;
-    this.interactionManager.camera = camera;
-    camera.position.z = -1000;
+    this.camera.fov = 60;
+    this.camera.near = 0.1;
+    this.camera.far = 10000;
+    this.camera.updateProjectionMatrix();
+    this.camera.position.z = -1000;
 
     // new kokomi.OrbitControls(this);
+
+    const pointLight = new THREE.PointLight(0xffffff, 1, 0, 2);
+    pointLight.position.set(10, 20, 30);
+    this.scene.add(pointLight);
 
     const urls = [...Array(100).keys()].map((item, i) => {
       return `https://picsum.photos/id/${i}/100/100`;
@@ -133,6 +121,7 @@ class Sketch extends kokomi.Base {
 
     const at = new ImageTunnel(this, {
       urls,
+      // speed: 0.1,
     });
     at.on("ready", () => {
       document.querySelector(".loader-screen").classList.add("hollow");
@@ -150,5 +139,19 @@ class Sketch extends kokomi.Base {
     // await at.addImageAtRandPos(
     //   "https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg"
     // );
+
+    const ce = new kokomi.CustomEffect(this, {
+      vertexShader,
+      fragmentShader,
+      uniforms: {
+        uCAMaxDistortion: {
+          value: 0.45,
+        },
+        uCASize: {
+          value: 0.8,
+        },
+      },
+    });
+    ce.addExisting();
   }
 }
