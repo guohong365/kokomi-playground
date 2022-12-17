@@ -121,7 +121,7 @@ class Sketch extends kokomi.Base {
 
     const at = new ImageTunnel(this, {
       urls,
-      // speed: 0.1,
+      // speed: 1,
     });
     at.on("ready", () => {
       document.querySelector(".loader-screen").classList.add("hollow");
@@ -135,7 +135,8 @@ class Sketch extends kokomi.Base {
 
     // test add image at rand pos
     // await kokomi.sleep(1000);
-
+    // at.emit("ready");
+    // at.run();
     // await at.addImageAtRandPos(
     //   "https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg"
     // );
