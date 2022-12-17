@@ -92,7 +92,7 @@ class ImageTunnel extends kokomi.Component {
   stop() {
     this.isRunning = false;
   }
-  async addImageAtRandPos(url) {
+  async addImageAtRandXY(url) {
     const newMesh = await this.addImage(url);
     const { x, y } = this.getRandomXY();
     const newMeshPos = new THREE.Vector3(x, y, -900);
@@ -133,11 +133,11 @@ class Sketch extends kokomi.Base {
     // const mesh = at.addMesh();
     // mesh.position.z = -1025;
 
-    // test add image at rand pos
+    // test add image at rand XY
     // await kokomi.sleep(1000);
     // at.emit("ready");
     // at.run();
-    // await at.addImageAtRandPos(
+    // await at.addImageAtRandXY(
     //   "https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg"
     // );
 
