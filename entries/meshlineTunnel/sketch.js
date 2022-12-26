@@ -232,11 +232,12 @@ class LineGenerator extends kokomi.Component {
 }
 
 class CustomLineGenerator extends LineGenerator {
-  constructor(base, { frequency = 0.1 } = {}, lineProps) {
+  constructor(base, { frequency = 0.1, countLimit = 400 } = {}, lineProps) {
     super(base, { frequency }, lineProps);
+    this.countLimit = countLimit;
   }
   addLine() {
-    if (this.lines.length > 400) {
+    if (this.lines.length > this.countLimit) {
       return;
     }
 
@@ -248,7 +249,7 @@ class CustomLineGenerator extends LineGenerator {
     const RADIUS_INCREMENT = 0.02;
     const ANGLE_INCREMENT = 0.025;
 
-    const COLORS = ["#dc202e", "#f7ed99", "#2d338b", "#76306b", "#ea8c2d"].map(
+    const COLORS = ["#0243bc", "#fc4ddc", "#07c1b3", "#ca2761"].map(
       (col) => new THREE.Color(col)
     );
 
@@ -275,7 +276,7 @@ class CustomLineGenerator extends LineGenerator {
 
     // Low lines
     super.addLine({
-      visibleLength: THREE.MathUtils.randFloat(0.1, 0.4),
+      visibleLength: THREE.MathUtils.randFloat(0.1, 0.2),
       // visibleLength: 1,
       points,
       // speed: THREE.MathUtils.randFloat(0.001, 0.002),
@@ -299,6 +300,7 @@ class Sketch extends kokomi.Base {
       this,
       {
         frequency: 0.9,
+        countLimit: 200,
       },
       {
         transformLineMethod: (p) => p * 1.5,
