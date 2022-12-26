@@ -6,6 +6,7 @@ import { MeshLine, MeshLineMaterial } from "three.meshline";
 
 const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
+// Credit: https://github.com/Jeremboo/animated-mesh-lines
 class AnimatedMeshLine extends kokomi.Component {
   constructor(
     base,
