@@ -341,12 +341,16 @@ class CustomLineGenerator extends LineGenerator {
       container = null,
       baseCamera = null,
       countLimit = 400,
+      colors = ["#0243bc", "#fc4ddc", "#07c1b3", "#ca2761"],
+      radiusIncSpeed = 1,
     } = {},
     lineProps
   ) {
     super(base, { frequency, container }, lineProps);
     this.countLimit = countLimit;
     this.baseCamera = baseCamera || this.base.camera;
+    this.colors = colors;
+    this.radiusIncSpeed = radiusIncSpeed;
   }
   addLine() {
     if (this.lines.length > this.countLimit) {
@@ -361,9 +365,7 @@ class CustomLineGenerator extends LineGenerator {
     const RADIUS_INCREMENT = 0.02;
     const ANGLE_INCREMENT = 0.025;
 
-    const COLORS = ["#0243bc", "#fc4ddc", "#07c1b3", "#ca2761"].map(
-      (col) => new THREE.Color(col)
-    );
+    const COLORS = this.colors.map((col) => new THREE.Color(col));
 
     const position = { x: 0, y: 0, z: 0 };
 
@@ -379,7 +381,7 @@ class CustomLineGenerator extends LineGenerator {
 
       // incrementation
       z += Z_INCREMENT;
-      radius += RADIUS_INCREMENT;
+      radius += RADIUS_INCREMENT * this.radiusIncSpeed;
       // angle += ANGLE_INCREMENT;
 
       // push
