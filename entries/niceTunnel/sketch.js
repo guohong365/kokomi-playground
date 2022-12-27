@@ -4,6 +4,109 @@ import gsap from "gsap";
 import * as dat from "lil";
 import { MeshLine, MeshLineMaterial } from "three.meshline";
 
+class ImageTunnel extends kokomi.Component {
+  constructor(base, config = {}) {
+    super(base);
+
+    const {
+      urls = [],
+      speed = 1,
+      imageSize = 5,
+      container = this.base.scene,
+    } = config;
+    this.urls = urls;
+    this.speed = speed;
+    this.imageSize = imageSize;
+    this.container = container;
+
+    const mat = new THREE.MeshPhongMaterial({
+      side: THREE.DoubleSide,
+    });
+    this.mat = mat;
+
+    const geo = new THREE.CircleGeometry(this.imageSize, 64);
+    this.geo = geo;
+
+    this.meshs = [];
+
+    this.isRunning = false;
+  }
+  addMesh(container = this.container) {
+    const matClone = this.mat.clone();
+    const mesh = new THREE.Mesh(this.geo, matClone);
+    container.add(mesh);
+    return mesh;
+  }
+  addImage(url) {
+    return new Promise((resolve) => {
+      new THREE.TextureLoader().load(
+        url,
+        (res) => {
+          const mesh = this.addMesh();
+          this.meshs.push(mesh);
+          mesh.material.map = res;
+          resolve(mesh);
+        },
+        () => {},
+        () => {
+          resolve(true);
+        }
+      );
+    });
+  }
+  async addImages(urls) {
+    await Promise.all(urls.map((url) => this.addImage(url)));
+  }
+  async addExisting() {
+    await this.addImages(this.urls);
+    this.emit("ready");
+    this.randomizeMeshesPos();
+    this.run();
+  }
+  update() {
+    if (this.mat && this.meshs) {
+      if (!this.isRunning) {
+        return;
+      }
+      this.meshs.forEach((mesh) => {
+        mesh.position.z = (mesh.position.z - 2 * this.speed) % 2000;
+      });
+    }
+  }
+  getRandomXY() {
+    const theta = THREE.MathUtils.randFloat(0, 360);
+    const r = THREE.MathUtils.randFloat(10, 50);
+    const x = r * Math.cos(theta);
+    const y = r * Math.sin(theta);
+    return { x, y };
+  }
+  getRandomPos() {
+    const { x, y } = this.getRandomXY();
+    const z = THREE.MathUtils.randFloat(-1000, 1000);
+    return new THREE.Vector3(x, y, z);
+  }
+  randomizeMeshesPos() {
+    if (this.meshs) {
+      this.meshs.forEach((mesh) => {
+        const randPos = this.getRandomPos();
+        mesh.position.copy(randPos);
+      });
+    }
+  }
+  run() {
+    this.isRunning = true;
+  }
+  stop() {
+    this.isRunning = false;
+  }
+  async addImageAtRandXY(url) {
+    const newMesh = await this.addImage(url);
+    const { x, y } = this.getRandomXY();
+    const newMeshPos = new THREE.Vector3(x, y, -900);
+    newMesh.position.copy(newMeshPos);
+  }
+}
+
 const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
 // Credit: https://github.com/Jeremboo/animated-mesh-lines
@@ -300,18 +403,74 @@ class CustomLineGenerator extends LineGenerator {
 
 class Sketch extends kokomi.Base {
   async create() {
-    this.camera.position.set(0, 0, 10);
-    this.camera.near = 1;
-    this.camera.far = 1000;
-    this.camera.updateProjectionMatrix();
+    const screenCamera = new kokomi.ScreenCamera(this);
+    screenCamera.addExisting();
 
     // new kokomi.OrbitControls(this);
+
+    // Scene1
+    const rtScene1 = new THREE.Scene();
+    const rtCamera1 = new THREE.PerspectiveCamera(
+      60,
+      window.innerWidth / window.innerHeight,
+      0.01,
+      10000
+    );
+    rtCamera1.position.z = -1000;
+
+    const pointLight = new THREE.PointLight(0xffffff, 1, 0, 2);
+    pointLight.position.set(10, 20, 30);
+    rtScene1.add(pointLight);
+
+    const urls = [...Array(100).keys()].map((item, i) => {
+      return `https://picsum.photos/id/${i}/100/100`;
+      // return `https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg`;
+    });
+
+    const at = new ImageTunnel(this, {
+      urls,
+      container: rtScene1,
+    });
+    at.on("ready", () => {
+      document.querySelector(".loader-screen").classList.add("hollow");
+    });
+    await at.addExisting();
+
+    const rt1 = new kokomi.RenderTexture(this, {
+      rtScene: rtScene1,
+      rtCamera: rtCamera1,
+    });
+
+    const quad1 = new kokomi.CustomMesh(this, {
+      vertexShader: "",
+      fragmentShader: "",
+      baseMaterial: new THREE.MeshBasicMaterial(),
+      geometry: new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
+      materialParams: {
+        map: rt1.texture,
+        transparent: true,
+      },
+    });
+    quad1.addExisting();
+    quad1.mesh.position.z = -1;
+
+    // Scene2
+    const rtScene2 = new THREE.Scene();
+    const rtCamera2 = new THREE.PerspectiveCamera(
+      70,
+      window.innerWidth / window.innerHeight,
+      0.01,
+      10000
+    );
+    rtCamera2.position.z = 10;
 
     const lineGenerator = new CustomLineGenerator(
       this,
       {
         frequency: 0.9,
         countLimit: 200,
+        container: rtScene2,
+        baseCamera: rtCamera2,
       },
       {
         transformLineMethod: (p) => p * 1.5,
@@ -319,5 +478,23 @@ class Sketch extends kokomi.Base {
     );
     lineGenerator.addExisting();
     lineGenerator.start();
+
+    const rt2 = new kokomi.RenderTexture(this, {
+      rtScene: rtScene2,
+      rtCamera: rtCamera2,
+    });
+
+    const quad2 = new kokomi.CustomMesh(this, {
+      vertexShader: "",
+      fragmentShader: "",
+      baseMaterial: new THREE.MeshBasicMaterial(),
+      geometry: new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
+      materialParams: {
+        map: rt2.texture,
+        transparent: true,
+      },
+    });
+    quad2.addExisting();
+    quad2.mesh.position.z = -2;
   }
 }
