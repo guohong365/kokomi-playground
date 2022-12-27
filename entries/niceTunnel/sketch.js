@@ -128,7 +128,6 @@ class AnimatedMeshLine extends kokomi.Component {
       nbrOfPoints = 3,
       orientation = new THREE.Vector3(1, 0, 0),
       turbulence = new THREE.Vector3(0, 0, 0),
-      transformLineMethod = false,
     } = {}
   ) {
     super(base);
@@ -471,9 +470,7 @@ class Sketch extends kokomi.Base {
         container: rtScene2,
         baseCamera: rtCamera2,
       },
-      {
-        transformLineMethod: (p) => p * 1.5,
-      }
+      {}
     );
     lineGenerator.addExisting();
     lineGenerator.start();
