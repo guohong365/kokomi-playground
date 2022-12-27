@@ -2,7 +2,7 @@ import * as kokomi from "kokomi.js";
 import * as THREE from "three";
 import gsap from "gsap";
 import * as dat from "lil";
-import { MeshLine, MeshLineMaterial } from "three.meshline";
+import { MeshLineGeometry as MeshLine, MeshLineMaterial } from "meshline";
 
 const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
@@ -71,9 +71,8 @@ class AnimatedMeshLine extends kokomi.Component {
 
     // * ******************************
     // * Create the MeshLineGeometry
-    const line = new MeshLine();
-    line.setGeometry(linePoints, transformLineMethod);
-    const geometry = line.geometry;
+    const geometry = new MeshLine();
+    geometry.setPoints(linePoints);
 
     // * ******************************
     // * Create the Line Material
