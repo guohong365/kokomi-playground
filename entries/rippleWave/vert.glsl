@@ -19,10 +19,10 @@ varying vec3 vNormal;
 
 const float PI=3.1415926535;
 
-float wave(vec3 v,waveData data){
+float wave(vec3 p,waveData data){
     // wave
-    vec2 p=v.xy*vec2(uAspect,1.);
-    float dist=distance(p,data.center);
+    vec2 p1=p.xy*vec2(uAspect,1.);
+    float dist=distance(p1,data.center);
     float wave=sin(dist*PI*2.*data.frequency-iTime*data.speed)*data.amplitude;
     
     // decay
@@ -33,16 +33,19 @@ float wave(vec3 v,waveData data){
     wave*=decay;
     wave*=decayFromCenter;
     wave*=smoothstep(0.,.5,1.-data.progress);
-    float edge=step(.001,data.progress);
     
-    return wave*edge;
+    // edge
+    float edge=step(.001,data.progress);
+    wave*=edge;
+    
+    return wave;
 }
 
-vec3 distort(vec3 v){
-    vec3 result=v;
+vec3 distort(vec3 p){
+    vec3 result=p;
     
     for(int i=0;i<WAVE_AMOUNT;i++){
-        float wave=wave(v,uWaves[i]);
+        float wave=wave(p,uWaves[i]);
         result.z+=normal.z*wave;
     }
     
@@ -71,7 +74,7 @@ vec3 fixNormal(vec3 position,vec3 distortedPosition,vec3 normal){
 
 void main(){
     vec3 p=position;
-
+    
     vec3 dp=distort(p);
     
     csm_Position=dp;
