@@ -107,8 +107,6 @@ class ImageTunnel extends kokomi.Component {
   }
 }
 
-const sample = (arr) => arr[Math.floor(Math.random() * arr.length)];
-
 class AnimatedMeshLine extends kokomi.Component {
   constructor(
     base,
@@ -329,7 +327,7 @@ class CustomLineGenerator extends LineGenerator {
       // visibleLength: 1,
       points,
       speed: THREE.MathUtils.randFloat(0.001, 0.005) * this.lineSpeed,
-      color: sample(COLORS),
+      color: kokomi.sample(COLORS),
       width: THREE.MathUtils.randFloat(0.01, 0.06),
     });
   }

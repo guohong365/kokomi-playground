@@ -3,22 +3,13 @@ import * as THREE from "three";
 import gsap from "gsap";
 import * as dat from "lil";
 
-const calcPerspectiveScreenSize = (targetZ = 0, camera, aspect) => {
-  let screenWidth = 1;
-  let screenHeight = 1;
-  const fovRadian = THREE.MathUtils.degToRad(camera.fov / 2);
-  screenHeight = (camera.position.z - targetZ) * Math.tan(fovRadian) * 2;
-  screenWidth = screenHeight * aspect;
-  return { width: screenWidth, height: screenHeight };
-};
-
 class Sketch extends kokomi.Base {
   async create() {
     const tex = new THREE.TextureLoader().load(
       "https://s2.loli.net/2022/09/08/gGY4VloDAeUwWxt.jpg"
     );
 
-    // new kokomi.OrbitControls(this);
+    new kokomi.OrbitControls(this);
 
     const size = {
       width: window.innerWidth,
@@ -59,7 +50,11 @@ class Sketch extends kokomi.Base {
       },
     });
     cm.addExisting();
-    const { width, height } = calcPerspectiveScreenSize(0, this.camera, aspect);
+    const { width, height } = kokomi.calcPerspectiveScreenSize(
+      0,
+      this.camera,
+      aspect
+    );
     cm.mesh.scale.set(width, height, 1);
     cm.mesh.scale.multiply(new THREE.Vector3(1.1, 1.1, 1));
 
