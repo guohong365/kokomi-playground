@@ -61,6 +61,7 @@ class Sketch extends kokomi.Base {
     cm.addExisting();
     const { width, height } = calcPerspectiveScreenSize(0, this.camera, aspect);
     cm.mesh.scale.set(width, height, 1);
+    cm.mesh.scale.multiply(new THREE.Vector3(1.1, 1.1, 1));
 
     const waves = cm.mesh.material.uniforms.uWaves.value;
 
