@@ -83,8 +83,8 @@ class Sketch extends kokomi.Base {
       this.interactionManager.add(cm.mesh);
       cm.mesh.addEventListener("click", () => {
         playWaveAnime(waves.slice(0, 10)[currentWaveId % 10], {
-          frequency: 3 + THREE.MathUtils.randFloatSpread(2),
-          amplitude: 0.05 + THREE.MathUtils.randFloatSpread(0.1),
+          frequency: 3 + THREE.MathUtils.randFloatSpread(0.5),
+          amplitude: 0.1 + THREE.MathUtils.randFloatSpread(0.1),
           center: this.interactionManager.mouse
             .clone()
             .divideScalar(window.devicePixelRatio),
