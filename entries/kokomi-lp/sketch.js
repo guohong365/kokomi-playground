@@ -7,7 +7,7 @@ class WebGLText extends kokomi.Component {
   constructor(base, config) {
     super(base);
 
-    const { scroller } = config;
+    const { scroller, textColor = "white" } = config;
 
     const mg = new kokomi.MojiGroup(base, {
       vertexShader,
@@ -16,6 +16,7 @@ class WebGLText extends kokomi.Component {
       elList: [...document.querySelectorAll(".webgl-text")],
     });
     this.mg = mg;
+    this.textColor = textColor;
   }
   addExisting() {
     this.mg.container = this.container;
@@ -24,7 +25,7 @@ class WebGLText extends kokomi.Component {
     this.mg.mojis.forEach((moji) => {
       moji.textMesh.mesh.letterSpacing = 0.05;
 
-      const color = moji.el.dataset["webglTextColor"] || "white";
+      const color = moji.el.dataset["webglTextColor"] || this.textColor;
       moji.textMesh.mesh.material.uniforms.uTextColor.value = new THREE.Color(
         color
       );
@@ -118,22 +119,23 @@ class RippleWave extends kokomi.Component {
     });
   }
   playRandomWaves() {
-    const targetWaves = this.waves.slice(10, 20);
+    const targetWaves = this.waves.slice(10, 15);
+    const singleDelay = 0.2;
     targetWaves.forEach((wave, i) => {
       this.playWaveAnime(
         wave,
         {
           frequency: 3,
-          amplitude: 0.02,
+          amplitude: 0.03,
           center: new THREE.Vector2(
             THREE.MathUtils.randFloatSpread(1 * this.aspect),
             THREE.MathUtils.randFloatSpread(1)
           ),
         },
         {
-          delay: 0.1 * i,
+          delay: singleDelay * i,
           repeat: -1,
-          repeatDelay: 1,
+          repeatDelay: singleDelay * targetWaves.length * 1.5,
         }
       );
     });
@@ -169,6 +171,8 @@ class Sketch extends kokomi.Base {
     const screenCamera = new kokomi.ScreenCamera(this);
     screenCamera.addExisting();
 
+    this.scene.background = new THREE.Color("#293150");
+
     // new kokomi.OrbitControls(this);
 
     // functions
@@ -192,9 +196,18 @@ class Sketch extends kokomi.Base {
 
     const wt = new WebGLText(this, {
       scroller,
+      textColor: "#F3DCCF",
     });
     wt.container = rtScene1;
     wt.addExisting();
+
+    const ga = new kokomi.Gallery(this, {
+      scroller,
+    });
+    ga.container = rtScene1;
+    ga.addExisting();
+
+    await ga.checkImagesLoaded();
 
     const rt1 = new kokomi.RenderTexture(this, {
       rtScene: rtScene1,
