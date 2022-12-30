@@ -114,7 +114,7 @@ class RippleWave extends kokomi.Component {
     const targetWave = this.waves.slice(-1)[0];
     this.playWaveAnime(targetWave, {
       frequency: 3,
-      amplitude: 0.1,
+      amplitude: 0.05,
     });
   }
   playRandomWaves() {
@@ -246,7 +246,7 @@ class Sketch extends kokomi.Base {
 
     rw.playCenterWave();
 
-    await kokomi.sleep(1000);
+    await kokomi.sleep(1500);
 
     rw.playRandomWaves();
   }
