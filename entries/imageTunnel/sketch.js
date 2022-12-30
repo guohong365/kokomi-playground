@@ -7,16 +7,10 @@ class ImageTunnel extends kokomi.Component {
   constructor(base, config = {}) {
     super(base);
 
-    const {
-      urls = [],
-      speed = 1,
-      imageSize = 5,
-      container = this.base.scene,
-    } = config;
+    const { urls = [], speed = 1, imageSize = 5 } = config;
     this.urls = urls;
     this.speed = speed;
     this.imageSize = imageSize;
-    this.container = container;
 
     const mat = new THREE.MeshPhongMaterial({
       side: THREE.DoubleSide,
@@ -30,10 +24,10 @@ class ImageTunnel extends kokomi.Component {
 
     this.isRunning = false;
   }
-  addMesh(container = this.container) {
+  addMesh() {
     const matClone = this.mat.clone();
     const mesh = new THREE.Mesh(this.geo, matClone);
-    container.add(mesh);
+    this.container.add(mesh);
     return mesh;
   }
   addImage(url) {

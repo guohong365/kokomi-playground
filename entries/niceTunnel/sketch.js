@@ -8,16 +8,10 @@ class ImageTunnel extends kokomi.Component {
   constructor(base, config = {}) {
     super(base);
 
-    const {
-      urls = [],
-      speed = 1,
-      imageSize = 5,
-      container = this.base.scene,
-    } = config;
+    const { urls = [], speed = 1, imageSize = 5 } = config;
     this.urls = urls;
     this.speed = speed;
     this.imageSize = imageSize;
-    this.container = container;
 
     const mat = new THREE.MeshPhongMaterial({
       side: THREE.DoubleSide,
@@ -31,10 +25,10 @@ class ImageTunnel extends kokomi.Component {
 
     this.isRunning = false;
   }
-  addMesh(container = this.container) {
+  addMesh() {
     const matClone = this.mat.clone();
     const mesh = new THREE.Mesh(this.geo, matClone);
-    container.add(mesh);
+    this.container.add(mesh);
     return mesh;
   }
   addImage(url) {
@@ -221,7 +215,6 @@ class LineGenerator extends kokomi.Component {
 
     this.frequency = frequency;
     this.lineStaticProps = lineProps;
-    this.container = container || this.base.scene;
 
     this.isStarted = false;
 
@@ -361,8 +354,8 @@ class Sketch extends kokomi.Base {
 
     const at = new ImageTunnel(this, {
       urls,
-      container: rtScene1,
     });
+    at.container = rtScene1;
     at.on("ready", () => {
       document.querySelector(".loader-screen").classList.add("hollow");
     });
@@ -373,16 +366,7 @@ class Sketch extends kokomi.Base {
       rtCamera: rtCamera1,
     });
 
-    const quad1 = new kokomi.CustomMesh(this, {
-      vertexShader: "",
-      fragmentShader: "",
-      baseMaterial: new THREE.MeshBasicMaterial(),
-      geometry: new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
-      materialParams: {
-        map: rt1.texture,
-        transparent: true,
-      },
-    });
+    const quad1 = new kokomi.RenderQuad(this, rt1.texture);
     quad1.addExisting();
     quad1.mesh.position.z = -1;
 
@@ -402,11 +386,11 @@ class Sketch extends kokomi.Base {
         frequency: 0.9,
         countLimit: 180,
         lineSpeed: 2,
-        container: rtScene2,
         baseCamera: rtCamera2,
       },
       {}
     );
+    lineGenerator.container = rtScene2;
     lineGenerator.addExisting();
     lineGenerator.start();
 
@@ -415,16 +399,7 @@ class Sketch extends kokomi.Base {
       rtCamera: rtCamera2,
     });
 
-    const quad2 = new kokomi.CustomMesh(this, {
-      vertexShader: "",
-      fragmentShader: "",
-      baseMaterial: new THREE.MeshBasicMaterial(),
-      geometry: new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
-      materialParams: {
-        map: rt2.texture,
-        transparent: true,
-      },
-    });
+    const quad2 = new kokomi.RenderQuad(this, rt2.texture);
     quad2.addExisting();
     quad2.mesh.position.z = -2;
   }

@@ -29,23 +29,15 @@ class Sketch extends kokomi.Base {
         side: THREE.DoubleSide,
       },
     });
-    rtScene1.add(cm.mesh);
+    cm.container = rtScene1;
+    cm.addExisting();
 
     const rt = new kokomi.RenderTexture(this, {
       rtScene: rtScene1,
       rtCamera: rtCamera1,
     });
 
-    const quad1 = new kokomi.CustomMesh(this, {
-      vertexShader: "",
-      fragmentShader: "",
-      baseMaterial: new THREE.MeshBasicMaterial(),
-      geometry: new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
-      materialParams: {
-        map: rt.texture,
-        transparent: true,
-      },
-    });
+    const quad1 = new kokomi.RenderQuad(this, rt.texture);
     quad1.addExisting();
     quad1.mesh.position.z = -1;
   }

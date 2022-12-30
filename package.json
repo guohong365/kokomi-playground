@@ -6,7 +6,7 @@
     "@types/three": "^0.146.0",
     "gsap": "^3.11.1",
     "kd-tree-javascript": "^1.0.3",
-    "kokomi.js": "^1.9.51",
+    "kokomi.js": "^1.9.52",
     "lil-gui": "^0.17.0",
     "meshline": "^3.1.6"
   }

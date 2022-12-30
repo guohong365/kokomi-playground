@@ -45,15 +45,10 @@ class Sketch extends kokomi.Base {
     cm.mesh.position.z += 1;
 
     // bg
-    const cm2 = new kokomi.CustomMesh(this, {
-      baseMaterial: new THREE.MeshBasicMaterial(),
-      geometry: new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
+    const cm2 = new kokomi.RenderQuad(this, outerTex, {
       materialParams: {
         side: THREE.DoubleSide,
-        map: outerTex,
       },
-      vertexShader: "",
-      fragmentShader: "",
     });
     cm2.addExisting();
 
@@ -73,19 +68,14 @@ class Sketch extends kokomi.Base {
     // blob
     const count = 50;
     const unit = window.innerWidth / 10;
-    const cm3 = new kokomi.CustomMesh(this, {
-      baseMaterial: new THREE.MeshBasicMaterial(),
+    const cm3 = new kokomi.RenderQuad(this, maskTex, {
       geometry: new THREE.PlaneGeometry(unit * 2, unit * 2),
       materialParams: {
         side: THREE.DoubleSide,
-        map: maskTex,
-        transparent: true,
         depthWrite: false,
         blending: THREE.AdditiveBlending,
         opacity: 0.9,
       },
-      vertexShader: "",
-      fragmentShader: "",
     });
     cm3.addExisting();
     cm3.mesh.position.z += 2;

@@ -194,17 +194,8 @@ class ParticleQuad extends kokomi.Component {
     const pf = new ParticlesFly(base, config);
     rtScene.add(pf.cm.points);
 
-    const sqPf = new kokomi.CustomMesh(base, {
-      geometry: new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
-      vertexShader: vertexShader3,
-      fragmentShader: fragmentShader3,
-      uniforms: {
-        uTexture: {
-          value: rt.texture,
-        },
-      },
+    const sqPf = new kokomi.RenderQuad(base, rt.texture, {
       materialParams: {
-        transparent: true,
         blending: THREE.AdditiveBlending,
       },
     });

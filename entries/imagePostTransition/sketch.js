@@ -31,17 +31,16 @@ class Sketch extends kokomi.Base {
       g.add(maku.mesh);
 
       const cms = [...Array(shadowCount).keys()].map((item, j) => {
-        const cm = new kokomi.CustomMesh(this, {
-          geometry: maku.mesh.geometry,
-          vertexShader: "",
-          fragmentShader: "",
-          baseMaterial: new THREE.MeshBasicMaterial(),
-          materialParams: {
-            map: maku.mesh.material.uniforms.uTexture.value,
-            transparent: true,
-            alphaMap: maskTex,
-          },
-        });
+        const cm = new kokomi.RenderQuad(
+          this,
+          maku.mesh.material.uniforms.uTexture.value,
+          {
+            geometry: maku.mesh.geometry,
+            materialParams: {
+              alphaMap: maskTex,
+            },
+          }
+        );
         cm.addExisting();
         g.add(cm.mesh);
         return cm;
