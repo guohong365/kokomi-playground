@@ -94,13 +94,13 @@ class Sketch extends kokomi.Base {
     };
 
     // random wave
-    const playRandomWave = () => {
+    const playRandomWaves = () => {
       const targetWaves = waves.slice(10, 20);
       targetWaves.forEach((wave, i) => {
         playWaveAnime(
           wave,
           {
-            frequency: 6,
+            frequency: 3,
             amplitude: 0.02,
             center: new THREE.Vector2(
               THREE.MathUtils.randFloatSpread(1 * aspect),
@@ -129,7 +129,7 @@ class Sketch extends kokomi.Base {
 
     await kokomi.sleep(1500);
 
-    playRandomWave();
+    playRandomWaves();
 
     playMouseWave();
   }
