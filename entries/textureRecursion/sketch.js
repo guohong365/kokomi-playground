@@ -67,15 +67,16 @@ class Sketch extends kokomi.Base {
     });
 
     // bg quad
-    const bgQuad = new THREE.Mesh(
-      new THREE.PlaneGeometry(window.innerWidth, window.innerHeight),
-      new THREE.MeshBasicMaterial()
-    );
-    bgQuad.position.z -= 10;
-    this.scene.add(bgQuad);
+    const bgQuad = new kokomi.RenderQuad(this, null, {
+      materialParams: {
+        transparent: false,
+      },
+    });
+    bgQuad.addExisting();
+    bgQuad.mesh.position.z -= 10;
 
     this.update(() => {
-      bgQuad.material.map = rt2.texture;
+      bgQuad.mesh.material.map = rt2.texture;
     });
 
     // scene quad
