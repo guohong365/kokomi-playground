@@ -12,7 +12,7 @@ class ImageTunnel extends kokomi.Component {
     this.speed = speed;
     this.imageSize = imageSize;
 
-    const mat = new THREE.MeshPhongMaterial({
+    const mat = new THREE.MeshBasicMaterial({
       side: THREE.DoubleSide,
     });
     this.mat = mat;
@@ -109,10 +109,6 @@ class Sketch extends kokomi.Base {
     this.camera.position.z = -1000;
 
     // new kokomi.OrbitControls(this);
-
-    const pointLight = new THREE.PointLight(0xffffff, 1, 0, 2);
-    pointLight.position.set(10, 20, 30);
-    this.scene.add(pointLight);
 
     const urls = [...Array(100).keys()].map((item, i) => {
       return `https://picsum.photos/id/${i}/100/100`;
