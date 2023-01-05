@@ -21,7 +21,7 @@ const resourceList = [
 class Sketch extends kokomi.Base {
   create() {
     const am = new kokomi.AssetManager(this, resourceList);
-    am.emitter.on("ready", () => {
+    am.on("ready", () => {
       this.camera.position.set(0, 0, 2);
 
       new kokomi.OrbitControls(this);

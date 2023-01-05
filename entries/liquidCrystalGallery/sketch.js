@@ -50,7 +50,7 @@ class LiquidCrystal extends kokomi.Component {
 
     return new Promise((resolve) => {
       const am = new kokomi.AssetManager(base, resourceList);
-      am.emitter.on("ready", () => {
+      am.on("ready", () => {
         const sq = new kokomi.ScreenQuad(base, {
           shadertoyMode: true,
           fragmentShader,
