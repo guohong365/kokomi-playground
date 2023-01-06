@@ -1,14 +1,14 @@
-const float PI=3.14159265359;
-
 uniform float iTime;
 uniform vec2 iResolution;
 uniform vec2 iMouse;
 
-uniform sampler2D uDisplacement;
+varying vec2 vUv;
 
 uniform sampler2D tDiffuse;
 
-varying vec2 vUv;
+uniform sampler2D uDisplacement;
+
+const float PI=3.14159265359;
 
 vec2 distort(vec2 p,sampler2D tex){
     vec4 displacement=texture(tex,p);
