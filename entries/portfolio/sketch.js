@@ -66,6 +66,7 @@ class Sketch extends kokomi.Base {
           transform: true,
           distanceFactor: 1.17,
           group: model.scene,
+          occlude: [model.scene],
         }
       );
       iframeHtml.group.position.set(0, 1.56, -1.4);
