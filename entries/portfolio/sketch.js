@@ -58,6 +58,14 @@ class Sketch extends kokomi.Base {
       float.addExisting();
       float.add(model.scene);
 
+      const cs = new kokomi.ContactShadows(this, {
+        opacity: 0.4,
+        scale: 5,
+        blur: 2.4,
+      });
+      cs.addExisting();
+      cs.group.position.y = -1.4;
+
       const iframeHtml = new kokomi.Html(
         this,
         document.querySelector(".html-screen"),
