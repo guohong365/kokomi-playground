@@ -1,0 +1,83 @@
+<!-- <script src="https://unpkg.com/postprocessing/build/postprocessing.js"></script> -->
+<script src="../../libs/postprocessing.js"></script>
+<style>
+    #sketch {
+        /* background: linear-gradient(45deg, #6e6f74, #202022); */
+        background: transparent;
+    }
+
+    .loading span {
+        animation: blur 1.5s calc(var(--i) / 5 * 1s) alternate infinite;
+    }
+
+    @keyframes blur {
+        to {
+            filter: blur(2px);
+        }
+    }
+
+    .html-screen iframe {
+        width: 428px;
+        height: 926px;
+        border: none;
+        border-radius: 45px;
+        background: black;
+        user-select: none;
+        transform: scaleX(-1);
+    }
+
+    .html-screen {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: none;
+        overflow: hidden;
+        width: var(--viewport-width);
+        height: var(--viewport-height);
+        perspective: var(--perspective);
+        opacity: 0;
+    }
+
+    .html-screen.visible {
+        opacity: 1;
+    }
+
+    .webgl-html-outer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: var(--viewport-width);
+        height: var(--viewport-height);
+        transform-style: preserve-3d;
+        pointer-events: none;
+        transform: var(--transform-outer);
+    }
+
+    .webgl-html-inner {
+        position: absolute;
+        pointer-events: auto;
+        transform: var(--transform-inner);
+    }
+</style>
+<div class="main-scene hollow">
+    <div class="html-screen">
+        <div class="webgl-html-outer">
+            <div class="webgl-html-inner">
+                <iframe src="https://juejin.cn/" frameborder="0"></iframe>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="fixed z-5 top-0 left-0 loader-screen w-screen h-screen transition-all duration-300 bg-black">
+    <div class="absolute hv-center">
+        <div class="loading text-white text-3xl tracking-widest">
+            <span style="--i: 0">L</span>
+            <span style="--i: 1">O</span>
+            <span style="--i: 2">A</span>
+            <span style="--i: 3">D</span>
+            <span style="--i: 4">I</span>
+            <span style="--i: 5">N</span>
+            <span style="--i: 6">G</span>
+        </div>
+    </div>
+</div>

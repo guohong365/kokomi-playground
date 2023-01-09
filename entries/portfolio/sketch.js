@@ -21,7 +21,6 @@ class Sketch extends kokomi.Base {
         {
           name: "model",
           type: "gltfModel",
-          // path: "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/iphone-x/model.gltf",
           path: "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/macbook/model.gltf",
         },
         {
