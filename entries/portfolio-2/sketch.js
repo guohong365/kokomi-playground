@@ -15,8 +15,7 @@ class Sketch extends kokomi.Base {
     controls.controls.enableDamping = false;
     // controls.controls.enabled = false;
 
-    // kokomi.optimizeModelRender(this.renderer);
-    kokomi.enableRealisticRender(this.renderer);
+    kokomi.optimizeModelRender(this.renderer);
 
     await kokomi.preloadSDFFont("../../assets/HYWenHei-85W.ttf");
 
@@ -51,10 +50,20 @@ class Sketch extends kokomi.Base {
       );
       this.scene.environment = envmap;
 
+      // const box = new kokomi.Box(this);
+      // box.mesh.scale.setScalar(2);
+      // box.mesh.position.y = 0.15;
+      // box.mesh.material = new THREE.MeshBasicMaterial({
+      //   color: "mediumpurple",
+      // });
+      // box.addExisting();
+
       const model = am.items["model"];
       model.scene.scale.setScalar(3);
-      model.scene.rotation.x = Math.PI / 2;
       model.scene.rotation.z = Math.PI;
+      model.scene.rotation.x = Math.PI / 2;
+      // model.scene.rotation.x = Math.PI;
+      // model.scene.position.y = 1.5;
       this.scene.add(model.scene);
 
       this.camera.lookAt(model.scene.position);
@@ -64,17 +73,16 @@ class Sketch extends kokomi.Base {
         scale: 5,
         blur: 2.4,
         color: "#cff4ff",
-        frames: 16,
       });
       cs.addExisting();
       cs.group.position.y = -0.1;
 
+      this.update(() => {
+        this.renderer.autoClear = true;
+      });
+
       const modelParts = kokomi.flatModel(model.scene);
       kokomi.printModel(modelParts);
-
-      modelParts.forEach((child) => {
-        child.castShadow = true;
-      });
 
       const Body_Wallpaper_0 = modelParts[12];
       Body_Wallpaper_0.material = new THREE.MeshBasicMaterial({
@@ -104,6 +112,18 @@ class Sketch extends kokomi.Base {
       tm.mesh.position.set(0.86, 0.32, 0);
       tm.mesh.rotation.y = -1.57;
       tm.mesh.textAlign = "center";
+
+      const plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(20, 20),
+        new THREE.MeshStandardMaterial({
+          color: "#000000",
+          metalness: 0,
+          roughness: 0,
+        })
+      );
+      this.scene.add(plane);
+      plane.rotation.x = -Math.PI / 2;
+      plane.position.y = -0.11;
 
       iframeHtml.el.addEventListener("mouseover", () => {
         if (orbitAngle.isPanning) {
@@ -194,21 +214,21 @@ class Sketch extends kokomi.Base {
         );
 
         // bloom
-        // const bloom = new POSTPROCESSING.BloomEffect({
-        //   luminanceThreshold: 0.2,
-        //   mipmapBlur: true,
-        //   luminanceSmoothing: 0,
-        //   intensity: 1,
-        // });
-        // composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
+        const bloom = new POSTPROCESSING.BloomEffect({
+          luminanceThreshold: 0.2,
+          mipmapBlur: true,
+          luminanceSmoothing: 0,
+          intensity: 1,
+        });
+        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
 
         // dof
-        // const dof = new POSTPROCESSING.DepthOfFieldEffect(this.camera, {
-        //   focusDistance: 0.025,
-        //   focalLength: 0.025,
-        //   bokehScale: 3,
-        // });
-        // composer.addPass(new POSTPROCESSING.EffectPass(this.camera, dof));
+        const dof = new POSTPROCESSING.DepthOfFieldEffect(this.camera, {
+          focusDistance: 0.025,
+          focalLength: 0.025,
+          bokehScale: 1,
+        });
+        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, dof));
 
         // ssr
         const ssrEffect = new SSREffect(this.scene, this.camera, {
@@ -242,41 +262,22 @@ class Sketch extends kokomi.Base {
           ior: 1.45,
         });
         const ssrPass = new POSTPROCESSING.EffectPass(this.camera, ssrEffect);
-        composer.addPass(ssrPass);
+        // composer.addPass(ssrPass);
 
         this.composer = composer;
-
-        this.renderer.autoClear = true;
-
-        // plane
-        const plane = new THREE.Mesh(
-          new THREE.PlaneGeometry(20, 20),
-          new THREE.MeshStandardMaterial({
-            color: "#111111",
-            metalness: 0,
-            roughness: 0,
-          })
-        );
-        this.scene.add(plane);
-        plane.rotation.x = -Math.PI / 2;
-        plane.position.y = -0.1;
-        plane.receiveShadow = true;
-
-        // light
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1.5);
-        dirLight.position.set(4, 4, 1);
-        dirLight.castShadow = true;
-        dirLight.shadow.mapSize = new THREE.Vector2(1024, 1024);
-        dirLight.shadow.camera.near = 1;
-        dirLight.shadow.camera.far = 100;
-        dirLight.shadow.camera.top = 10;
-        dirLight.shadow.camera.right = 10;
-        dirLight.shadow.camera.bottom = -10;
-        dirLight.shadow.camera.left = -10;
-        this.scene.add(dirLight);
       };
 
       createPostprocessing();
+
+      const customIframe = () => {
+        const hash = location.hash;
+        if (hash) {
+          const url = hash.slice(1);
+          document.querySelector("iframe").src = url;
+        }
+      };
+
+      customIframe();
     });
   }
 }
