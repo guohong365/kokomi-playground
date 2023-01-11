@@ -42,14 +42,17 @@ class Sketch extends kokomi.Base {
       document.querySelector(".loader-screen").classList.add("hollow");
       document.querySelector(".main-scene").classList.remove("hollow");
 
+      // bg
       this.scene.background = new THREE.Color("#6e6f74");
 
+      // env
       const envmap = kokomi.getEnvmapFromHDRTexture(
         this.renderer,
         am.items["hdr"]
       );
       this.scene.environment = envmap;
 
+      // placeholder
       // const box = new kokomi.Box(this);
       // box.mesh.scale.setScalar(2);
       // box.mesh.position.y = 0.15;
@@ -58,6 +61,7 @@ class Sketch extends kokomi.Base {
       // });
       // box.addExisting();
 
+      // model
       const model = am.items["model"];
       model.scene.scale.setScalar(3);
       model.scene.rotation.z = Math.PI;
@@ -65,9 +69,9 @@ class Sketch extends kokomi.Base {
       // model.scene.rotation.x = Math.PI;
       // model.scene.position.y = 1.5;
       this.scene.add(model.scene);
-
       this.camera.lookAt(model.scene.position);
 
+      // contact shadows
       const cs = new kokomi.ContactShadows(this, {
         opacity: 0.6,
         scale: 5,
@@ -81,6 +85,7 @@ class Sketch extends kokomi.Base {
         this.renderer.autoClear = true;
       });
 
+      // model screen
       const modelParts = kokomi.flatModel(model.scene);
       kokomi.printModel(modelParts);
 
@@ -90,6 +95,7 @@ class Sketch extends kokomi.Base {
         side: THREE.DoubleSide,
       });
 
+      // iframe
       const iframeHtml = new kokomi.Html(
         this,
         document.querySelector(".html-screen"),
@@ -105,6 +111,7 @@ class Sketch extends kokomi.Base {
       iframeHtml.group.rotation.set(0, 0, 0);
       iframeHtml.addExisting();
 
+      // text
       const tm = new kokomi.TextMesh(this, "kokomi.js");
       tm.addExisting();
       tm.mesh.font = "../../assets/HYWenHei-85W.ttf";
@@ -113,6 +120,7 @@ class Sketch extends kokomi.Base {
       tm.mesh.rotation.y = -1.57;
       tm.mesh.textAlign = "center";
 
+      // plane
       const plane = new THREE.Mesh(
         new THREE.PlaneGeometry(20, 20),
         new THREE.MeshStandardMaterial({
@@ -125,19 +133,7 @@ class Sketch extends kokomi.Base {
       plane.rotation.x = -Math.PI / 2;
       plane.position.y = -0.11;
 
-      iframeHtml.el.addEventListener("mouseover", () => {
-        if (orbitAngle.isPanning) {
-          return;
-        }
-        cameraEnter();
-      });
-      iframeHtml.el.addEventListener("mouseleave", () => {
-        if (orbitAngle.isPanning) {
-          return;
-        }
-        cameraLeave();
-      });
-
+      // orbit
       let orbitAngle = {
         tilt: {
           x: -0.7853981633974482,
@@ -205,6 +201,20 @@ class Sketch extends kokomi.Base {
         });
       };
 
+      iframeHtml.el.addEventListener("mouseover", () => {
+        if (orbitAngle.isPanning) {
+          return;
+        }
+        cameraEnter();
+      });
+      iframeHtml.el.addEventListener("mouseleave", () => {
+        if (orbitAngle.isPanning) {
+          return;
+        }
+        cameraLeave();
+      });
+
+      // postprocessing
       const createPostprocessing = () => {
         // this.scene.background = new THREE.Color("#0a0a0a");
 
@@ -269,6 +279,7 @@ class Sketch extends kokomi.Base {
 
       createPostprocessing();
 
+      // custom
       const customIframe = () => {
         const hash = location.hash;
         if (hash) {
