@@ -81,6 +81,7 @@ class LiquidCrystal extends kokomi.Component {
             },
           },
         });
+        sq.container = this.container;
         sq.material.transparent = true;
         sq.material.defines = {
           GLOW: params.glow,
@@ -231,6 +232,7 @@ class WebGLText extends kokomi.Component {
     this.mg = mg;
   }
   addExisting() {
+    this.mg.container = this.container;
     this.mg.addExisting();
 
     this.mg.mojis.forEach((moji) => {
@@ -255,7 +257,9 @@ class WebGLGallery extends kokomi.Component {
       elList: [...document.querySelectorAll(".webgl-img")],
       isScrollPositionSync: false,
       uniforms: {
-        uOpacity: 1,
+        uOpacity: {
+          value: 1,
+        },
       },
     });
     this.gallary = gallary;
@@ -264,6 +268,7 @@ class WebGLGallery extends kokomi.Component {
     this.targetY = 0;
   }
   async addExisting() {
+    this.gallary.container = this.container;
     await this.gallary.addExisting();
   }
   hideAll() {
@@ -368,12 +373,11 @@ class Sketch extends kokomi.Base {
     // rt for text
     const rtScene1 = new THREE.Scene();
 
-    const mojiClones = wt.mg.mojis.map((moji) => {
-      const mojiClone = moji.textMesh.mesh.clone();
-      mojiClone.origin = moji.textMesh.mesh;
-      rtScene1.add(mojiClone);
-      return mojiClone;
+    const wt2 = new WebGLText(this, {
+      scroller,
     });
+    wt2.container = rtScene1;
+    wt2.addExisting();
 
     const rt = new kokomi.RenderTexture(this, {
       rtScene: rtScene1,
@@ -382,12 +386,6 @@ class Sketch extends kokomi.Base {
 
     this.update(() => {
       lc.setRt(rt);
-
-      if (mojiClones) {
-        mojiClones.forEach((mojiClone) => {
-          mojiClone.position.copy(mojiClone.origin.position);
-        });
-      }
     });
 
     // gallery
@@ -397,46 +395,29 @@ class Sketch extends kokomi.Base {
     const wg = new WebGLGallery(this, {
       scroller,
     });
-    await wg.addExisting();
     wg.connectSwiper(swiper);
 
     // rt for img
     const rtScene2 = new THREE.Scene();
 
-    const makuClones = wg.gallary.makuGroup.makus.map((maku) => {
-      const makuClone = maku.mesh.clone();
-      makuClone.origin = maku.mesh;
-      makuClone.el = maku.el;
-      rtScene2.add(makuClone);
-      return makuClone;
-    });
-
-    wg.hideAll();
+    wg.container = rtScene2;
+    await wg.addExisting();
 
     const rt2 = new kokomi.RenderTexture(this, {
       rtScene: rtScene2,
       rtCamera: this.camera,
     });
 
-    this.update(() => {
-      lc.setRt2(rt2);
-
-      if (wg.gallary.makuGroup.makus && makuClones) {
-        makuClones.forEach((makuClone) => {
-          makuClone.position.copy(makuClone.origin.position);
-        });
-      }
-    });
+    lc.setRt2(rt2);
 
     const showImgOnly = (id) => {
-      makuClones.forEach((maku) => {
-        gsap.to(maku.material.uniforms.uOpacity, {
+      wg.gallary.makuGroup.makus.forEach((maku) => {
+        gsap.to(maku.mesh.material.uniforms.uOpacity, {
           value: 0,
           duration: 0.8,
         });
-
         if (id === Number(maku.el.dataset["webglImgId"])) {
-          gsap.to(maku.material.uniforms.uOpacity, {
+          gsap.to(maku.mesh.material.uniforms.uOpacity, {
             value: 1,
             duration: 0.8,
           });
