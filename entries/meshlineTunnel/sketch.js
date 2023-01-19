@@ -1,7 +1,7 @@
 import * as kokomi from "kokomi.js";
 import * as THREE from "three";
 import gsap from "gsap";
-import * as dat from "lil";
+import * as dat from "lil-gui";
 import { MeshLineGeometry as MeshLine, MeshLineMaterial } from "meshline";
 
 class AnimatedMeshLine extends kokomi.Component {

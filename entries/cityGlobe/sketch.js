@@ -1,7 +1,7 @@
 import * as kokomi from "kokomi.js";
 import * as THREE from "three";
 import gsap from "gsap";
-import * as dat from "lil";
+import * as dat from "lil-gui";
 
 // https://en.wikipedia.org/wiki/Spherical_coordinate_system#h5o-9
 const calcPosFromLatLngRad = (lat, lng) => {

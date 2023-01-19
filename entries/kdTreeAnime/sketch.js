@@ -1,7 +1,7 @@
 import * as kokomi from "kokomi.js";
 import * as THREE from "three";
 import gsap from "gsap";
-import * as dat from "lil";
+import * as dat from "lil-gui";
 import { kdTree } from "kd-tree-javascript";
 
 class Sketch extends kokomi.Base {
