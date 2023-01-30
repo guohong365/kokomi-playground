@@ -7,7 +7,7 @@ import * as POSTPROCESSING from "postprocessing";
 class HoloEffect extends POSTPROCESSING.Effect {
   constructor({ blendFunction = POSTPROCESSING.BlendFunction.NORMAL }) {
     super("HoloEffect", fragmentShader, {
-      uniforms: new Map([["progress", new THREE.Uniform(0)]]),
+      uniforms: new Map([["uProgress", new THREE.Uniform(1)]]),
       blendFunction,
     });
   }
@@ -15,12 +15,15 @@ class HoloEffect extends POSTPROCESSING.Effect {
 
 class Sketch extends kokomi.Base {
   create() {
-    this.camera.position.set(-0.6, 0, 1.5);
+    this.camera.position.set(0, 0, 1.6);
 
     const controls = new kokomi.OrbitControls(this);
-    controls.controls.autoRotate = true;
+    // controls.controls.autoRotate = true;
 
     kokomi.optimizeModelRender(this.renderer);
+
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 0.8;
 
     const am = new kokomi.AssetManager(
       this,
@@ -58,128 +61,128 @@ class Sketch extends kokomi.Base {
       kokomi.printModel(modelParts);
 
       const human = modelParts[1];
-      const humanMat = new THREE.MeshStandardMaterial({
+      human.scale.setScalar(0.1);
+      human.geometry.center();
+
+      const material = new THREE.MeshStandardMaterial({
         envMap,
         metalness: 1,
         roughness: 0.28,
       });
-      human.material = humanMat;
+      human.material = material;
 
-      human.scale.setScalar(0.1);
-      human.geometry.center();
-
-      // modify
+      // material
       const uj = new kokomi.UniformInjector(this);
 
-      humanMat.onBeforeCompile = (shader) => {
+      material.onBeforeCompile = (shader) => {
         shader.uniforms = {
           ...shader.uniforms,
           ...uj.shadertoyUniforms,
         };
+        material.userData.shader = shader;
 
-        shader.fragmentShader = `
-        uniform float iTime;
-        mat4 rotationMatrix(vec3 axis, float angle) {
-          axis = normalize(axis);
-          float s = sin(angle);
-          float c = cos(angle);
-          float oc = 1.0 - c;
-          
-          return mat4(oc * axis.x * axis.x + c,           oc * axis.x * axis.y - axis.z * s,  oc * axis.z * axis.x + axis.y * s,  0.0,
-                      oc * axis.x * axis.y + axis.z * s,  oc * axis.y * axis.y + c,           oc * axis.y * axis.z - axis.x * s,  0.0,
-                      oc * axis.z * axis.x - axis.y * s,  oc * axis.y * axis.z + axis.x * s,  oc * axis.z * axis.z + c,           0.0,
-                      0.0,                                0.0,                                0.0,                                1.0);
-      }
-      
-      vec3 rotate(vec3 v, vec3 axis, float angle) {
-        mat4 m = rotationMatrix(axis, angle);
-        return (m * vec4(v, 1.0)).xyz;
-      }
-
-      ${shader.fragmentShader}
-        `;
-
-        shader.fragmentShader = shader.fragmentShader.replace(
-          `#include <envmap_physical_pars_fragment>`,
+        shader.fragmentShader = [
+          /* glsl */
           `
-          #if defined( USE_ENVMAP )
-vec3 getIBLIrradiance( const in vec3 normal ) {
-  #if defined( ENVMAP_TYPE_CUBE_UV )
-    vec3 worldNormal = inverseTransformDirection( normal, viewMatrix );
-    vec4 envMapColor = textureCubeUV( envMap, worldNormal, 1.0 );
-    return PI * envMapColor.rgb * envMapIntensity;
-  #else
-    return vec3( 0.0 );
-  #endif
-}
-vec3 getIBLRadiance( const in vec3 viewDir, const in vec3 normal, const in float roughness ) {
-  #if defined( ENVMAP_TYPE_CUBE_UV )
-    vec3 reflectVec = reflect( - viewDir, normal );
-    // Mixing the reflection with the normal is more accurate and keeps rough objects from gathering light from behind their tangent plane.
-    reflectVec = normalize( mix( reflectVec, normal, roughness * roughness) );
-    reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
+          uniform float iTime;
 
-    reflectVec = rotate(reflectVec, vec3(1.0, 0.0, 0.0), iTime);
-    vec4 envMapColor = textureCubeUV( envMap, reflectVec, roughness );
-    return envMapColor.rgb * envMapIntensity;
-  #else
-    return vec3( 0.0 );
-  #endif
-}
-#endif
-`
+          mat2 rotation2d(float angle){
+            float s=sin(angle);
+            float c=cos(angle);
+            
+            return mat2(
+                c,-s,
+                s,c
+            );
+        }
+        
+        mat4 rotation3d(vec3 axis,float angle){
+            axis=normalize(axis);
+            float s=sin(angle);
+            float c=cos(angle);
+            float oc=1.-c;
+            
+            return mat4(
+                oc*axis.x*axis.x+c,oc*axis.x*axis.y-axis.z*s,oc*axis.z*axis.x+axis.y*s,0.,
+                oc*axis.x*axis.y+axis.z*s,oc*axis.y*axis.y+c,oc*axis.y*axis.z-axis.x*s,0.,
+                oc*axis.z*axis.x-axis.y*s,oc*axis.y*axis.z+axis.x*s,oc*axis.z*axis.z+c,0.,
+                0.,0.,0.,1.
+            );
+        }
+        
+        vec2 rotate(vec2 v,float angle){
+            return rotation2d(angle)*v;
+        }
+        
+        vec3 rotate(vec3 v,vec3 axis,float angle){
+            return(rotation3d(axis,angle)*vec4(v,1.)).xyz;
+        }
+          `,
+          shader.fragmentShader,
+        ].join("\n");
+
+        // https://ycw.github.io/three-shaderlib-skim/dist/#/latest/physical/fragment
+        shader.fragmentShader = shader.fragmentShader.replace(
+          /* glsl */
+          `#include <envmap_physical_pars_fragment>`,
+          /* glsl */
+          `
+        #if defined( USE_ENVMAP )
+        vec3 getIBLIrradiance( const in vec3 normal ) {
+          #if defined( ENVMAP_TYPE_CUBE_UV )
+            vec3 worldNormal = inverseTransformDirection( normal, viewMatrix );
+            vec4 envMapColor = textureCubeUV( envMap, worldNormal, 1.0 );
+            return PI * envMapColor.rgb * envMapIntensity;
+          #else
+            return vec3( 0.0 );
+          #endif
+        }
+        vec3 getIBLRadiance( const in vec3 viewDir, const in vec3 normal, const in float roughness ) {
+          #if defined( ENVMAP_TYPE_CUBE_UV )
+            vec3 reflectVec = reflect( - viewDir, normal );
+            reflectVec = normalize( mix( reflectVec, normal, roughness * roughness) );
+            reflectVec = inverseTransformDirection( reflectVec, viewMatrix );
+
+            reflectVec = rotate( reflectVec, vec3(0., 0., 1.), iTime * .1 );
+
+            vec4 envMapColor = textureCubeUV( envMap, reflectVec, roughness );
+            return envMapColor.rgb * envMapIntensity;
+          #else
+            return vec3( 0.0 );
+          #endif
+        }
+      #endif
+      `
         );
-
-        humanMat.userData.shader = shader;
       };
 
       this.update(() => {
-        if (humanMat.userData.shader) {
-          uj.injectShadertoyUniforms(humanMat.userData.shader.uniforms);
+        if (material.userData.shader) {
+          uj.injectShadertoyUniforms(material.userData.shader.uniforms);
         }
       });
-
-      // lights
-      const light1 = new THREE.AmbientLight(0xffffff, 0.5);
-      this.scene.add(light1);
-
-      const light2 = new THREE.DirectionalLight(0xffffff, 0.5);
-      light2.position.set(0.5, 0, 0.866);
-      this.scene.add(light2);
 
       // postprocessing
       this.scene.background = new THREE.Color("#000000");
 
       const composer = new POSTPROCESSING.EffectComposer(this.renderer);
+      this.composer = composer;
+
       composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
 
       // bloom
       const bloom = new POSTPROCESSING.BloomEffect({
-        luminanceThreshold: 0.2,
+        luminanceThreshold: 0.05,
         luminanceSmoothing: 0,
         mipmapBlur: true,
         intensity: 3,
-        radius: 0.85,
+        radius: 0.4,
       });
       composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
 
       // holo
       const holo = new HoloEffect({});
       composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
-
-      this.composer = composer;
-
-      // anime
-      let t1 = gsap.timeline({
-        repeat: -1,
-        yoyo: true,
-        repeatDelay: 2,
-      });
-      t1.to(holo.uniforms.get("progress"), {
-        value: 1,
-        ease: "power1.inOut",
-        duration: 1,
-      });
     });
   }
 }
