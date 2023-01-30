@@ -5,9 +5,18 @@ import * as dat from "lil-gui";
 import * as POSTPROCESSING from "postprocessing";
 
 class HoloEffect extends POSTPROCESSING.Effect {
-  constructor({ blendFunction = POSTPROCESSING.BlendFunction.NORMAL }) {
+  constructor({
+    blendFunction = POSTPROCESSING.BlendFunction.NORMAL,
+    progress = 1,
+    glowColor = new THREE.Color("#66ccff"),
+    glowColorStrength = 0.3,
+  }) {
     super("HoloEffect", fragmentShader, {
-      uniforms: new Map([["uProgress", new THREE.Uniform(0)]]),
+      uniforms: new Map([
+        ["uProgress", new THREE.Uniform(progress)],
+        ["uGlowColor", new THREE.Uniform(glowColor)],
+        ["uGlowColorStrength", new THREE.Uniform(glowColorStrength)],
+      ]),
       blendFunction,
     });
   }
@@ -181,7 +190,9 @@ class Sketch extends kokomi.Base {
       composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
 
       // holo
-      const holo = new HoloEffect({});
+      const holo = new HoloEffect({
+        progress: 0,
+      });
       composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
       this.holo = holo;
 
@@ -191,6 +202,8 @@ class Sketch extends kokomi.Base {
   createDebug() {
     const params = {
       progress: 0,
+      glowColor: "#66ccff",
+      glowColorStrength: 0.3,
     };
 
     const gui = new dat.GUI();
@@ -201,6 +214,17 @@ class Sketch extends kokomi.Base {
       .step(0.01)
       .onChange((val) => {
         this.holo.uniforms.get("uProgress").value = val;
+      });
+    gui.addColor(params, "glowColor").onChange((val) => {
+      this.holo.uniforms.get("uGlowColor").value = new THREE.Color(val);
+    });
+    gui
+      .add(params, "glowColorStrength")
+      .min(0)
+      .max(1)
+      .step(0.01)
+      .onChange((val) => {
+        this.holo.uniforms.get("uGlowColorStrength").value = val;
       });
   }
 }

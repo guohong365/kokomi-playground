@@ -1,8 +1,10 @@
-uniform float uProgress;
-
 #define iTime time
 #define iResolution resolution
 #define iChannel0 inputBuffer
+
+uniform float uProgress;
+uniform vec3 uGlowColor;
+uniform float uGlowColorStrength;
 
 #define GLSLIFY 1
 //
@@ -109,7 +111,7 @@ float n2=snoise(vec2(iTime*2.,1.));
 float strength=.1+.3*(1.+n2);
 vec3 combinedColor=diffuseBase.rgb+hologramColor.rgb*strength;
 
-vec3 bgColor=vec3(0.,.66,1.)*.3;
+vec3 bgColor=uGlowColor*uGlowColorStrength;
 vec3 lumiColor=luminosity(combinedColor,bgColor);
 
 vec3 col=mix(diffuseBase.rgb,lumiColor,uProgress);
