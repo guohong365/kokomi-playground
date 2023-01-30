@@ -7,7 +7,7 @@ import * as POSTPROCESSING from "postprocessing";
 class HoloEffect extends POSTPROCESSING.Effect {
   constructor({ blendFunction = POSTPROCESSING.BlendFunction.NORMAL }) {
     super("HoloEffect", fragmentShader, {
-      uniforms: new Map([["uProgress", new THREE.Uniform(1)]]),
+      uniforms: new Map([["uProgress", new THREE.Uniform(0)]]),
       blendFunction,
     });
   }
@@ -183,6 +183,24 @@ class Sketch extends kokomi.Base {
       // holo
       const holo = new HoloEffect({});
       composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
+      this.holo = holo;
+
+      this.createDebug();
     });
+  }
+  createDebug() {
+    const params = {
+      progress: 0,
+    };
+
+    const gui = new dat.GUI();
+    gui
+      .add(params, "progress")
+      .min(0)
+      .max(1)
+      .step(0.01)
+      .onChange((val) => {
+        this.holo.uniforms.get("uProgress").value = val;
+      });
   }
 }
