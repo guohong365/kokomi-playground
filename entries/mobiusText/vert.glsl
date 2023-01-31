@@ -52,9 +52,9 @@ vec3 rotate(vec3 v,vec3 axis,float angle){
 vec3 distort(vec3 p){
     float x=map(p.x,uMin.x,uMax.x,-PI,PI);
     vXDebug=x;
-    p=rotate(p,vec3(1.,0.,0.),x*.5+.01*iTime*35.);
+    p=rotate(p,vec3(1.,0.,0.),x*.5+iTime*.35);
     float r=1.5;
-    float theta=x+.01*iTime*.5;
+    float theta=x+iTime*.005;
     vec3 dir=vec3(sin(theta),cos(theta),0.);
     p=r*dir+vec3(0.,0.,p.z)+p.y*dir;
     return p;
