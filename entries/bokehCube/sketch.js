@@ -71,91 +71,65 @@ class Sketch extends kokomi.Base {
 
     kokomi.enableRealisticRender(this.renderer);
 
-    const am = new kokomi.AssetManager(this, [
-      {
-        name: "hdr",
-        type: "hdrTexture",
-        path: "../../assets/potsdamer_platz_1k.hdr",
+    const cm = new kokomi.CustomMesh(this, {
+      baseMaterial: new THREE.ShaderMaterial(),
+      geometry: new THREE.BoxGeometry(1, 1, 1),
+      vertexShader,
+      fragmentShader,
+      materialParams: {
+        side: THREE.DoubleSide,
+        transparent: true,
       },
-    ]);
-
-    am.on("ready", () => {
-      document.querySelector(".loader-screen").classList.add("hollow");
-
-      const envMap = kokomi.getEnvmapFromHDRTexture(
-        this.renderer,
-        am.items["hdr"]
-      );
-
-      const cm = new kokomi.CustomMesh(this, {
-        baseMaterial: new THREE.ShaderMaterial(),
-        geometry: new THREE.BoxGeometry(1, 1, 1),
-        vertexShader,
-        fragmentShader,
-        materialParams: {
-          side: THREE.DoubleSide,
-          transparent: true,
-          metalness: 1,
-          roughness: 0.28,
-          envMap,
+      uniforms: {
+        uTexture: {
+          value: null,
         },
-        uniforms: {
-          uTexture: {
-            value: null,
-          },
-        },
-      });
-      cm.addExisting();
-
-      const ambiLight = new THREE.AmbientLight(0xffffff, 1);
-      this.scene.add(ambiLight);
-      const dirLight = new THREE.DirectionalLight(0xffffff, 1);
-      dirLight.position.set(1, 2, 3);
-      this.scene.add(dirLight);
-
-      const rtScene = new THREE.Scene();
-      const rtCamera = new THREE.PerspectiveCamera(
-        70,
-        window.innerWidth / window.innerHeight,
-        0.01,
-        100
-      );
-      rtCamera.position.z = 1;
-      const rt = new kokomi.RenderTexture(this, {
-        rtScene,
-        rtCamera,
-      });
-
-      const pf = new ParticlesFly(this, {
-        colors: ["#cb4959", "#3beced"],
-        count: 16,
-        size: 100,
-      });
-      pf.container = rtScene;
-      pf.addExisting();
-
-      rt.texture.minFilter = THREE.LinearFilter;
-      rt.texture.magFilter = THREE.LinearFilter;
-
-      cm.material.uniforms.uTexture.value = rt.texture;
-
-      // postprocessing
-      const composer = new POSTPROCESSING.EffectComposer(this.renderer);
-      this.composer = composer;
-
-      composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
-
-      // bloom
-      const bloom = new POSTPROCESSING.BloomEffect({
-        luminanceThreshold: 0.05,
-        luminanceSmoothing: 0,
-        mipmapBlur: true,
-        intensity: 2,
-        radius: 0.3,
-      });
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
-
-      this.renderer.autoClear = true;
+      },
     });
+    cm.addExisting();
+
+    const rtScene = new THREE.Scene();
+    const rtCamera = new THREE.PerspectiveCamera(
+      70,
+      window.innerWidth / window.innerHeight,
+      0.01,
+      100
+    );
+    rtCamera.position.z = 1;
+    const rt = new kokomi.RenderTexture(this, {
+      rtScene,
+      rtCamera,
+    });
+
+    const pf = new ParticlesFly(this, {
+      colors: ["#cb4959", "#3beced"],
+      count: 16,
+      size: 100,
+    });
+    pf.container = rtScene;
+    pf.addExisting();
+
+    rt.texture.minFilter = THREE.LinearFilter;
+    rt.texture.magFilter = THREE.LinearFilter;
+
+    cm.material.uniforms.uTexture.value = rt.texture;
+
+    // postprocessing
+    const composer = new POSTPROCESSING.EffectComposer(this.renderer);
+    this.composer = composer;
+
+    composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
+
+    // bloom
+    const bloom = new POSTPROCESSING.BloomEffect({
+      luminanceThreshold: 0.05,
+      luminanceSmoothing: 0,
+      mipmapBlur: true,
+      intensity: 2,
+      radius: 0.3,
+    });
+    composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
+
+    this.renderer.autoClear = true;
   }
 }
