@@ -22,11 +22,11 @@ class Sketch extends kokomi.Base {
         type: "hdrTexture",
         path: "../../assets/potsdamer_platz_1k.hdr",
       },
-      {
-        name: "matcapTex",
-        type: "texture",
-        path: "../../assets/chemical_carpaint_blue.png",
-      },
+      // {
+      //   name: "matcapTex",
+      //   type: "texture",
+      //   path: "https://s2.loli.net/2023/01/31/NdvQ14ieOVq9FE7.png",
+      // },
     ]);
     am.on("ready", () => {
       document.querySelector(".loader-screen").classList.add("hollow");
