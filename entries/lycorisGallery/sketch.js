@@ -172,6 +172,10 @@ class ParticlesFly extends kokomi.Component {
     });
     this.cm = cm;
   }
+  addExisting() {
+    this.cm.container = this.container;
+    this.cm.addExisting();
+  }
 }
 
 class ParticleQuad extends kokomi.Component {
@@ -192,7 +196,8 @@ class ParticleQuad extends kokomi.Component {
     });
 
     const pf = new ParticlesFly(base, config);
-    rtScene.add(pf.cm.points);
+    pf.container = rtScene;
+    pf.addExisting();
 
     const sqPf = new kokomi.RenderQuad(base, rt.texture, {
       materialParams: {
