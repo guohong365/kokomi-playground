@@ -89,6 +89,5 @@ void main(){
     
     vUv=uv;
     
-    vec3 fNormal=fixNormal(p,dp,normal);
-    csm_Normal=fNormal;
+    csm_Normal=fixNormal(p,dp,normal);
 }
