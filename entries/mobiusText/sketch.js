@@ -36,9 +36,11 @@ class Sketch extends kokomi.Base {
         am.items["hdr"]
       );
 
+      const text = "ALPHARDEXISGOD";
+
       const t3d = new kokomi.Text3D(
         this,
-        "ALPHARDEXISGOD",
+        text,
         am.items["font"],
         {
           size: 1,
@@ -78,7 +80,14 @@ class Sketch extends kokomi.Base {
       t3d.mesh.material.uniforms.uMin.value = t3d.mesh.geometry.boundingBox.min;
       t3d.mesh.material.uniforms.uMax.value = t3d.mesh.geometry.boundingBox.max;
 
-      // t3d.mesh.geometry = new THREE.BoxGeometry(0.5, 0.1, 0.1, 100, 100, 100);
+      // t3d.mesh.geometry = new THREE.BoxGeometry(
+      //   text.length,
+      //   1,
+      //   1,
+      //   100,
+      //   100,
+      //   100
+      // );
 
       const ambiLight = new THREE.AmbientLight(0xffffff, 1);
       this.scene.add(ambiLight);
