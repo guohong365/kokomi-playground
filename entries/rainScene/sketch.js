@@ -98,7 +98,7 @@ class Sketch extends kokomi.Base {
       };
 
       // lights
-      const pointLight1 = new THREE.PointLight(config.color, 1, 17, 0.8);
+      const pointLight1 = new THREE.PointLight(config.color, 0.4, 17, 0.8);
       pointLight1.position.set(0, 2.3, 0);
       this.scene.add(pointLight1);
 
