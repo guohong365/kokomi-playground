@@ -1,4 +1,3 @@
-// https://github.com/junni-inc/next.junni.co.jp/blob/master/src/ts/MainScene/World/Sections/Section2/Transparents/Transparent/shaders/transparent.fs
 uniform float iTime;
 uniform vec2 iResolution;
 uniform vec2 iMouse;
@@ -10,6 +9,14 @@ uniform vec2 uFBOResolution;
 
 varying vec3 vNormal;
 varying vec3 vEyeVector;
+
+uniform float uChromaticAberration;
+uniform float uRefraction;
+uniform float uSaturation;
+uniform vec3 uLightPosition;
+uniform float uDiffuse;
+uniform float uSpecular;
+uniform float uFresnel;
 
 vec3 saturation(vec3 rgb,float adjustment){
     const vec3 W=vec3(.2125,.7154,.0721);
@@ -60,15 +67,15 @@ void main(){
     float iorB=1.22;
     float iorP=1.22;
     
-    float cr=.5;
-    float refra=.25;
-    float sat=1.14;
+    float cr=uChromaticAberration;
+    float refra=uRefraction;
+    float sat=uSaturation;
     
-    vec3 lightPos=vec3(-1.,1.,1.);
-    float d=.2;
-    float s=15.;
+    vec3 lightPos=uLightPosition;
+    float d=uDiffuse;
+    float s=uSpecular;
     
-    float fr=8.;
+    float fr=uFresnel;
     
     for(int i=0;i<SAMPLES;i++){
         float slide=float(i)/float(SAMPLES)*.1;
