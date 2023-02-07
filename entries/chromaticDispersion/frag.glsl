@@ -17,6 +17,7 @@ uniform vec3 uLightPosition;
 uniform float uDiffuse;
 uniform float uSpecular;
 uniform float uFresnel;
+uniform vec3 uFresnelColor;
 
 vec3 saturation(vec3 rgb,float adjustment){
     const vec3 W=vec3(.2125,.7154,.0721);
@@ -76,6 +77,7 @@ void main(){
     float s=uSpecular;
     
     float fr=uFresnel;
+    vec3 frCol=uFresnelColor;
     
     for(int i=0;i<SAMPLES;i++){
         float slide=float(i)/float(SAMPLES)*.1;
@@ -118,14 +120,15 @@ void main(){
     
     col/=float(SAMPLES);
     
+    col*=.8;
+    
+    col=mix(col,vec3(.0),.0);
+    
     float lin=lighting(lightPos,vNormal,vEyeVector,d,s);
     col+=vec3(lin);
     
     float F=fresnel2(vEyeVector,vNormal,fr);
     col+=vec3(F);
     
-    csm_DiffuseColor=vec4(col,1.);
-    
-    // csm_DiffuseColor=vec4(vec3(lin),1.);
-    // csm_DiffuseColor=vec4(vec3(F),1.);
+    gl_FragColor=vec4(col,1.);
 }
