@@ -3,10 +3,10 @@
     "updateIndex": "node entries/getFilesData.mjs"
   },
   "devDependencies": {
-    "@types/three": "^0.146.0",
-    "gsap": "^3.11.1",
+    "@types/three": "^0.149.0",
+    "gsap": "^3.11.4",
     "kd-tree-javascript": "^1.0.3",
-    "kokomi.js": "^1.9.65",
+    "kokomi.js": "^1.9.66",
     "lil-gui": "^0.17.0",
     "meshline": "^3.1.6",
     "postprocessing": "^6.29.3"
