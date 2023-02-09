@@ -18,31 +18,6 @@ class Sketch extends kokomi.Base {
 
     const am = new kokomi.AssetManager(this, [
       {
-        name: "brick-normal2",
-        type: "texture",
-        path: "https://s2.loli.net/2023/01/31/cnZ9qXoEseUWRlY.jpg",
-      },
-      {
-        name: "normal",
-        type: "texture",
-        path: "https://s2.loli.net/2023/01/31/JfhqtZERnGHQUuo.png",
-      },
-      {
-        name: "opacity",
-        type: "texture",
-        path: "https://s2.loli.net/2023/01/31/5zVHumc91IESJhA.jpg",
-      },
-      {
-        name: "rain-normal",
-        type: "texture",
-        path: "https://s2.loli.net/2023/01/31/qT2vC8G71UtMXeb.png",
-      },
-      {
-        name: "roughness",
-        type: "texture",
-        path: "https://s2.loli.net/2023/01/31/ZIM2rXWJOp76ECV.jpg",
-      },
-      {
         name: "shutter-Diffuse",
         type: "texture",
         path: "https://s2.loli.net/2023/01/31/4b7YcTDx1teCoAm.png",
@@ -66,6 +41,31 @@ class Sketch extends kokomi.Base {
         name: "top-cover-Diffuse",
         type: "texture",
         path: "https://s2.loli.net/2023/01/31/C98NKGUorEXmdWe.png",
+      },
+      {
+        name: "brick-normal2",
+        type: "texture",
+        path: "https://s2.loli.net/2023/01/31/cnZ9qXoEseUWRlY.jpg",
+      },
+      {
+        name: "normal",
+        type: "texture",
+        path: "https://s2.loli.net/2023/01/31/JfhqtZERnGHQUuo.png",
+      },
+      {
+        name: "opacity",
+        type: "texture",
+        path: "https://s2.loli.net/2023/01/31/5zVHumc91IESJhA.jpg",
+      },
+      {
+        name: "roughness",
+        type: "texture",
+        path: "https://s2.loli.net/2023/01/31/ZIM2rXWJOp76ECV.jpg",
+      },
+      {
+        name: "rain-normal",
+        type: "texture",
+        path: "https://s2.loli.net/2023/01/31/qT2vC8G71UtMXeb.png",
       },
       {
         name: "rain",
