@@ -118,7 +118,7 @@ class Sketch extends kokomi.Base {
       const rectLight1Helper = new kokomi.RectAreaLightHelper(rectLight1);
       this.scene.add(rectLight1Helper);
 
-      // model
+      // main scene
       const model = am.items["rain-scene"];
       this.scene.add(model.scene);
 
@@ -201,6 +201,8 @@ class Sketch extends kokomi.Base {
         specularIntensity: 0.5,
       });
 
+      floor.visible = false;
+
       // floor
       const fNormalTex = am.items["normal"];
       const fOpacityTex = am.items["opacity"];
@@ -210,7 +212,6 @@ class Sketch extends kokomi.Base {
       fRoughnessTex.wrapS = fRoughnessTex.wrapT = THREE.MirroredRepeatWrapping;
 
       // custom reflector
-      floor.visible = false;
       const uj = new kokomi.UniformInjector(this);
       const mirror = new kokomi.Reflector(new THREE.PlaneGeometry(25, 100));
       mirror.position.z = -25;
