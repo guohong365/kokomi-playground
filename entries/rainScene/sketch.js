@@ -4,6 +4,195 @@ import gsap from "gsap";
 import * as dat from "lil-gui";
 import * as POSTPROCESSING from "postprocessing";
 
+class RainFloor extends kokomi.Component {
+  constructor(base, config = {}) {
+    super(base);
+
+    const { count = 1000 } = config;
+
+    const am = this.base.am;
+
+    // floor
+    const fNormalTex = am.items["floor-normal"];
+    const fOpacityTex = am.items["floor-opacity"];
+    const fRoughnessTex = am.items["floor-roughness"];
+    fNormalTex.wrapS = fNormalTex.wrapT = THREE.MirroredRepeatWrapping;
+    fOpacityTex.wrapS = fOpacityTex.wrapT = THREE.MirroredRepeatWrapping;
+    fRoughnessTex.wrapS = fRoughnessTex.wrapT = THREE.MirroredRepeatWrapping;
+
+    // custom reflector
+    const uj = new kokomi.UniformInjector(this.base);
+    this.uj = uj;
+    const mirror = new kokomi.Reflector(new THREE.PlaneGeometry(25, 100));
+    this.mirror = mirror;
+    mirror.position.z = -25;
+    mirror.rotation.x = -Math.PI / 2;
+
+    mirror.material.uniforms = {
+      ...mirror.material.uniforms,
+      ...uj.shadertoyUniforms,
+      ...{
+        uNormalTexture: {
+          value: fNormalTex,
+        },
+        uOpacityTexture: {
+          value: fOpacityTex,
+        },
+        uRoughnessTexture: {
+          value: fRoughnessTex,
+        },
+        uRainCount: {
+          value: count,
+        },
+        uTexScale: {
+          value: new THREE.Vector2(1, 4),
+        },
+        uDistortionAmount: {
+          value: 0.1,
+        },
+        uBlurStrength: {
+          value: 6.3,
+        },
+        uMipmapTextureSize: {
+          value: new THREE.Vector2(window.innerWidth, window.innerHeight),
+        },
+      },
+    };
+    mirror.material.vertexShader = vertexShader;
+    mirror.material.fragmentShader = fragmentShader;
+
+    const mipmapper = new kokomi.PackedMipMapGenerator();
+    this.mipmapper = mipmapper;
+    const mirrorFBO = mirror.getRenderTarget();
+    this.mirrorFBO = mirrorFBO;
+    const mipmapFBO = new kokomi.FBO(this.base);
+    this.mipmapFBO = mipmapFBO;
+
+    mirror.material.uniforms.tDiffuse.value = mipmapFBO.rt.texture;
+  }
+  addExisting() {
+    this.base.scene.add(this.mirror);
+  }
+  update() {
+    this.uj.injectShadertoyUniforms(this.mirror.material.uniforms);
+
+    this.mipmapper.update(
+      this.mirrorFBO.texture,
+      this.mipmapFBO.rt,
+      this.base.renderer
+    );
+  }
+}
+
+class Rain extends kokomi.Component {
+  constructor(base, config = {}) {
+    super(base);
+
+    const { count = 1000, speed = 1.5, debug = false } = config;
+
+    const am = this.base.am;
+
+    // rain
+    const rNormalTex = am.items["rain-normal"];
+    rNormalTex.flipY = false;
+
+    const uj = new kokomi.UniformInjector(this.base);
+    this.uj = uj;
+    const rainMat = new THREE.ShaderMaterial({
+      vertexShader: vertexShader2,
+      fragmentShader: fragmentShader2,
+      uniforms: {
+        ...uj.shadertoyUniforms,
+        ...{
+          uSpeed: {
+            value: speed,
+          },
+          uHeightRange: {
+            value: 20,
+          },
+          uNormalTexture: {
+            value: rNormalTex,
+          },
+          uBgRt: {
+            value: null,
+          },
+          uRefraction: {
+            value: 0.05,
+          },
+          uBaseBrightness: {
+            value: 0.07,
+          },
+        },
+      },
+    });
+    this.rainMat = rainMat;
+
+    const rain = new THREE.InstancedMesh(
+      new THREE.PlaneGeometry(),
+      rainMat,
+      count
+    );
+    this.rain = rain;
+    rain.instanceMatrix.needsUpdate = true;
+
+    const dummy = new THREE.Object3D();
+
+    const progressArr = [];
+    const speedArr = [];
+
+    for (let i = 0; i < rain.count; i++) {
+      dummy.position.set(
+        THREE.MathUtils.randFloat(-10, 10),
+        0,
+        THREE.MathUtils.randFloat(-20, 10)
+      );
+      dummy.scale.set(0.03, THREE.MathUtils.randFloat(0.3, 0.5), 0.03);
+      if (debug) {
+        dummy.scale.setScalar(1);
+        rainMat.uniforms.uSpeed.value = 0;
+      }
+      dummy.updateMatrix();
+      rain.setMatrixAt(i, dummy.matrix);
+
+      progressArr.push(Math.random());
+      speedArr.push(dummy.scale.y * 10);
+    }
+    rain.rotation.set(-0.1, 0, 0.1);
+    rain.position.set(0, 4, 4);
+
+    rain.geometry.setAttribute(
+      "aProgress",
+      new THREE.InstancedBufferAttribute(new Float32Array(progressArr), 1)
+    );
+    rain.geometry.setAttribute(
+      "aSpeed",
+      new THREE.InstancedBufferAttribute(new Float32Array(speedArr), 1)
+    );
+
+    const bgFBO = new kokomi.FBO(this.base, {
+      width: window.innerWidth * 0.1,
+      height: window.innerHeight * 0.1,
+    });
+    this.bgFBO = bgFBO;
+    rainMat.uniforms.uBgRt.value = bgFBO.rt.texture;
+
+    const fboCamera = this.base.camera.clone();
+    this.fboCamera = fboCamera;
+  }
+  addExisting() {
+    this.base.scene.add(this.rain);
+  }
+  update() {
+    this.uj.injectShadertoyUniforms(this.rainMat.uniforms);
+
+    this.rain.visible = false;
+    this.base.renderer.setRenderTarget(this.bgFBO.rt);
+    this.base.renderer.render(this.base.scene, this.fboCamera);
+    this.base.renderer.setRenderTarget(null);
+    this.rain.visible = true;
+  }
+}
+
 class Sketch extends kokomi.Base {
   create() {
     this.camera.position.set(0, 2, 9);
@@ -43,22 +232,22 @@ class Sketch extends kokomi.Base {
         path: "https://s2.loli.net/2023/01/31/C98NKGUorEXmdWe.png",
       },
       {
-        name: "brick-normal2",
+        name: "brick-normal",
         type: "texture",
         path: "https://s2.loli.net/2023/01/31/cnZ9qXoEseUWRlY.jpg",
       },
       {
-        name: "normal",
+        name: "floor-normal",
         type: "texture",
         path: "https://s2.loli.net/2023/01/31/JfhqtZERnGHQUuo.png",
       },
       {
-        name: "opacity",
+        name: "floor-opacity",
         type: "texture",
         path: "https://s2.loli.net/2023/01/31/5zVHumc91IESJhA.jpg",
       },
       {
-        name: "roughness",
+        name: "floor-roughness",
         type: "texture",
         path: "https://s2.loli.net/2023/01/31/ZIM2rXWJOp76ECV.jpg",
       },
@@ -78,6 +267,7 @@ class Sketch extends kokomi.Base {
         path: "../../assets/rain-scene.glb",
       },
     ]);
+    this.am = am;
     am.on("ready", () => {
       document.querySelector(".loader-screen").classList.add("hollow");
 
@@ -154,7 +344,7 @@ class Sketch extends kokomi.Base {
         shininess: 50,
       });
 
-      const bnTex = am.items["brick-normal2"];
+      const bnTex = am.items["brick-normal"];
       bnTex.rotation = THREE.MathUtils.degToRad(90);
       bnTex.wrapS = bnTex.wrapT = THREE.RepeatWrapping;
       bnTex.repeat.set(5, 8);
@@ -203,157 +393,17 @@ class Sketch extends kokomi.Base {
 
       floor.visible = false;
 
-      // floor
-      const fNormalTex = am.items["normal"];
-      const fOpacityTex = am.items["opacity"];
-      const fRoughnessTex = am.items["roughness"];
-      fNormalTex.wrapS = fNormalTex.wrapT = THREE.MirroredRepeatWrapping;
-      fOpacityTex.wrapS = fOpacityTex.wrapT = THREE.MirroredRepeatWrapping;
-      fRoughnessTex.wrapS = fRoughnessTex.wrapT = THREE.MirroredRepeatWrapping;
-
-      // custom reflector
-      const uj = new kokomi.UniformInjector(this);
-      const mirror = new kokomi.Reflector(new THREE.PlaneGeometry(25, 100));
-      mirror.position.z = -25;
-      mirror.rotation.x = -Math.PI / 2;
-      this.scene.add(mirror);
-      mirror.material.uniforms = {
-        ...mirror.material.uniforms,
-        ...uj.shadertoyUniforms,
-        ...{
-          uNormalTexture: {
-            value: fNormalTex,
-          },
-          uOpacityTexture: {
-            value: fOpacityTex,
-          },
-          uRoughnessTexture: {
-            value: fRoughnessTex,
-          },
-          uRainCount: {
-            value: config.rain.count,
-          },
-          uTexScale: {
-            value: new THREE.Vector2(1, 4),
-          },
-          uDistortionAmount: {
-            value: 0.1,
-          },
-          uBlurStrength: {
-            value: 6.3,
-          },
-          uMipmapTextureSize: {
-            value: new THREE.Vector2(window.innerWidth, window.innerHeight),
-          },
-        },
-      };
-      mirror.material.vertexShader = vertexShader;
-      mirror.material.fragmentShader = fragmentShader;
-      this.update(() => {
-        uj.injectShadertoyUniforms(mirror.material.uniforms);
+      // rain floor
+      const rainFloor = new RainFloor(this, {
+        count: config.rain.count,
       });
-
-      const mipmapper = new kokomi.PackedMipMapGenerator();
-      const mirrorFBO = mirror.getRenderTarget();
-      const mipmapFBO = new kokomi.FBO(this);
-      this.update(() => {
-        mipmapper.update(mirrorFBO.texture, mipmapFBO.rt, this.renderer);
-      });
-      mirror.material.uniforms.tDiffuse.value = mipmapFBO.rt.texture;
+      rainFloor.addExisting();
 
       // rain
-      const rNormalTex = am.items["rain-normal"];
-      rNormalTex.flipY = false;
+      const rain = new Rain(this, config.rain);
+      rain.addExisting();
 
-      const rainMat = new THREE.ShaderMaterial({
-        vertexShader: vertexShader2,
-        fragmentShader: fragmentShader2,
-        uniforms: {
-          ...uj.shadertoyUniforms,
-          ...{
-            uSpeed: {
-              value: config.rain.speed,
-            },
-            uHeightRange: {
-              value: 20,
-            },
-            uNormalTexture: {
-              value: rNormalTex,
-            },
-            uBgRt: {
-              value: null,
-            },
-            uRefraction: {
-              value: 0.05,
-            },
-            uBaseBrightness: {
-              value: 0.07,
-            },
-          },
-        },
-      });
-      this.update(() => {
-        uj.injectShadertoyUniforms(rainMat.uniforms);
-      });
-      const rain = new THREE.InstancedMesh(
-        new THREE.PlaneGeometry(),
-        rainMat,
-        config.rain.count
-      );
-      rain.instanceMatrix.needsUpdate = true;
-      this.scene.add(rain);
-
-      const dummy = new THREE.Object3D();
-
-      const progressArr = [];
-      const speedArr = [];
-
-      for (let i = 0; i < rain.count; i++) {
-        dummy.position.set(
-          THREE.MathUtils.randFloat(-10, 10),
-          0,
-          THREE.MathUtils.randFloat(-20, 10)
-        );
-        dummy.scale.set(0.03, THREE.MathUtils.randFloat(0.3, 0.5), 0.03);
-        if (config.rain.debug) {
-          dummy.scale.setScalar(1);
-          rainMat.uniforms.uSpeed.value = 0;
-        }
-        dummy.updateMatrix();
-        rain.setMatrixAt(i, dummy.matrix);
-
-        progressArr.push(Math.random());
-        speedArr.push(dummy.scale.y * 10);
-      }
-      rain.rotation.set(-0.1, 0, 0.1);
-      rain.position.set(0, 4, 4);
-
-      rain.geometry.setAttribute(
-        "aProgress",
-        new THREE.InstancedBufferAttribute(new Float32Array(progressArr), 1)
-      );
-      rain.geometry.setAttribute(
-        "aSpeed",
-        new THREE.InstancedBufferAttribute(new Float32Array(speedArr), 1)
-      );
-
-      const bgFBO = new kokomi.FBO(this, {
-        width: window.innerWidth * 0.1,
-        height: window.innerHeight * 0.1,
-      });
-      rainMat.uniforms.uBgRt.value = bgFBO.rt.texture;
-
-      mirror.ignoreObjects.push(rain);
-
-      const fboCamera = this.camera.clone();
-
-      this.update(() => {
-        rain.visible = false;
-        this.renderer.setRenderTarget(bgFBO.rt);
-        this.renderer.render(this.scene, fboCamera);
-        this.renderer.setRenderTarget(null);
-        rain.visible = true;
-      });
+      rainFloor.mirror.ignoreObjects.push(rain.rain);
 
       // flicker
       const turnOffLight = () => {
