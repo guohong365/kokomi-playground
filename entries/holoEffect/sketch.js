@@ -31,7 +31,6 @@ class Sketch extends kokomi.Base {
 
     kokomi.optimizeModelRender(this.renderer);
 
-    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
     this.renderer.toneMappingExposure = 0.8;
 
     const am = new kokomi.AssetManager(

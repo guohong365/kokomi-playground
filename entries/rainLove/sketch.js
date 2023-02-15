@@ -2,6 +2,7 @@ import * as kokomi from "kokomi.js";
 import * as THREE from "three";
 import gsap from "gsap";
 import * as dat from "lil-gui";
+import * as POSTPROCESSING from "postprocessing";
 
 class RainFloor extends kokomi.Component {
   constructor(base, config = {}) {
