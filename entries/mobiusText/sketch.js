@@ -9,7 +9,7 @@ class Sketch extends kokomi.Base {
 
     new kokomi.OrbitControls(this);
 
-    kokomi.enableRealisticRender(this.renderer);
+    kokomi.beautifyRender(this.renderer);
 
     const am = new kokomi.AssetManager(this, [
       {

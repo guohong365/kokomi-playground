@@ -9,8 +9,8 @@ class Sketch extends kokomi.Base {
 
     new kokomi.OrbitControls(this);
 
+    kokomi.beautifyRender(this.renderer);
     this.renderer.shadowMap.enabled = true;
-    kokomi.enableRealisticRender(this.renderer);
 
     const cm = new kokomi.CustomMesh(this, {
       baseMaterial: new THREE.ShaderMaterial(),

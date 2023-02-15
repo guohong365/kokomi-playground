@@ -11,7 +11,7 @@ class Sketch extends kokomi.Base {
 
     new kokomi.OrbitControls(this);
 
-    kokomi.optimizeModelRender(this.renderer);
+    kokomi.beautifyRender(this.renderer);
 
     await kokomi.preloadSDFFont("../../assets/HYWenHei-85W.ttf");
 

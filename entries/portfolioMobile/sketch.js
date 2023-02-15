@@ -15,7 +15,7 @@ class Sketch extends kokomi.Base {
     controls.controls.enableDamping = false;
     // controls.controls.enabled = false;
 
-    kokomi.optimizeModelRender(this.renderer);
+    kokomi.beautifyRender(this.renderer);
 
     await kokomi.preloadSDFFont("../../assets/HYWenHei-85W.ttf");
 

@@ -29,8 +29,7 @@ class Sketch extends kokomi.Base {
     const controls = new kokomi.OrbitControls(this);
     // controls.controls.autoRotate = true;
 
-    kokomi.optimizeModelRender(this.renderer);
-
+    kokomi.beautifyRender(this.renderer);
     this.renderer.toneMappingExposure = 0.8;
 
     const am = new kokomi.AssetManager(
