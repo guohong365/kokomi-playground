@@ -116,10 +116,10 @@ class Rain extends kokomi.Component {
             value: null,
           },
           uRefraction: {
-            value: 0.05,
+            value: 0.1,
           },
           uBaseBrightness: {
-            value: 0.07,
+            value: 0.1,
           },
         },
       },
