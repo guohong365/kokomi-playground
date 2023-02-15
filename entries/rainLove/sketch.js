@@ -54,7 +54,7 @@ class RainFloor extends kokomi.Component {
           value: 0.1,
         },
         uBlurStrength: {
-          value: 6.3,
+          value: 8,
         },
         uMipmapTextureSize: {
           value: new THREE.Vector2(window.innerWidth, window.innerHeight),
