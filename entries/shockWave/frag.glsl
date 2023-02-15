@@ -12,8 +12,10 @@ uniform sampler2D uMatcapTex;
 uniform sampler2D uScanTex;
 uniform vec3 uScanOrigin;
 uniform float uScanSpeed;
-uniform vec3 uScanColor;
+uniform float uScanWaveRatio1;
+uniform float uScanWaveRatio2;
 uniform vec3 uScanColorDark;
+uniform vec3 uScanColor;
 
 // https://ycw.github.io/three-shaderlib-skim/dist/#/latest/matcap/fragment
 vec2 matcap2(vec3 viewPosition,vec3 normal){
@@ -22,6 +24,14 @@ vec2 matcap2(vec3 viewPosition,vec3 normal){
     vec3 y=cross(viewDir,x);
     vec2 uv=vec2(dot(x,normal),dot(y,normal))*.495+.5;
     return uv;
+}
+
+vec2 getScanUv(){
+    vec2 scanUv=fract(vWorldPosition.xz);
+    if(vNormal.y<0.){
+        scanUv=vUv*10.;
+    }
+    return scanUv;
 }
 
 float circleWave(vec3 p,vec3 origin,float distRatio){
@@ -43,18 +53,13 @@ float circleWave(vec3 p,vec3 origin,float distRatio){
     // return cutInitialMask;
 }
 
-vec3 getScanColor(vec3 col){
+vec3 getScanColor(vec3 worldPos,vec2 uv,vec3 col){
     // mask
-    vec2 scanUv=fract(vWorldPosition.xz);
-    if(vNormal.y<0.){
-        scanUv=vUv*10.;
-    }
-    
-    float scanMask=texture(uScanTex,scanUv).r;
+    float scanMask=texture(uScanTex,uv).r;
     
     // waves
-    float cw=circleWave(vWorldPosition,uScanOrigin,.15);
-    float cw2=circleWave(vWorldPosition,uScanOrigin,.13);
+    float cw=circleWave(worldPos,uScanOrigin,uScanWaveRatio1);
+    float cw2=circleWave(worldPos,uScanOrigin,uScanWaveRatio2);
     
     // scan
     float mask1=smoothstep(.3,0.,1.-cw);
@@ -71,7 +76,7 @@ vec3 getScanColor(vec3 col){
     col=mix(col,scanCol,mask1);
     
     return col;
-    // return vWorldPosition;
+    // return worldPos;
     // return scanMask;
     // return vec3(cw);
     // return vec3(mask1);
@@ -85,7 +90,9 @@ void main(){
     vec3 matcapTex=texture(uMatcapTex,matcapP).xyz;
     
     vec3 col=matcapTex;
-    col=getScanColor(col);
+    
+    vec2 scanUv=getScanUv();
+    col=getScanColor(vWorldPosition,scanUv,col);
     
     gl_FragColor=vec4(col,1.);
 }

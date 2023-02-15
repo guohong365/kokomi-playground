@@ -73,11 +73,17 @@ class Sketch extends kokomi.Base {
             uScanSpeed: {
               value: 0.5,
             },
-            uScanColor: {
-              value: new THREE.Color("#00D8FF"),
+            uScanWaveRatio1: {
+              value: 0.15,
+            },
+            uScanWaveRatio2: {
+              value: 0.13,
             },
             uScanColorDark: {
               value: new THREE.Color("#7AFFEF"),
+            },
+            uScanColor: {
+              value: new THREE.Color("#00D8FF"),
             },
           },
         },
