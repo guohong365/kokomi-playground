@@ -47,6 +47,9 @@ class RainFloor extends kokomi.Component {
         uTexScale: {
           value: new THREE.Vector2(1, 4),
         },
+        uTexOffset: {
+          value: new THREE.Vector2(0, 0),
+        },
         uDistortionAmount: {
           value: 0.1,
         },

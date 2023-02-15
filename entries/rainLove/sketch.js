@@ -47,6 +47,9 @@ class RainFloor extends kokomi.Component {
         uTexScale: {
           value: new THREE.Vector2(1, 4),
         },
+        uTexOffset: {
+          value: new THREE.Vector2(1, -0.5),
+        },
         uDistortionAmount: {
           value: 0.1,
         },
@@ -214,6 +217,10 @@ class Sketch extends kokomi.Base {
       },
     };
 
+    // asphalt: https://3dtextures.me/2017/04/05/asphalt-001/
+    // floor: https://3dtextures.me/2019/10/22/ground-wet-002/
+    // rain normal: https://www.shadertoy.com/view/XsfXDr
+    // audio: https://on-jin.com/sound/kan.php
     const am = new kokomi.AssetManager(this, [
       {
         name: "asphalt-normal",
@@ -223,17 +230,17 @@ class Sketch extends kokomi.Base {
       {
         name: "floor-normal",
         type: "texture",
-        path: "https://s2.loli.net/2023/01/31/JfhqtZERnGHQUuo.png",
+        path: "https://s2.loli.net/2023/02/15/GcWBptwDKn8b2dU.jpg",
       },
       {
         name: "floor-opacity",
         type: "texture",
-        path: "https://s2.loli.net/2023/01/31/5zVHumc91IESJhA.jpg",
+        path: "https://s2.loli.net/2023/02/15/E5dajTYIucWL1vy.jpg",
       },
       {
         name: "floor-roughness",
         type: "texture",
-        path: "https://s2.loli.net/2023/01/31/ZIM2rXWJOp76ECV.jpg",
+        path: "https://s2.loli.net/2023/02/15/aWeN6ED4mbpZGLs.jpg",
       },
       {
         name: "rain-normal",
@@ -280,9 +287,6 @@ class Sketch extends kokomi.Base {
 
       const rectLight1Helper = new kokomi.RectAreaLightHelper(rectLight1);
       this.scene.add(rectLight1Helper);
-
-      // const ambiLight = new THREE.AmbientLight("#81C8F2", 2);
-      // this.scene.add(ambiLight);
 
       // wall
       const aspTex = am.items["asphalt-normal"];

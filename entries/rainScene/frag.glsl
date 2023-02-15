@@ -102,6 +102,7 @@ uniform sampler2D uRoughnessTexture;
 uniform sampler2D uNormalTexture;
 uniform sampler2D uOpacityTexture;
 uniform vec2 uTexScale;
+uniform vec2 uTexOffset;
 uniform float uDistortionAmount;
 uniform float uBlurStrength;
 uniform float iTime;
@@ -114,6 +115,7 @@ uniform vec2 uMipmapTextureSize;
 void main(){
     vec2 p=vUv;
     vec2 texUv=p*uTexScale;
+    texUv+=uTexOffset;
     float floorOpacity=texture(uOpacityTexture,texUv).r;
     vec3 floorNormal=texture(uNormalTexture,texUv).rgb*2.-1.;
     floorNormal=normalize(floorNormal);
