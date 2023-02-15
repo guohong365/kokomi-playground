@@ -204,6 +204,7 @@ class Sketch extends kokomi.Base {
 
     // config
     const config = {
+      text: "love",
       color: "#ef77eb",
       rain: {
         count: 1000,
@@ -311,9 +312,7 @@ class Sketch extends kokomi.Base {
       wall3.position.x = 12;
 
       // text
-      const text = "love";
-
-      const t3d = new kokomi.Text3D(this, text, font, {
+      const t3d = new kokomi.Text3D(this, config.text, font, {
         size: 3,
         height: 0.2,
         curveSegments: 120,
