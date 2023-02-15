@@ -20,7 +20,7 @@ class Sketch extends kokomi.Base {
       {
         name: "hdr",
         type: "hdrTexture",
-        path: "../../assets/potsdamer_platz_1k.hdr",
+        path: "https://market-assets.fra1.cdn.digitaloceanspaces.com/market-assets/hdris/potsdamer-platz/potsdamer_platz_1k.hdr",
       },
       // {
       //   name: "matcapTex",
