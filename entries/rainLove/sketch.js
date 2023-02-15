@@ -51,7 +51,7 @@ class RainFloor extends kokomi.Component {
           value: new THREE.Vector2(1, -0.5),
         },
         uDistortionAmount: {
-          value: 0.1,
+          value: 0.25,
         },
         uBlurStrength: {
           value: 8,
