@@ -59,7 +59,8 @@ class Sketch extends kokomi.Base {
           ...uj.shadertoyUniforms,
           ...{
             uOffsetY: {
-              value: 0.4,
+              // value: 0.4,
+              value: 0,
             },
             uMatcapTex: {
               value: matcapTex,
@@ -104,7 +105,12 @@ class Sketch extends kokomi.Base {
       for (let i = 0; i < row; i++) {
         for (let j = 0; j < col; j++) {
           const idx = i * row + j;
-          dummy.position.set(i - row / 2, -10, j - col / 2);
+          // dummy.position.set(i - row / 2, -10, j - col / 2);
+          dummy.position.set(
+            i - row / 2,
+            -10 + THREE.MathUtils.randFloat(-0.5, 0.5),
+            j - col / 2
+          );
           dummy.updateMatrix();
           gridMesh.setMatrixAt(idx, dummy.matrix);
           randomHeightArr.push(THREE.MathUtils.randFloat(-0.5, 0.5));
@@ -120,6 +126,54 @@ class Sketch extends kokomi.Base {
         "aRandom",
         new THREE.InstancedBufferAttribute(new Float32Array(randomArr), 1)
       );
+
+      // postprocessing
+      const createPostprocessing = () => {
+        const composer = new POSTPROCESSING.EffectComposer(this.renderer);
+        composer.addPass(
+          new POSTPROCESSING.RenderPass(this.scene, this.camera)
+        );
+
+        // ssr
+        const ssrEffect = new SSREffect(this.scene, this.camera, {
+          temporalResolve: true,
+          STRETCH_MISSED_RAYS: true,
+          USE_MRT: true,
+          USE_NORMALMAP: true,
+          USE_ROUGHNESSMAP: true,
+          ENABLE_JITTERING: true,
+          ENABLE_BLUR: true,
+          temporalResolveMix: 0.9,
+          temporalResolveCorrectionMix: 0.25,
+          maxSamples: 0,
+          resolutionScale: 1,
+          blurMix: 0.5,
+          blurKernelSize: 8,
+          blurSharpness: 0.5,
+          rayStep: 0.3,
+          intensity: 1,
+          maxRoughness: 0.1,
+          jitter: 0.7,
+          jitterSpread: 0.45,
+          jitterRough: 0.1,
+          roughnessFadeOut: 1,
+          rayFadeOut: 0,
+          MAX_STEPS: 20,
+          NUM_BINARY_SEARCH_STEPS: 5,
+          maxDepthDifference: 3,
+          maxDepth: 1,
+          thickness: 10,
+          ior: 1.45,
+        });
+        const ssrPass = new POSTPROCESSING.EffectPass(this.camera, ssrEffect);
+        composer.addPass(ssrPass);
+
+        gridMat.userData.needsUpdatedReflections = true;
+
+        this.composer = composer;
+      };
+
+      createPostprocessing();
     });
   }
 }
