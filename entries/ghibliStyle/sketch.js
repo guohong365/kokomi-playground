@@ -100,6 +100,14 @@ class Sketch extends kokomi.Base {
         },
       });
 
+      const treeMat2 = treeMat.clone();
+      treeMat2.uniforms.uColors.value = [
+        new THREE.Color("#4a8d7e"),
+        new THREE.Color("#377f6a"),
+        new THREE.Color("#184f52"),
+        new THREE.Color("#143b36"),
+      ];
+
       // const treeGeo = new THREE.TorusKnotGeometry();
       const treeGeo = Foliage.geometry;
 
@@ -112,6 +120,7 @@ class Sketch extends kokomi.Base {
       tree1.position.set(0, 0, -2);
 
       const tree2 = tree.clone();
+      tree2.material = treeMat2;
       this.scene.add(tree2);
       tree2.position.set(0, 0, 4);
 
