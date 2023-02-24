@@ -17,7 +17,7 @@ class Model extends kokomi.Component {
     mesh.geometry = geo;
     mesh.material = mat.material;
     this.group.add(mesh);
-    mesh.scale.setScalar(1 + Math.random());
+    mesh.scale.setScalar(1 + Math.random() * 0.5);
     mesh.rotation.set(
       2 * Math.PI * Math.random(),
       2 * Math.PI * Math.random(),
@@ -161,6 +161,7 @@ class Sketch extends kokomi.Base {
     f3.add(mo7.group);
     f3.add(mo8.group);
 
+    // sparkles
     const sp1 = new kokomi.Sparkles(this, {
       noise: 0,
       speed: 0.01,
