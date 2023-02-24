@@ -83,20 +83,22 @@ class Sketch extends kokomi.Base {
     });
 
     // meshes
+    const g = new THREE.Group();
+    scg.add(g);
 
     // f1
     const mo1 = new Model(this);
-    mo1.container = scg;
+    mo1.container = g;
     mo1.addExisting();
     mo1.group.position.set(0, -2.5, 0);
 
     const mo2 = new Model(this);
-    mo2.container = scg;
+    mo2.container = g;
     mo2.addExisting();
     mo2.group.position.set(-10, -3, -6);
 
     const mo3 = new Model(this);
-    mo3.container = scg;
+    mo3.container = g;
     mo3.addExisting();
     mo3.group.position.set(10, -4, -10);
 
@@ -105,7 +107,7 @@ class Sketch extends kokomi.Base {
       floatIntensity: 0.2,
       floatingRange: [1, 1],
     });
-    f1.container = scg;
+    f1.container = g;
     f1.addExisting();
     f1.add(mo1.group);
     f1.add(mo2.group);
@@ -113,12 +115,12 @@ class Sketch extends kokomi.Base {
 
     // f2
     const mo4 = new Model(this);
-    mo4.container = scg;
+    mo4.container = g;
     mo4.addExisting();
     mo4.group.position.set(-1, -12.5, 0);
 
     const mo5 = new Model(this);
-    mo5.container = scg;
+    mo5.container = g;
     mo5.addExisting();
     mo5.group.position.set(12, -14, -10);
 
@@ -127,24 +129,24 @@ class Sketch extends kokomi.Base {
       floatIntensity: 0.2,
       floatingRange: [1, 1],
     });
-    f2.container = scg;
+    f2.container = g;
     f2.addExisting();
     f2.add(mo4.group);
     f2.add(mo5.group);
 
     // f3
     const mo6 = new Model(this);
-    mo6.container = scg;
+    mo6.container = g;
     mo6.addExisting();
     mo6.group.position.set(-3, -19.5, 2);
 
     const mo7 = new Model(this);
-    mo7.container = scg;
+    mo7.container = g;
     mo7.addExisting();
     mo7.group.position.set(8, -23, -10);
 
     const mo8 = new Model(this);
-    mo8.container = scg;
+    mo8.container = g;
     mo8.addExisting();
     mo8.group.position.set(4, -24, 2);
 
@@ -153,7 +155,7 @@ class Sketch extends kokomi.Base {
       floatIntensity: 0.2,
       floatingRange: [1, 1],
     });
-    f3.container = scg;
+    f3.container = g;
     f3.addExisting();
     f3.add(mo6.group);
     f3.add(mo7.group);
