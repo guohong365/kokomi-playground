@@ -17,6 +17,7 @@ class Model extends kokomi.Component {
     mesh.geometry = geo;
     mesh.material = mat.material;
     this.group.add(mesh);
+    mesh.scale.setScalar(1 + Math.random());
     mesh.rotation.set(
       2 * Math.PI * Math.random(),
       2 * Math.PI * Math.random(),
