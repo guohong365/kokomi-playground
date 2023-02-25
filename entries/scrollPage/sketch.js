@@ -45,7 +45,7 @@ class Sketch extends kokomi.Base {
   create() {
     this.camera.position.set(0, 0, 5);
 
-    new kokomi.OrbitControls(this);
+    // new kokomi.OrbitControls(this);
 
     kokomi.beautifyRender(this.renderer);
 
