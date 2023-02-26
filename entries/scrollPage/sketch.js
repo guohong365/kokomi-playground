@@ -49,8 +49,6 @@ class Sketch extends kokomi.Base {
 
     kokomi.beautifyRender(this.renderer);
 
-    this.renderer.toneMapping = THREE.NoToneMapping;
-
     this.scene.background = new THREE.Color("#000000");
 
     const am = new kokomi.AssetManager(
