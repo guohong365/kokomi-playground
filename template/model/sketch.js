@@ -5,7 +5,7 @@ import * as dat from "lil-gui";
 
 class Sketch extends kokomi.Base {
   create() {
-    this.camera.position.set(0, 0, 1);
+    this.camera.position.set(0, 0, 1.2);
 
     new kokomi.OrbitControls(this);
 
@@ -48,6 +48,10 @@ class Sketch extends kokomi.Base {
 
       const modelParts = kokomi.flatModel(model.scene);
       kokomi.printModel(modelParts);
+
+      const stage = new kokomi.Stage(this);
+      stage.addExisting();
+      stage.add(model.scene);
     });
   }
 }
