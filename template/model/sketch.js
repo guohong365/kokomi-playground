@@ -5,9 +5,12 @@ import * as dat from "lil-gui";
 
 class Sketch extends kokomi.Base {
   create() {
-    this.camera.position.set(0, 0, 1.2);
+    this.camera.position.set(0, 0, 2);
+    this.camera.fov = 50;
+    this.camera.updateProjectionMatrix();
 
-    new kokomi.OrbitControls(this);
+    const controls = new kokomi.OrbitControls(this);
+    controls.controls.autoRotate = true;
 
     kokomi.beautifyRender(this.renderer);
 
@@ -42,6 +45,9 @@ class Sketch extends kokomi.Base {
 
       this.scene.environment = envMap;
 
+      const stage = new kokomi.Stage(this);
+      stage.addExisting();
+
       const model = am.items["model"];
 
       this.scene.add(model.scene);
@@ -49,8 +55,6 @@ class Sketch extends kokomi.Base {
       const modelParts = kokomi.flatModel(model.scene);
       kokomi.printModel(modelParts);
 
-      const stage = new kokomi.Stage(this);
-      stage.addExisting();
       stage.add(model.scene);
     });
   }
