@@ -5,9 +5,7 @@ import * as dat from "lil-gui";
 
 class Sketch extends kokomi.Base {
   create() {
-    this.camera.position.set(0, 0, 2);
-    this.camera.fov = 50;
-    this.camera.updateProjectionMatrix();
+    this.camera.position.set(0, 0, 5);
 
     const controls = new kokomi.OrbitControls(this);
     controls.controls.autoRotate = true;
@@ -27,7 +25,7 @@ class Sketch extends kokomi.Base {
         {
           name: "model",
           type: "gltfModel",
-          path: "../../assets/apple_iphone_13_pro_max.glb",
+          path: "https://vazxmixjsiawhamofees.supabase.co/storage/v1/object/public/models/macbook/model.gltf",
         },
       ],
       {
@@ -49,8 +47,6 @@ class Sketch extends kokomi.Base {
       stage.addExisting();
 
       const model = am.items["model"];
-
-      this.scene.add(model.scene);
 
       const modelParts = kokomi.flatModel(model.scene);
       kokomi.printModel(modelParts);
