@@ -6,7 +6,9 @@ import * as POSTPROCESSING from "postprocessing";
 
 class Sketch extends kokomi.Base {
   create() {
-    this.camera.position.set(0, 0, 5);
+    this.camera.position.set(0, 0.2, 5);
+    this.camera.fov = 50;
+    this.camera.updateProjectionMatrix();
 
     const controls = new kokomi.OrbitControls(this);
 
