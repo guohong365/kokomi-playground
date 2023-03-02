@@ -218,7 +218,10 @@ class Sketch extends kokomi.Base {
       const createPostprocessing = () => {
         // this.scene.background = new THREE.Color("#0a0a0a");
 
-        const composer = new POSTPROCESSING.EffectComposer(this.renderer);
+        const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
+          frameBufferType: THREE.HalfFloatType,
+          multisampling: 8,
+        });
         composer.addPass(
           new POSTPROCESSING.RenderPass(this.scene, this.camera)
         );

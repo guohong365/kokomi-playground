@@ -377,7 +377,10 @@ class Sketch extends kokomi.Base {
       flicker();
 
       // postprocessing
-      const composer = new POSTPROCESSING.EffectComposer(this.renderer);
+      const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
+        frameBufferType: THREE.HalfFloatType,
+        multisampling: 8,
+      });
       this.composer = composer;
 
       composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
