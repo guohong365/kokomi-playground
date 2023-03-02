@@ -12,8 +12,6 @@ class Sketch extends kokomi.Base {
 
     kokomi.beautifyRender(this.renderer);
 
-    this.renderer.physicallyCorrectLights = false;
-
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
