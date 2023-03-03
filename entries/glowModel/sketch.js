@@ -96,10 +96,12 @@ class Sketch extends kokomi.Base {
         averageLuminance: 1,
         adaptationRate: 1,
       });
+      const smaa = new POSTPROCESSING.SMAAEffect();
       const effectPass = new POSTPROCESSING.EffectPass(
         this.camera,
         bloom,
-        toneMapping
+        toneMapping,
+        smaa
       );
       effectPass.renderToScreen = true;
       composer.addPass(effectPass);
