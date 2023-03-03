@@ -73,40 +73,46 @@ class Sketch extends kokomi.Base {
       model.scene.rotation.y = THREE.MathUtils.degToRad(150);
 
       // postprocessing
-      this.scene.background = this.scene.background.convertSRGBToLinear();
+      const createPostprocessing = () => {
+        this.scene.background = this.scene.background.convertSRGBToLinear();
 
-      const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
-        frameBufferType: THREE.HalfFloatType,
-        multisampling: 8,
-      });
-      this.composer = composer;
+        const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
+          frameBufferType: THREE.HalfFloatType,
+          multisampling: 8,
+        });
+        this.composer = composer;
 
-      composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
+        composer.addPass(
+          new POSTPROCESSING.RenderPass(this.scene, this.camera)
+        );
 
-      const bloom = new POSTPROCESSING.BloomEffect({
-        blendFunction: POSTPROCESSING.BlendFunction.ADD,
-        mipmapBlur: true,
-        luminanceThreshold: 1,
-      });
-      const toneMapping = new POSTPROCESSING.ToneMappingEffect({
-        adaptive: true,
-        resolution: 256,
-        middleGrey: 0.4,
-        maxLuminance: 16,
-        averageLuminance: 1,
-        adaptationRate: 1,
-      });
-      const smaa = new POSTPROCESSING.SMAAEffect();
-      const effectPass = new POSTPROCESSING.EffectPass(
-        this.camera,
-        bloom,
-        toneMapping,
-        smaa
-      );
-      effectPass.renderToScreen = true;
-      composer.addPass(effectPass);
+        const bloom = new POSTPROCESSING.BloomEffect({
+          blendFunction: POSTPROCESSING.BlendFunction.ADD,
+          mipmapBlur: true,
+          luminanceThreshold: 1,
+        });
+        const toneMapping = new POSTPROCESSING.ToneMappingEffect({
+          adaptive: true,
+          resolution: 256,
+          middleGrey: 0.4,
+          maxLuminance: 16,
+          averageLuminance: 1,
+          adaptationRate: 1,
+        });
+        const smaa = new POSTPROCESSING.SMAAEffect();
+        const effectPass = new POSTPROCESSING.EffectPass(
+          this.camera,
+          bloom,
+          toneMapping,
+          smaa
+        );
+        effectPass.renderToScreen = true;
+        composer.addPass(effectPass);
 
-      this.renderer.autoClear = true;
+        this.renderer.autoClear = true;
+      };
+
+      createPostprocessing();
     });
   }
 }
