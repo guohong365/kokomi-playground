@@ -61,11 +61,14 @@ class Sketch extends kokomi.Base {
 
       stage.add(model.scene);
 
-      // emissive
       modelParts.forEach((item) => {
         if (item.material) {
+          // emissive
           item.material.toneMapped = false;
           item.material.emissiveIntensity = 10;
+
+          // envmap
+          item.material.envMapIntensity = 0.5;
         }
       });
 
