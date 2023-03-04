@@ -17,7 +17,7 @@ class Sketch extends kokomi.Base {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    this.scene.background = new THREE.Color("#252530");
+    this.scene.background = new THREE.Color("#0b0b11");
 
     const am = new kokomi.AssetManager(
       this,
@@ -91,19 +91,10 @@ class Sketch extends kokomi.Base {
           mipmapBlur: true,
           luminanceThreshold: 1,
         });
-        const toneMapping = new POSTPROCESSING.ToneMappingEffect({
-          adaptive: true,
-          resolution: 256,
-          middleGrey: 0.4,
-          maxLuminance: 16,
-          averageLuminance: 1,
-          adaptationRate: 1,
-        });
         const smaa = new POSTPROCESSING.SMAAEffect();
         const effectPass = new POSTPROCESSING.EffectPass(
           this.camera,
           bloom,
-          toneMapping,
           smaa
         );
         effectPass.renderToScreen = true;
