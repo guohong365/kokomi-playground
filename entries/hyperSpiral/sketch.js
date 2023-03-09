@@ -43,8 +43,7 @@ class Sketch extends kokomi.Base {
     });
 
     // env
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    kokomi.enableShadow(this.renderer);
 
     const dirLight = new THREE.DirectionalLight(new THREE.Color("#ffffff"), 3);
     dirLight.position.set(1, 1, 1);

@@ -14,8 +14,7 @@ class Sketch extends kokomi.Base {
 
     kokomi.beautifyRender(this.renderer);
 
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    kokomi.enableShadow(this.renderer);
 
     this.scene.background = new THREE.Color("#0b0b11");
 

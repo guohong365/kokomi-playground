@@ -7,8 +7,7 @@ class Sketch extends kokomi.Base {
   create() {
     this.camera.position.set(0, 1, 1.5);
 
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    kokomi.enableShadow(this.renderer);
 
     new kokomi.OrbitControls(this);
 
