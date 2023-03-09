@@ -8,7 +8,7 @@ powered by kokomi.js
 
 2. 以`template`目录作为模板
 
-3. 编写`sketch.js`
+3. 编写`sketch.js`和`glsl`文件
 
 4. 用`http-server`或[vscode 的 Live Preview 插件](https://marketplace.visualstudio.com/items?itemName=ms-vscode.live-server)即可预览效果
 
