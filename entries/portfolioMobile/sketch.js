@@ -19,6 +19,7 @@ class Sketch extends kokomi.Base {
 
     await kokomi.preloadSDFFont("../../assets/HYWenHei-85W.ttf");
 
+    // model: https://sketchfab.com/3d-models/apple-iphone-13-pro-max-4328dea00e47497dbeac73c556121bc9
     const am = new kokomi.AssetManager(
       this,
       [

@@ -18,6 +18,7 @@ class Sketch extends kokomi.Base {
 
     this.scene.background = new THREE.Color("#0b0b11");
 
+    // model: https://sketchfab.com/3d-models/cyberpunk-car-b4301ff99d214d16a7a43708a5866bf0
     const am = new kokomi.AssetManager(
       this,
       [

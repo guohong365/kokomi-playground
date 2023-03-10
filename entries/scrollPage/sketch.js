@@ -51,6 +51,7 @@ class Sketch extends kokomi.Base {
 
     this.scene.background = new THREE.Color("#000000");
 
+    // model: https://sketchfab.com/3d-models/butterfly-bb7a9781c2674e59a0f335fb8efb77d3
     const am = new kokomi.AssetManager(
       this,
       [
