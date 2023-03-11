@@ -95,15 +95,7 @@ class Sketch extends kokomi.Base {
           luminanceThreshold: 1,
         });
         const smaa = new POSTPROCESSING.SMAAEffect();
-        const effectPass = new POSTPROCESSING.EffectPass(
-          this.camera,
-          bloom,
-          smaa
-        );
-        composer.addPass(effectPass);
-
-        // ssr
-        const ssrEffect = new SSREffect(this.scene, this.camera, {
+        const ssr = new SSREffect(this.scene, this.camera, {
           temporalResolve: true,
           STRETCH_MISSED_RAYS: true,
           USE_MRT: true,
@@ -133,8 +125,14 @@ class Sketch extends kokomi.Base {
           thickness: 10,
           ior: 1.45,
         });
-        const ssrPass = new POSTPROCESSING.EffectPass(this.camera, ssrEffect);
-        composer.addPass(ssrPass);
+
+        const effectPass = new POSTPROCESSING.EffectPass(
+          this.camera,
+          bloom,
+          smaa,
+          ssr
+        );
+        composer.addPass(effectPass);
 
         this.renderer.autoClear = true;
       };
