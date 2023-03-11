@@ -228,7 +228,7 @@ class Sketch extends kokomi.Base {
     });
     gui
       .add(params, "glowColorStrength")
-      .min(0)
+      .min(0.01)
       .max(1)
       .step(0.01)
       .onChange((val) => {
