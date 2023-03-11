@@ -175,8 +175,6 @@ class Sketch extends kokomi.Base {
         composer.addPass(effectPass);
 
         this.renderer.autoClear = true;
-
-        gridMat.userData.needsUpdatedReflections = true;
       };
 
       createPostprocessing();
