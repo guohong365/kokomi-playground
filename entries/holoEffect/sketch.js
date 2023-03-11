@@ -170,33 +170,39 @@ class Sketch extends kokomi.Base {
       });
 
       // postprocessing
-      this.scene.background = new THREE.Color("#000000");
+      const createPostprocessing = () => {
+        this.scene.background = new THREE.Color("#000000");
 
-      const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
-        frameBufferType: THREE.HalfFloatType,
-        multisampling: 8,
-      });
-      this.composer = composer;
+        const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
+          frameBufferType: THREE.HalfFloatType,
+          multisampling: 8,
+        });
+        this.composer = composer;
 
-      composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
+        composer.addPass(
+          new POSTPROCESSING.RenderPass(this.scene, this.camera)
+        );
 
-      // bloom
-      const bloom = new POSTPROCESSING.BloomEffect({
-        blendFunction: POSTPROCESSING.BlendFunction.ADD,
-        luminanceThreshold: 0.05,
-        luminanceSmoothing: 0,
-        mipmapBlur: true,
-        intensity: 3,
-        radius: 0.4,
-      });
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
+        // bloom
+        const bloom = new POSTPROCESSING.BloomEffect({
+          blendFunction: POSTPROCESSING.BlendFunction.ADD,
+          luminanceThreshold: 0.05,
+          luminanceSmoothing: 0,
+          mipmapBlur: true,
+          intensity: 3,
+          radius: 0.4,
+        });
+        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
 
-      // holo
-      const holo = new HoloEffect({
-        progress: 0,
-      });
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
-      this.holo = holo;
+        // holo
+        const holo = new HoloEffect({
+          progress: 0,
+        });
+        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
+        this.holo = holo;
+      };
+
+      createPostprocessing();
 
       this.createDebug();
     });
