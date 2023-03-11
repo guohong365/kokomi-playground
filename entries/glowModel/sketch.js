@@ -131,8 +131,8 @@ class Sketch extends kokomi.Base {
         const effectPass = new POSTPROCESSING.EffectPass(
           this.camera,
           bloom,
-          smaa,
-          ssr
+          ssr,
+          smaa
         );
         composer.addPass(effectPass);
 
