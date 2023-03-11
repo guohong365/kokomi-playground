@@ -198,8 +198,8 @@ class Sketch extends kokomi.Base {
         const holo = new HoloEffect({
           progress: 0,
         });
-        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
         this.holo = holo;
+        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
 
         this.renderer.autoClear = true;
 
