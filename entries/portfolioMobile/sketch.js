@@ -82,10 +82,6 @@ class Sketch extends kokomi.Base {
       cs.addExisting();
       cs.group.position.y = -0.1;
 
-      this.update(() => {
-        this.renderer.autoClear = true;
-      });
-
       // model screen
       const modelParts = kokomi.flatModel(model.scene);
       kokomi.printModel(modelParts);
@@ -223,62 +219,66 @@ class Sketch extends kokomi.Base {
           frameBufferType: THREE.HalfFloatType,
           multisampling: 8,
         });
+        this.composer = composer;
+
         composer.addPass(
           new POSTPROCESSING.RenderPass(this.scene, this.camera)
         );
 
-        // bloom
         const bloom = new POSTPROCESSING.BloomEffect({
+          blendFunction: POSTPROCESSING.BlendFunction.ADD,
           luminanceThreshold: 0.2,
           mipmapBlur: true,
           luminanceSmoothing: 0,
           intensity: 1,
         });
-        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
 
-        // dof
         const dof = new POSTPROCESSING.DepthOfFieldEffect(this.camera, {
           focusDistance: 0.025,
           focalLength: 0.025,
           bokehScale: 1,
         });
-        composer.addPass(new POSTPROCESSING.EffectPass(this.camera, dof));
 
-        // ssr
-        // const ssrEffect = new SSREffect(this.scene, this.camera, {
-        //   temporalResolve: true,
-        //   STRETCH_MISSED_RAYS: true,
-        //   USE_MRT: true,
-        //   USE_NORMALMAP: true,
-        //   USE_ROUGHNESSMAP: true,
-        //   ENABLE_JITTERING: true,
-        //   ENABLE_BLUR: true,
-        //   temporalResolveMix: 0.9,
-        //   temporalResolveCorrectionMix: 0.25,
-        //   maxSamples: 0,
-        //   resolutionScale: 1,
-        //   blurMix: 0.5,
-        //   blurKernelSize: 8,
-        //   blurSharpness: 0.5,
-        //   rayStep: 0.3,
-        //   intensity: 1,
-        //   maxRoughness: 0.1,
-        //   jitter: 0.7,
-        //   jitterSpread: 0.45,
-        //   jitterRough: 0.1,
-        //   roughnessFadeOut: 1,
-        //   rayFadeOut: 0,
-        //   MAX_STEPS: 20,
-        //   NUM_BINARY_SEARCH_STEPS: 5,
-        //   maxDepthDifference: 3,
-        //   maxDepth: 1,
-        //   thickness: 10,
-        //   ior: 1.45,
-        // });
-        // const ssrPass = new POSTPROCESSING.EffectPass(this.camera, ssrEffect);
-        // composer.addPass(ssrPass);
+        const ssr = new SSREffect(this.scene, this.camera, {
+          temporalResolve: true,
+          STRETCH_MISSED_RAYS: true,
+          USE_MRT: true,
+          USE_NORMALMAP: true,
+          USE_ROUGHNESSMAP: true,
+          ENABLE_JITTERING: true,
+          ENABLE_BLUR: true,
+          temporalResolveMix: 0.9,
+          temporalResolveCorrectionMix: 0.25,
+          maxSamples: 0,
+          resolutionScale: 1,
+          blurMix: 0.5,
+          blurKernelSize: 8,
+          blurSharpness: 0.5,
+          rayStep: 0.3,
+          intensity: 1,
+          maxRoughness: 0.1,
+          jitter: 0.7,
+          jitterSpread: 0.45,
+          jitterRough: 0.1,
+          roughnessFadeOut: 1,
+          rayFadeOut: 0,
+          MAX_STEPS: 20,
+          NUM_BINARY_SEARCH_STEPS: 5,
+          maxDepthDifference: 3,
+          maxDepth: 1,
+          thickness: 10,
+          ior: 1.45,
+        });
 
-        this.composer = composer;
+        const effectPass = new POSTPROCESSING.EffectPass(
+          this.camera,
+          bloom,
+          dof
+          // ssr
+        );
+        composer.addPass(effectPass);
+
+        this.renderer.autoClear = true;
       };
 
       createPostprocessing();

@@ -94,7 +94,9 @@ class Sketch extends kokomi.Base {
           mipmapBlur: true,
           luminanceThreshold: 1,
         });
+
         const smaa = new POSTPROCESSING.SMAAEffect();
+
         const ssr = new SSREffect(this.scene, this.camera, {
           temporalResolve: true,
           STRETCH_MISSED_RAYS: true,

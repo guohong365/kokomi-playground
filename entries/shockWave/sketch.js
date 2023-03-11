@@ -134,12 +134,13 @@ class Sketch extends kokomi.Base {
           frameBufferType: THREE.HalfFloatType,
           multisampling: 8,
         });
+        this.composer = composer;
+
         composer.addPass(
           new POSTPROCESSING.RenderPass(this.scene, this.camera)
         );
 
-        // ssr
-        const ssrEffect = new SSREffect(this.scene, this.camera, {
+        const ssr = new SSREffect(this.scene, this.camera, {
           temporalResolve: true,
           STRETCH_MISSED_RAYS: true,
           USE_MRT: true,
@@ -169,12 +170,13 @@ class Sketch extends kokomi.Base {
           thickness: 10,
           ior: 1.45,
         });
-        const ssrPass = new POSTPROCESSING.EffectPass(this.camera, ssrEffect);
-        composer.addPass(ssrPass);
+
+        const effectPass = new POSTPROCESSING.EffectPass(this.camera, ssr);
+        composer.addPass(effectPass);
+
+        this.renderer.autoClear = true;
 
         gridMat.userData.needsUpdatedReflections = true;
-
-        this.composer = composer;
       };
 
       createPostprocessing();

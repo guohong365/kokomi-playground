@@ -182,6 +182,7 @@ class Sketch extends kokomi.Base {
 
       // bloom
       const bloom = new POSTPROCESSING.BloomEffect({
+        blendFunction: POSTPROCESSING.BlendFunction.ADD,
         luminanceThreshold: 0.05,
         luminanceSmoothing: 0,
         mipmapBlur: true,

@@ -229,37 +229,48 @@ class Sketch extends kokomi.Base {
       sp2.addExisting();
 
       // postprocessing
-      const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
-        frameBufferType: THREE.HalfFloatType,
-        multisampling: 8,
-      });
-      this.composer = composer;
+      const createPostprocessing = () => {
+        const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
+          frameBufferType: THREE.HalfFloatType,
+          multisampling: 8,
+        });
+        this.composer = composer;
 
-      composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
+        composer.addPass(
+          new POSTPROCESSING.RenderPass(this.scene, this.camera)
+        );
 
-      // dof
-      const dof = new POSTPROCESSING.DepthOfFieldEffect(this.camera, {
-        focusDistance: 0,
-        focalLength: 0.02,
-        bokehScale: 3,
-      });
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, dof));
+        const dof = new POSTPROCESSING.DepthOfFieldEffect(this.camera, {
+          focusDistance: 0,
+          focalLength: 0.02,
+          bokehScale: 3,
+        });
 
-      // bloom
-      const bloom = new POSTPROCESSING.BloomEffect({
-        luminanceThreshold: 0.1,
-        luminanceSmoothing: 0.9,
-        // mipmapBlur: true,
-        intensity: 2,
-      });
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
+        const bloom = new POSTPROCESSING.BloomEffect({
+          blendFunction: POSTPROCESSING.BlendFunction.ADD,
+          luminanceThreshold: 0.1,
+          luminanceSmoothing: 0.9,
+          // mipmapBlur: true,
+          intensity: 2,
+        });
 
-      // vignette
-      const vig = new POSTPROCESSING.VignetteEffect({
-        offset: 0.1,
-        darkness: 1.5,
-      });
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, vig));
+        const vig = new POSTPROCESSING.VignetteEffect({
+          offset: 0.1,
+          darkness: 1.5,
+        });
+
+        const effectPass = new POSTPROCESSING.EffectPass(
+          this.camera,
+          dof,
+          bloom,
+          vig
+        );
+        composer.addPass(effectPass);
+
+        this.renderer.autoClear = true;
+      };
+
+      createPostprocessing();
     });
   }
 }

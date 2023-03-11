@@ -377,27 +377,39 @@ class Sketch extends kokomi.Base {
       flicker();
 
       // postprocessing
-      const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
-        frameBufferType: THREE.HalfFloatType,
-        multisampling: 8,
-      });
-      this.composer = composer;
+      const createPostprocessing = () => {
+        const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
+          frameBufferType: THREE.HalfFloatType,
+          multisampling: 8,
+        });
+        this.composer = composer;
 
-      composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
+        composer.addPass(
+          new POSTPROCESSING.RenderPass(this.scene, this.camera)
+        );
 
-      // bloom
-      const bloom = new POSTPROCESSING.BloomEffect({
-        luminanceThreshold: 0.4,
-        luminanceSmoothing: 0,
-        mipmapBlur: true,
-        intensity: 2,
-        radius: 0.4,
-      });
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
+        const bloom = new POSTPROCESSING.BloomEffect({
+          blendFunction: POSTPROCESSING.BlendFunction.ADD,
+          luminanceThreshold: 0.4,
+          luminanceSmoothing: 0,
+          mipmapBlur: true,
+          intensity: 2,
+          radius: 0.4,
+        });
 
-      // antialiasing
-      const smaa = new POSTPROCESSING.SMAAEffect();
-      composer.addPass(new POSTPROCESSING.EffectPass(this.camera, smaa));
+        const smaa = new POSTPROCESSING.SMAAEffect();
+
+        const effectPass = new POSTPROCESSING.EffectPass(
+          this.camera,
+          bloom,
+          smaa
+        );
+        composer.addPass(effectPass);
+
+        this.renderer.autoClear = true;
+      };
+
+      createPostprocessing();
     });
   }
 }
