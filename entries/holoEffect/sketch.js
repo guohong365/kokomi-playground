@@ -183,7 +183,6 @@ class Sketch extends kokomi.Base {
           new POSTPROCESSING.RenderPass(this.scene, this.camera)
         );
 
-        // bloom
         const bloom = new POSTPROCESSING.BloomEffect({
           blendFunction: POSTPROCESSING.BlendFunction.ADD,
           luminanceThreshold: 0.05,
@@ -194,7 +193,6 @@ class Sketch extends kokomi.Base {
         });
         composer.addPass(new POSTPROCESSING.EffectPass(this.camera, bloom));
 
-        // holo
         const holo = new HoloEffect({
           progress: 0,
         });
