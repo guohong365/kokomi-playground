@@ -200,11 +200,13 @@ class Sketch extends kokomi.Base {
         });
         composer.addPass(new POSTPROCESSING.EffectPass(this.camera, holo));
         this.holo = holo;
+
+        this.renderer.autoClear = true;
+
+        this.createDebug();
       };
 
       createPostprocessing();
-
-      this.createDebug();
     });
   }
   createDebug() {
