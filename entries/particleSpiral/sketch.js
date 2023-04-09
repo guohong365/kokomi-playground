@@ -113,8 +113,6 @@ class Sketch extends kokomi.Base {
     g.add(ps.cm);
     g.rotation.x = THREE.MathUtils.degToRad(-60);
 
-    ps.show();
-
     // postprocessing
     const createPostprocessing = () => {
       const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
@@ -148,6 +146,30 @@ class Sketch extends kokomi.Base {
     createPostprocessing();
 
     // this.createDebug();
+
+    const start = async () => {
+      gsap.to(".core", {
+        scale: 1.5,
+        repeat: 6,
+        yoyo: true,
+        ease: "none",
+        duration: 0.2,
+        async onComplete() {
+          gsap.to(".core", {
+            display: "none",
+          });
+          ps.show();
+          await kokomi.sleep(1500);
+          gsap.to(".title-text", {
+            opacity: 1,
+            duration: 1,
+            ease: "none",
+          });
+        },
+      });
+    };
+
+    start();
   }
   createDebug() {
     const config = this.config;
