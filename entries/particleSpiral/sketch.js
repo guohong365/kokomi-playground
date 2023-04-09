@@ -85,7 +85,7 @@ class Sketch extends kokomi.Base {
     this.camera.fov = 60;
     this.camera.updateProjectionMatrix();
 
-    new kokomi.OrbitControls(this);
+    // new kokomi.OrbitControls(this);
 
     const ps = new ParticleSpiral(this, config.spiral);
     this.ps = ps;
