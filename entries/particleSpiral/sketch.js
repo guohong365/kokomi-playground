@@ -134,7 +134,12 @@ class Sketch extends kokomi.Base {
         radius: 0.4,
       });
 
-      const effectPass = new POSTPROCESSING.EffectPass(this.camera, bloom);
+      const vig = new POSTPROCESSING.VignetteEffect({
+        offset: 0.1,
+        darkness: 0.8,
+      });
+
+      const effectPass = new POSTPROCESSING.EffectPass(this.camera, bloom, vig);
       composer.addPass(effectPass);
 
       this.renderer.autoClear = true;
