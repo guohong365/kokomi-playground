@@ -23,6 +23,13 @@ class ParticleSpiral extends kokomi.Component {
       arr[axis.z] = i / totalPointCount;
     });
 
+    const randBuffer = kokomi.makeBuffer(
+      totalPointCount,
+      () => Math.random(),
+      4
+    );
+    geometry.setAttribute("aRandom", new THREE.BufferAttribute(randBuffer, 4));
+
     const uj = new kokomi.UniformInjector(this.base);
     this.uj = uj;
 
@@ -47,6 +54,9 @@ class ParticleSpiral extends kokomi.Component {
           uColor2: {
             value: new THREE.Color(uniforms.color2),
           },
+          uProgress: {
+            value: uniforms.progress,
+          },
         },
       },
     });
@@ -62,6 +72,12 @@ class ParticleSpiral extends kokomi.Component {
       this.uj.injectShadertoyUniforms(this.cm.material.uniforms);
     }
   }
+  show() {
+    gsap.to(this.cm.material.uniforms.uProgress, {
+      value: 1,
+      duration: 3,
+    });
+  }
 }
 
 class Sketch extends kokomi.Base {
@@ -74,6 +90,7 @@ class Sketch extends kokomi.Base {
         uniforms: {
           color: "#66CCFF",
           color2: "#CB17CF",
+          progress: 0,
         },
       },
     };
@@ -95,6 +112,8 @@ class Sketch extends kokomi.Base {
     this.scene.add(g);
     g.add(ps.cm);
     g.rotation.x = THREE.MathUtils.degToRad(-60);
+
+    ps.show();
 
     // postprocessing
     const createPostprocessing = () => {
@@ -139,5 +158,13 @@ class Sketch extends kokomi.Base {
     gui.addColor(config.spiral.uniforms, "color2").onChange((val) => {
       mat.uniforms.uColor2.value = new THREE.Color(val);
     });
+    gui
+      .add(config.spiral.uniforms, "progress")
+      .min(0)
+      .max(1)
+      .step(0.01)
+      .onChange((val) => {
+        mat.uniforms.uProgress.value = val;
+      });
   }
 }
