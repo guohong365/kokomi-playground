@@ -3,23 +3,23 @@ import * as THREE from "three";
 import gsap from "gsap";
 import * as dat from "lil-gui";
 
-const resourceList = [
-  {
-    name: "cubemap",
-    type: "cubeTexture",
-    path: [
-      "https://s2.loli.net/2022/11/02/AdySfoqhV8W5Fgr.png",
-      "https://s2.loli.net/2022/11/02/raZmYvN5kC8gVdu.png",
-      "https://s2.loli.net/2022/11/02/jhUc8kHMIxBwKSR.png",
-      "https://s2.loli.net/2022/11/02/Dk6grUanARNLpOM.png",
-      "https://s2.loli.net/2022/11/02/CwBdbtuMoQmKcjq.png",
-      "https://s2.loli.net/2022/11/02/SrZMC3bDAd7xJwj.png",
-    ],
-  },
-];
-
 class Sketch extends kokomi.Base {
   create() {
+    const resourceList = [
+      {
+        name: "cubemap",
+        type: "cubeTexture",
+        path: [
+          "https://s2.loli.net/2022/11/02/AdySfoqhV8W5Fgr.png",
+          "https://s2.loli.net/2022/11/02/raZmYvN5kC8gVdu.png",
+          "https://s2.loli.net/2022/11/02/jhUc8kHMIxBwKSR.png",
+          "https://s2.loli.net/2022/11/02/Dk6grUanARNLpOM.png",
+          "https://s2.loli.net/2022/11/02/CwBdbtuMoQmKcjq.png",
+          "https://s2.loli.net/2022/11/02/SrZMC3bDAd7xJwj.png",
+        ],
+      },
+    ];
+
     const am = new kokomi.AssetManager(this, resourceList);
     am.on("ready", () => {
       this.camera.position.set(0, 0, 2);
