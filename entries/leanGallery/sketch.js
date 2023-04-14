@@ -21,6 +21,9 @@ class Sketch extends kokomi.Base {
           value: 0,
         },
       },
+      materialParams: {
+        transparent: true,
+      },
     });
     await gallary.addExisting();
 
