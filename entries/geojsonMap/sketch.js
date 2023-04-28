@@ -1,0 +1,180 @@
+import * as kokomi from "kokomi.js";
+import * as THREE from "three";
+import gsap from "gsap";
+import * as dat from "lil-gui";
+import * as d3 from "d3";
+import * as POSTPROCESSING from "postprocessing";
+
+class Sketch extends kokomi.Base {
+  async create() {
+    const config = {
+      map: {
+        coord: {
+          lng: 120.619585,
+          lat: 31.299379,
+        },
+        depth: 2,
+        lineDepth: 0.1,
+        color: "#175ed9",
+        color2: "#479676",
+        depthColor: "#1c51ac",
+        edgeColor: "#40c0f3",
+      },
+    };
+
+    this.camera.position.set(0, 0, 75);
+    this.camera.near = 0.1;
+    this.camera.far = 1000;
+    this.camera.fov = 50;
+    this.camera.updateProjectionMatrix();
+
+    new kokomi.OrbitControls(this);
+
+    const materialMap = new THREE.MeshPhysicalMaterial({
+      side: THREE.DoubleSide,
+      color: config.map.color,
+      metalness: 0.3,
+      roughness: 0.5,
+    });
+    const materialDepth = new THREE.MeshPhysicalMaterial({
+      side: THREE.DoubleSide,
+      color: config.map.depthColor,
+    });
+
+    const g = new THREE.Group();
+    this.scene.add(g);
+
+    g.rotation.x = THREE.MathUtils.degToRad(-45);
+
+    const geojson = JSON.parse(
+      await new THREE.FileLoader().loadAsync("../../assets/suzhou.json")
+    );
+
+    const projection = d3
+      .geoMercator()
+      .center([config.map.coord.lng, config.map.coord.lat])
+      .scale(2400)
+      .translate([0, 0]);
+
+    const map = new THREE.Group();
+    this.scene.add(map);
+    g.add(map);
+    const cities = geojson["features"];
+    const selections = [];
+    cities.forEach((item, j) => {
+      const city = new THREE.Group();
+      map.add(city);
+
+      const offset = j / cities.length;
+      city.position.z = -offset;
+
+      const coordinates = item.geometry.coordinates;
+
+      coordinates.forEach((multiPolygon) => {
+        multiPolygon.forEach((polygon) => {
+          const shape = new THREE.Shape();
+
+          const vertices = [];
+
+          for (let i = 0; i < polygon.length; i++) {
+            const [x, y] = projection(polygon[i]);
+            if (i === 0) {
+              shape.moveTo(x, -y);
+            }
+            shape.lineTo(x, -y);
+
+            vertices.push(
+              new THREE.Vector3(x, -y, config.map.depth + config.map.lineDepth)
+            );
+          }
+
+          const extrudeSettings = {
+            depth: config.map.depth,
+            bevelEnabled: false,
+          };
+
+          const geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
+
+          const mesh = new THREE.Mesh(geometry, [materialMap, materialDepth]);
+
+          city.add(mesh);
+
+          selections.push(mesh);
+
+          const lineGeometry = new THREE.BufferGeometry().setFromPoints(
+            vertices
+          );
+          const lineMaterial = new THREE.MeshBasicMaterial({
+            color: config.map.edgeColor,
+          });
+          const line = new THREE.Line(lineGeometry, lineMaterial);
+          city.add(line);
+        });
+      });
+    });
+
+    const stage = new kokomi.Stage(this, {
+      shadow: false,
+      intensity: 2,
+    });
+    stage.addExisting();
+
+    const spLight1 = new THREE.SpotLight(
+      config.map.color2,
+      1,
+      0,
+      Math.PI / 3,
+      1
+    );
+    spLight1.position.z = 20;
+    spLight1.position.x = 15;
+    spLight1.position.y = 60;
+    this.scene.add(spLight1);
+
+    // const spLight1Helper = new THREE.SpotLightHelper(spLight1);
+    // this.scene.add(spLight1Helper);
+
+    // postprocessing
+    const createPostprocessing = () => {
+      const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
+        frameBufferType: THREE.HalfFloatType,
+        multisampling: 8,
+      });
+      this.composer = composer;
+
+      composer.addPass(new POSTPROCESSING.RenderPass(this.scene, this.camera));
+
+      const bloom = new POSTPROCESSING.BloomEffect({
+        blendFunction: POSTPROCESSING.BlendFunction.ADD,
+        luminanceThreshold: 0.4,
+        luminanceSmoothing: 0.5,
+        mipmapBlur: true,
+        intensity: 1,
+        radius: 0.4,
+      });
+
+      const outline = new POSTPROCESSING.OutlineEffect(
+        this.scene,
+        this.camera,
+        {
+          blendFunction: POSTPROCESSING.BlendFunction.SCREEN,
+          edgeStrength: 1,
+          visibleEdgeColor: new THREE.Color(config.map.edgeColor),
+        }
+      );
+      outline.selection.set(selections);
+
+      const smaa = new POSTPROCESSING.SMAAEffect();
+
+      const effectPass = new POSTPROCESSING.EffectPass(
+        this.camera,
+        bloom,
+        outline,
+        smaa
+      );
+      composer.addPass(effectPass);
+    };
+
+    createPostprocessing();
+  }
+}
