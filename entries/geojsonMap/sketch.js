@@ -49,13 +49,19 @@ class GeoJsonMap extends kokomi.Component {
       .center([config.projection.coord.lng, config.projection.coord.lat])
       .scale(config.projection.scale)
       .translate([0, 0]);
+    this.projection = projection;
 
     const map = new THREE.Group();
     this.map = map;
 
     const cities = this.geojson["features"];
+
     const cityMeshes = [];
     this.cityMeshes = cityMeshes;
+
+    const cityCentroids = [];
+    this.cityCentroids = cityCentroids;
+
     cities.forEach((item, j) => {
       const city = new THREE.Group();
       map.add(city);
@@ -63,7 +69,7 @@ class GeoJsonMap extends kokomi.Component {
       const offset = j / cities.length;
       city.position.z = -offset;
 
-      const coordinates = item.geometry.coordinates;
+      const coordinates = item["geometry"]["coordinates"];
 
       coordinates.forEach((multiPolygon) => {
         multiPolygon.forEach((polygon) => {
@@ -106,6 +112,9 @@ class GeoJsonMap extends kokomi.Component {
           city.add(line);
         });
       });
+
+      const centroid = item["properties"]["centroid"];
+      cityCentroids.push(centroid);
     });
   }
   addExisting() {
