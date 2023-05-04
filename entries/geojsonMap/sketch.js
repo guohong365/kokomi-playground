@@ -130,7 +130,7 @@ class GeoJsonMap extends kokomi.Component {
       const marker = new kokomi.Html(
         this.base,
         document.querySelector(`.point-${i + 1}`),
-        new THREE.Vector3(x, -y, 0)
+        new THREE.Vector3(x, -y, this.config.depth.length + 1)
       );
       marker.addExisting();
       marker.el.textContent = item.name;
