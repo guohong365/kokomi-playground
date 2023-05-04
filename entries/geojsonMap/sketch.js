@@ -12,9 +12,12 @@ class GeoJsonMap extends kokomi.Component {
     this.geojson = geojson;
 
     const defaultConfig = {
-      coord: {
-        lng: 120.619585,
-        lat: 31.299379,
+      projection: {
+        coord: {
+          lng: 120.619585,
+          lat: 31.299379,
+        },
+        scale: 2400,
       },
       depth: 2,
       lineDepth: 0.1,
@@ -39,8 +42,8 @@ class GeoJsonMap extends kokomi.Component {
 
     const projection = d3
       .geoMercator()
-      .center([config.coord.lng, config.coord.lat])
-      .scale(2400)
+      .center([config.projection.coord.lng, config.projection.coord.lat])
+      .scale(config.projection.scale)
       .translate([0, 0]);
 
     const map = new THREE.Group();
@@ -110,9 +113,12 @@ class Sketch extends kokomi.Base {
   async create() {
     const config = {
       map: {
-        coord: {
-          lng: 120.619585,
-          lat: 31.299379,
+        projection: {
+          coord: {
+            lng: 120.619585,
+            lat: 31.299379,
+          },
+          scale: 2400,
         },
         depth: 2,
         lineDepth: 0.1,
