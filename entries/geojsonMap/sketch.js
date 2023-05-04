@@ -19,11 +19,15 @@ class GeoJsonMap extends kokomi.Component {
         },
         scale: 2400,
       },
-      depth: 2,
-      lineDepth: 0.1,
       color: "#175ed9",
-      depthColor: "#1c51ac",
-      edgeColor: "#40c0f3",
+      depth: {
+        color: "#1c51ac",
+        length: 2,
+      },
+      line: {
+        color: "#40c0f3",
+        offset: 0.1,
+      },
     };
 
     const config = { ...defaultConfig, ...customConfig };
@@ -37,7 +41,7 @@ class GeoJsonMap extends kokomi.Component {
     });
     const materialDepth = new THREE.MeshPhysicalMaterial({
       side: THREE.DoubleSide,
-      color: config.depthColor,
+      color: config.depth.color,
     });
 
     const projection = d3
@@ -75,12 +79,12 @@ class GeoJsonMap extends kokomi.Component {
             shape.lineTo(x, -y);
 
             vertices.push(
-              new THREE.Vector3(x, -y, config.depth + config.lineDepth)
+              new THREE.Vector3(x, -y, config.depth.length + config.line.offset)
             );
           }
 
           const extrudeSettings = {
-            depth: config.depth,
+            depth: config.depth.length,
             bevelEnabled: false,
           };
 
@@ -96,7 +100,7 @@ class GeoJsonMap extends kokomi.Component {
             vertices
           );
           const lineMaterial = new THREE.MeshBasicMaterial({
-            color: config.edgeColor,
+            color: config.line.color,
           });
           const line = new THREE.Line(lineGeometry, lineMaterial);
           city.add(line);
@@ -120,11 +124,15 @@ class Sketch extends kokomi.Base {
           },
           scale: 2400,
         },
-        depth: 2,
-        lineDepth: 0.1,
         color: "#175ed9",
-        depthColor: "#1c51ac",
-        edgeColor: "#40c0f3",
+        depth: {
+          color: "#1c51ac",
+          length: 2,
+        },
+        line: {
+          color: "#40c0f3",
+          offset: 0.1,
+        },
       },
       light: {
         spotColor: "#479676",
@@ -197,7 +205,7 @@ class Sketch extends kokomi.Base {
         {
           blendFunction: POSTPROCESSING.BlendFunction.SCREEN,
           edgeStrength: 1,
-          visibleEdgeColor: new THREE.Color(config.map.edgeColor),
+          visibleEdgeColor: new THREE.Color(config.map.line.color),
         }
       );
       outline.selection.set(geoJsonMap.cityMeshes);
