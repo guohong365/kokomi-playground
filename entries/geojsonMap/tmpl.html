@@ -4,4 +4,49 @@
     #sketch {
         background: url("https://s2.loli.net/2023/04/28/UNryk6hIgHJGECZ.jpg") 0 0 / cover;
     }
+
+    .point {
+        position: absolute;
+        top: 0;
+        left: 0;
+        pointer-events: auto;
+        transform: translate(var(--x), var(--y));
+        z-index: var(--z-index);
+    }
+
+    .point .label {
+        position: absolute;
+        color: white;
+        transform: translate(-50%, -50%);
+        user-select: none;
+    }
 </style>
+<div class="absolute cover overflow-hidden pointer-events-none">
+    <div class="point point-1">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-2">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-3">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-4">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-5">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-6">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-7">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-8">
+        <div class="label">114514</div>
+    </div>
+    <div class="point point-9">
+        <div class="label">114514</div>
+    </div>
+</div>

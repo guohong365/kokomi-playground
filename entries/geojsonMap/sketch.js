@@ -113,12 +113,31 @@ class GeoJsonMap extends kokomi.Component {
         });
       });
 
-      const centroid = item["properties"]["centroid"];
+      const centroid = {
+        coord: item["properties"]["centroid"],
+        name: item["properties"]["name"],
+      };
       cityCentroids.push(centroid);
     });
   }
   addExisting() {
     this.base.scene.add(this.map);
+  }
+  addCityMarkers() {
+    const { projection, cityCentroids } = this;
+    const markers = cityCentroids.map((item, i) => {
+      const [x, y] = projection(item.coord);
+      const marker = new kokomi.Html(
+        this.base,
+        document.querySelector(`.point-${i + 1}`),
+        new THREE.Vector3(x, -y, 0)
+      );
+      marker.addExisting();
+      marker.el.textContent = item.name;
+      this.map.add(marker.group);
+      return marker;
+    });
+    this.markers = markers;
   }
 }
 
@@ -162,11 +181,9 @@ class Sketch extends kokomi.Base {
 
     const geoJsonMap = new GeoJsonMap(this, geojson, config.map);
     geoJsonMap.addExisting();
+    geoJsonMap.addCityMarkers();
 
-    const g = new THREE.Group();
-    this.scene.add(g);
-    g.rotation.x = THREE.MathUtils.degToRad(-45);
-    g.add(geoJsonMap.map);
+    geoJsonMap.map.rotation.x = THREE.MathUtils.degToRad(-45);
 
     const stage = new kokomi.Stage(this, {
       shadow: false,
