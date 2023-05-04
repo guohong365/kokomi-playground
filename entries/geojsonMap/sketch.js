@@ -119,6 +119,8 @@ class GeoJsonMap extends kokomi.Component {
       };
       cityCentroids.push(centroid);
     });
+
+    this.markers = [];
   }
   addExisting() {
     this.base.scene.add(this.map);
