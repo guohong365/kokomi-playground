@@ -5,62 +5,50 @@ import * as dat from "lil-gui";
 import * as d3 from "d3";
 import * as POSTPROCESSING from "postprocessing";
 
-class Sketch extends kokomi.Base {
-  async create() {
-    const config = {
-      map: {
-        coord: {
-          lng: 120.619585,
-          lat: 31.299379,
-        },
-        depth: 2,
-        lineDepth: 0.1,
-        color: "#175ed9",
-        color2: "#479676",
-        depthColor: "#1c51ac",
-        edgeColor: "#40c0f3",
+class GeoJsonMap extends kokomi.Component {
+  constructor(base, geojson, customConfig = {}) {
+    super(base);
+
+    this.geojson = geojson;
+
+    const defaultConfig = {
+      coord: {
+        lng: 120.619585,
+        lat: 31.299379,
       },
+      depth: 2,
+      lineDepth: 0.1,
+      color: "#175ed9",
+      depthColor: "#1c51ac",
+      edgeColor: "#40c0f3",
     };
 
-    this.camera.position.set(0, 0, 75);
-    this.camera.near = 0.1;
-    this.camera.far = 1000;
-    this.camera.fov = 50;
-    this.camera.updateProjectionMatrix();
-
-    new kokomi.OrbitControls(this);
+    const config = { ...defaultConfig, ...customConfig };
+    this.config = config;
 
     const materialMap = new THREE.MeshPhysicalMaterial({
       side: THREE.DoubleSide,
-      color: config.map.color,
+      color: config.color,
       metalness: 0.3,
       roughness: 0.5,
     });
     const materialDepth = new THREE.MeshPhysicalMaterial({
       side: THREE.DoubleSide,
-      color: config.map.depthColor,
+      color: config.depthColor,
     });
-
-    const g = new THREE.Group();
-    this.scene.add(g);
-
-    g.rotation.x = THREE.MathUtils.degToRad(-45);
-
-    const geojson = JSON.parse(
-      await new THREE.FileLoader().loadAsync("../../assets/suzhou.json")
-    );
 
     const projection = d3
       .geoMercator()
-      .center([config.map.coord.lng, config.map.coord.lat])
+      .center([config.coord.lng, config.coord.lat])
       .scale(2400)
       .translate([0, 0]);
 
     const map = new THREE.Group();
-    this.scene.add(map);
-    g.add(map);
-    const cities = geojson["features"];
-    const selections = [];
+    this.map = map;
+
+    const cities = this.geojson["features"];
+    const cityMeshes = [];
+    this.cityMeshes = cityMeshes;
     cities.forEach((item, j) => {
       const city = new THREE.Group();
       map.add(city);
@@ -84,12 +72,12 @@ class Sketch extends kokomi.Base {
             shape.lineTo(x, -y);
 
             vertices.push(
-              new THREE.Vector3(x, -y, config.map.depth + config.map.lineDepth)
+              new THREE.Vector3(x, -y, config.depth + config.lineDepth)
             );
           }
 
           const extrudeSettings = {
-            depth: config.map.depth,
+            depth: config.depth,
             bevelEnabled: false,
           };
 
@@ -99,19 +87,63 @@ class Sketch extends kokomi.Base {
 
           city.add(mesh);
 
-          selections.push(mesh);
+          cityMeshes.push(mesh);
 
           const lineGeometry = new THREE.BufferGeometry().setFromPoints(
             vertices
           );
           const lineMaterial = new THREE.MeshBasicMaterial({
-            color: config.map.edgeColor,
+            color: config.edgeColor,
           });
           const line = new THREE.Line(lineGeometry, lineMaterial);
           city.add(line);
         });
       });
     });
+  }
+  addExisting() {
+    this.base.scene.add(this.map);
+  }
+}
+
+class Sketch extends kokomi.Base {
+  async create() {
+    const config = {
+      map: {
+        coord: {
+          lng: 120.619585,
+          lat: 31.299379,
+        },
+        depth: 2,
+        lineDepth: 0.1,
+        color: "#175ed9",
+        depthColor: "#1c51ac",
+        edgeColor: "#40c0f3",
+      },
+      light: {
+        spotColor: "#479676",
+      },
+    };
+
+    this.camera.position.set(0, 0, 75);
+    this.camera.near = 0.1;
+    this.camera.far = 1000;
+    this.camera.fov = 50;
+    this.camera.updateProjectionMatrix();
+
+    new kokomi.OrbitControls(this);
+
+    const geojson = JSON.parse(
+      await new THREE.FileLoader().loadAsync("../../assets/suzhou.json")
+    );
+
+    const geoJsonMap = new GeoJsonMap(this, geojson, config.map);
+    geoJsonMap.addExisting();
+
+    const g = new THREE.Group();
+    this.scene.add(g);
+    g.rotation.x = THREE.MathUtils.degToRad(-45);
+    g.add(geoJsonMap.map);
 
     const stage = new kokomi.Stage(this, {
       shadow: false,
@@ -120,7 +152,7 @@ class Sketch extends kokomi.Base {
     stage.addExisting();
 
     const spLight1 = new THREE.SpotLight(
-      config.map.color2,
+      config.light.spotColor,
       1,
       0,
       Math.PI / 3,
@@ -162,7 +194,7 @@ class Sketch extends kokomi.Base {
           visibleEdgeColor: new THREE.Color(config.map.edgeColor),
         }
       );
-      outline.selection.set(selections);
+      outline.selection.set(geoJsonMap.cityMeshes);
 
       const smaa = new POSTPROCESSING.SMAAEffect();
 
