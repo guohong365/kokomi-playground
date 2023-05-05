@@ -172,7 +172,7 @@ class Sketch extends kokomi.Base {
     this.camera.position.set(0, 0, 75);
     this.camera.near = 0.1;
     this.camera.far = 1000;
-    this.camera.fov = 40;
+    this.camera.fov = 42;
     this.camera.updateProjectionMatrix();
 
     new kokomi.OrbitControls(this);
