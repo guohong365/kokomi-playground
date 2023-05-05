@@ -208,6 +208,24 @@ class Sketch extends kokomi.Base {
     // const spLight1Helper = new THREE.SpotLightHelper(spLight1);
     // this.scene.add(spLight1Helper);
 
+    // tilt with inertia
+    let offsetX = 0;
+    let offsetY = 0;
+
+    const tiltContainer = new THREE.Group();
+    this.scene.add(tiltContainer);
+    tiltContainer.add(geoJsonMap.map);
+
+    this.update(() => {
+      const { x, y } = this.interactionManager.mouse;
+
+      offsetX = THREE.MathUtils.lerp(offsetX, x, 0.1);
+      offsetY = THREE.MathUtils.lerp(offsetY, y, 0.1);
+
+      tiltContainer.rotation.x = -0.1 * offsetY;
+      tiltContainer.rotation.y = 0.1 * offsetX;
+    });
+
     // postprocessing
     const createPostprocessing = () => {
       const composer = new POSTPROCESSING.EffectComposer(this.renderer, {
