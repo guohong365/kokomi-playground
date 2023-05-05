@@ -222,8 +222,8 @@ class Sketch extends kokomi.Base {
       offsetX = THREE.MathUtils.lerp(offsetX, x, 0.1);
       offsetY = THREE.MathUtils.lerp(offsetY, y, 0.1);
 
-      tiltContainer.rotation.x = -0.1 * offsetY;
-      tiltContainer.rotation.y = 0.1 * offsetX;
+      tiltContainer.rotation.x = -0.05 * offsetY;
+      tiltContainer.rotation.y = 0.05 * offsetX;
     });
 
     // postprocessing
