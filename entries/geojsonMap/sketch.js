@@ -172,7 +172,7 @@ class Sketch extends kokomi.Base {
     this.camera.position.set(0, 0, 75);
     this.camera.near = 0.1;
     this.camera.far = 1000;
-    this.camera.fov = 50;
+    this.camera.fov = 40;
     this.camera.updateProjectionMatrix();
 
     new kokomi.OrbitControls(this);
@@ -185,7 +185,7 @@ class Sketch extends kokomi.Base {
     geoJsonMap.addExisting();
     geoJsonMap.addCityMarkers();
 
-    geoJsonMap.map.rotation.x = THREE.MathUtils.degToRad(-45);
+    geoJsonMap.map.rotation.x = THREE.MathUtils.degToRad(-50);
 
     const stage = new kokomi.Stage(this, {
       shadow: false,
