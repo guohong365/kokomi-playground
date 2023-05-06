@@ -195,15 +195,31 @@ class Sketch extends kokomi.Base {
 
     const spLight1 = new THREE.SpotLight(
       config.light.spotColor,
-      1,
+      1.8,
       0,
       Math.PI / 3,
-      1
+      1.2
     );
-    spLight1.position.set(15, 60, 20);
+    spLight1.position.set(0, 40, 0);
+    spLight1.target.position.set(-5, 1, -30);
     this.scene.add(spLight1);
+    this.scene.add(spLight1.target);
     // const spLight1Helper = new THREE.SpotLightHelper(spLight1);
     // this.scene.add(spLight1Helper);
+
+    const spLight2 = new THREE.SpotLight(
+      config.light.spotColor,
+      1.8,
+      0,
+      Math.PI / 3,
+      0.6
+    );
+    spLight2.position.set(0, 40, 0);
+    spLight2.target.position.set(50, 1, 30);
+    this.scene.add(spLight2);
+    this.scene.add(spLight2.target);
+    // const spLight2Helper = new THREE.SpotLightHelper(spLight2);
+    // this.scene.add(spLight2Helper);
 
     // tilt with inertia
     let offsetX = 0;
