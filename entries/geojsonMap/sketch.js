@@ -200,11 +200,8 @@ class Sketch extends kokomi.Base {
       Math.PI / 3,
       1
     );
-    spLight1.position.z = 20;
-    spLight1.position.x = 15;
-    spLight1.position.y = 60;
+    spLight1.position.set(15, 60, 20);
     this.scene.add(spLight1);
-
     // const spLight1Helper = new THREE.SpotLightHelper(spLight1);
     // this.scene.add(spLight1Helper);
 
