@@ -36,8 +36,6 @@ class GeoJsonMap extends kokomi.Component {
     const materialMap = new THREE.MeshPhysicalMaterial({
       side: THREE.DoubleSide,
       color: config.color,
-      metalness: 0.3,
-      roughness: 0.5,
     });
     const materialDepth = new THREE.MeshPhysicalMaterial({
       side: THREE.DoubleSide,
