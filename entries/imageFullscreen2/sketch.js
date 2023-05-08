@@ -104,10 +104,9 @@ class Sketch extends kokomi.Base {
       this.interactionManager.add(maku.mesh);
 
       maku.mesh.addEventListener("click", () => {
-        console.log("click");
         if (!currentFullscreenMesh) {
           const progress = maku.mesh.material.uniforms.uProgress.value;
-          if (progress < 0.5) {
+          if (progress < 0.1) {
             doTransition(maku.mesh);
             currentFullscreenMesh = maku.mesh;
           }
@@ -119,7 +118,7 @@ class Sketch extends kokomi.Base {
       if (currentFullscreenMesh) {
         const progress =
           currentFullscreenMesh.material.uniforms.uProgress.value;
-        if (progress > 0.01) {
+        if (progress > 0.1) {
           undoTransition(currentFullscreenMesh);
           currentFullscreenMesh = null;
         }
@@ -136,7 +135,14 @@ class Sketch extends kokomi.Base {
       backside: false,
       chromaticAberration: 0.06,
       refraction: 0.7,
+      lightPosition: new THREE.Vector3(1, 0, 0),
     });
     rq.mesh.material = mat.material;
+
+    this.update(() => {
+      const delta = wheelScroller.scroll.delta;
+
+      mat.material.uniforms.uRefraction.value = Math.abs(delta * 0.05);
+    });
   }
 }
