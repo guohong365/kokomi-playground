@@ -11,6 +11,7 @@ class Sketch extends kokomi.Base {
     const gallary = new kokomi.Gallery(this, {
       vertexShader,
       fragmentShader,
+      isScrollPositionSync: false,
       uniforms: {
         uMeshSize: {
           value: new THREE.Vector2(0, 0),
@@ -30,6 +31,35 @@ class Sketch extends kokomi.Base {
       },
     });
     await gallary.addExisting();
+
+    // horizontal infinite scroll
+    const wheelScroller = new kokomi.WheelScroller();
+    wheelScroller.listenForScroll();
+
+    const gap = 64;
+
+    const syncGallery = () => {
+      wheelScroller.syncScroll();
+
+      if (gallary.makuGroup) {
+        const imgWidth = gallary.makuGroup.makus[0].el.clientWidth;
+
+        const totalWidth = (imgWidth + gap) * gallary.makuGroup.makus.length;
+
+        gallary.makuGroup.makus.forEach((maku, i) => {
+          maku.mesh.position.x =
+            (((imgWidth + gap) * i -
+              wheelScroller.scroll.current -
+              114514 * totalWidth) %
+              totalWidth) +
+            (imgWidth + gap) * 3;
+        });
+      }
+    };
+
+    this.update(() => {
+      syncGallery();
+    });
 
     // mesh info
     this.update(() => {
@@ -73,7 +103,8 @@ class Sketch extends kokomi.Base {
     gallary.makuGroup.makus.forEach((maku) => {
       this.interactionManager.add(maku.mesh);
 
-      maku.el.addEventListener("click", () => {
+      maku.mesh.addEventListener("click", () => {
+        console.log("click");
         if (!currentFullscreenMesh) {
           const progress = maku.mesh.material.uniforms.uProgress.value;
           if (progress < 0.5) {
@@ -94,5 +125,18 @@ class Sketch extends kokomi.Base {
         }
       }
     });
+
+    // simulate postprocessing
+    const rq = new kokomi.RenderQuad(this);
+    rq.mesh.position.z = 1;
+    rq.addExisting();
+
+    const mat = new kokomi.MeshTransmissionMaterial(this, rq.mesh, {
+      saturation: 1,
+      backside: false,
+      chromaticAberration: 0.06,
+      refraction: 0.7,
+    });
+    rq.mesh.material = mat.material;
   }
 }

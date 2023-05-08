@@ -18,7 +18,7 @@ vec3 distort(vec3 p){
 void main(){
     vec3 p=position;
     vec3 dp=distort(p);
-    gl_Position=projectionMatrix*modelViewMatrix*vec4(dp,1.);
+    gl_Position=projectionMatrix*modelViewMatrix*vec4(p,1.);
     
     vUv=uv;
 }

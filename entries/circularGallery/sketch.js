@@ -24,7 +24,7 @@ class Sketch extends kokomi.Base {
     const wheelScroller = new kokomi.WheelScroller();
     wheelScroller.listenForScroll();
 
-    const gap = 64;
+    const gap = 100;
 
     const syncGallery = () => {
       wheelScroller.syncScroll();
@@ -66,7 +66,7 @@ class Sketch extends kokomi.Base {
           -Math.PI
         );
 
-        const r = 500;
+        const r = 900;
 
         maku.mesh.position.y = r * (Math.cos(progressX * Math.PI) - 1);
       });
