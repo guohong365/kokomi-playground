@@ -86,6 +86,9 @@ class Sketch extends kokomi.Base {
         uHover: {
           value: 0,
         },
+        uDevicePixelRatio: {
+          value: window.devicePixelRatio,
+        },
       },
       materialParams: {
         transparent: true,

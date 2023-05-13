@@ -8,12 +8,13 @@ varying vec2 vUv;
 
 uniform vec2 uMeshSize;
 uniform vec2 uMeshPosition;
+uniform float uDevicePixelRatio;
 
 uniform float uProgress;
 uniform float uHover;
 
 void main(){
-    vec2 uv=gl_FragCoord.xy/iResolution.xy;
+    vec2 uv=gl_FragCoord.xy/iResolution.xy*uDevicePixelRatio;
     float aspect=iResolution.x/iResolution.y;
     vec2 s=vec2(1.);
     if(aspect<1.){
@@ -22,8 +23,8 @@ void main(){
         s=vec2(aspect,1.);
     }
     uv=(uv-vec2(.5))*s/1.2+vec2(.5);
-    uv.y-=.3;
     uv.x+=uMeshPosition.x/iResolution.x;
+    uv.x-=.2;
     
     uv.x+=uProgress;
     
