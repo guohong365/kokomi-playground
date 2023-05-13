@@ -168,6 +168,9 @@ class Sketch extends kokomi.Base {
 
     await kokomi.sleep(100);
 
+    let pointGroup = new THREE.Group();
+    this.scene.add(pointGroup);
+
     gallary.makuGroup.makus.forEach((maku) => {
       const posBuffer = maku.mesh.geometry.attributes.position.array;
       maku.mesh.geometry.attributes.position.needsUpdate = true;
@@ -184,6 +187,7 @@ class Sketch extends kokomi.Base {
           index: i,
         });
         point.addExisting();
+        pointGroup.add(point.mesh);
 
         this.update(() => {
           point.syncMousePos(p);
@@ -224,6 +228,8 @@ class Sketch extends kokomi.Base {
 
           maku.mesh.material.uniforms.uProgress.value = progressOffset;
           maku.mesh.position.x -= posOffset;
+
+          pointGroup.position.x = -posOffset;
         });
       }
     };
