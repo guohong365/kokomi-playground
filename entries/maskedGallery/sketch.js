@@ -40,7 +40,8 @@ class Point extends kokomi.Component {
 
     const posBuffer = this.originalMesh.geometry.attributes.position.array;
     this.originalMesh.geometry.attributes.position.needsUpdate = true;
-    posBuffer[this.index * 3] = this.pos.x / this.originalMesh.scale.x;
+    posBuffer[this.index * 3] =
+      (this.pos.x - this.originalMesh.position.x) / this.originalMesh.scale.x;
     posBuffer[this.index * 3 + 1] = this.pos.y / this.originalMesh.scale.y;
   }
   syncMousePos(p) {
@@ -127,16 +128,6 @@ class Sketch extends kokomi.Base {
     this.scene.add(testSphere);
     // testSphere.visible = false;
 
-    const hitPlane = gallary.makuGroup.makus[0];
-
-    this.container.addEventListener("mousemove", (e) => {
-      const target = rs.onChooseIntersect(hitPlane.mesh);
-      if (target) {
-        p = target.point;
-        testSphere.position.copy(p);
-      }
-    });
-
     // points
     // const points = [...Array(4)].map((_) => {
     //   const halfWidth = hitPlane.el.clientWidth / 2;
@@ -153,12 +144,13 @@ class Sketch extends kokomi.Base {
     //     point.syncMousePos(p);
     //   });
     // });
+
     gallary.makuGroup.makus.forEach((maku) => {
       const posBuffer = maku.mesh.geometry.attributes.position.array;
       maku.mesh.geometry.attributes.position.needsUpdate = true;
       kokomi.iterateBuffer(posBuffer, posBuffer.length, (arr, axis, i) => {
-        const x = arr[axis.x] * maku.el.clientWidth;
-        const y = arr[axis.y] * maku.el.clientHeight;
+        const x = arr[axis.x] * maku.mesh.scale.x - maku.mesh.position.x;
+        const y = arr[axis.y] * maku.mesh.scale.y;
 
         const point = new Point(this, { x, y, mesh: maku.mesh, index: i });
         point.addExisting();
@@ -167,6 +159,15 @@ class Sketch extends kokomi.Base {
           point.syncMousePos(p);
         });
       });
+    });
+
+    const makuMeshes = gallary.makuGroup.makus.map((maku) => maku.mesh);
+    this.container.addEventListener("mousemove", (e) => {
+      const intersects = rs.getInterSects(makuMeshes);
+      if (intersects.length > 0) {
+        p = intersects[0].point;
+        testSphere.position.copy(p);
+      }
     });
   }
 }
