@@ -83,6 +83,12 @@ class Sketch extends kokomi.Base {
         uProgress: {
           value: 0,
         },
+        uHover: {
+          value: 0,
+        },
+      },
+      materialParams: {
+        transparent: true,
       },
     });
     await gallary.addExisting();
@@ -167,6 +173,8 @@ class Sketch extends kokomi.Base {
         p = intersect.point;
         currentMesh = intersect.object;
         testSphere.position.copy(p);
+      } else {
+        currentMesh = null;
       }
     });
 
@@ -240,6 +248,18 @@ class Sketch extends kokomi.Base {
 
     this.update(() => {
       syncGallery();
+
+      gallary.makuGroup.makus.forEach((maku) => {
+        gsap.to(maku.mesh.material.uniforms.uHover, {
+          value: 0,
+        });
+      });
+
+      if (currentMesh) {
+        gsap.to(currentMesh.material.uniforms.uHover, {
+          value: 1,
+        });
+      }
     });
   }
 }
