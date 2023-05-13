@@ -31,7 +31,7 @@ class Point extends kokomi.Component {
     const forceFactor = 1 / Math.max(dist, 0.2);
     const posToGo = this.originalPos
       .clone()
-      .sub(mouseForce.normalize().multiplyScalar(20))
+      .sub(mouseForce.normalize().multiplyScalar(25))
       .multiplyScalar(-dist * forceFactor * 1.2);
     this.pos.lerp(posToGo, 0.1);
 
@@ -52,7 +52,7 @@ class Point extends kokomi.Component {
 class Sketch extends kokomi.Base {
   async create() {
     const config = {
-      noise: 4,
+      noise: 5,
       debug: false,
     };
 
@@ -214,44 +214,7 @@ class Sketch extends kokomi.Base {
       });
     });
 
-    // horizontal scroll
-    const wheelScroller = new kokomi.WheelScroller();
-    wheelScroller.listenForScroll();
-
-    let progressOffset = 0;
-    let posOffset = 0;
-
-    let targetProgressOffset = 0;
-    let targetPosOffset = 0;
-
-    const syncGallery = () => {
-      wheelScroller.syncScroll();
-
-      if (gallary.makuGroup) {
-        gallary.makuGroup.makus.forEach((maku, i) => {
-          const sc = wheelScroller.scroll.current;
-
-          targetPosOffset = sc * 0.25;
-          targetProgressOffset = sc * 0.001;
-
-          progressOffset = THREE.MathUtils.lerp(
-            progressOffset,
-            targetProgressOffset,
-            0.02
-          );
-          posOffset = THREE.MathUtils.lerp(posOffset, targetPosOffset, 0.1);
-
-          maku.mesh.material.uniforms.uProgress.value = progressOffset;
-          maku.mesh.position.x -= posOffset;
-
-          pointGroup.position.x = -posOffset;
-        });
-      }
-    };
-
     this.update(() => {
-      syncGallery();
-
       gallary.makuGroup.makus.forEach((maku) => {
         gsap.to(maku.mesh.material.uniforms.uHover, {
           value: 0,
@@ -264,5 +227,44 @@ class Sketch extends kokomi.Base {
         });
       }
     });
+
+    // // horizontal scroll
+    // const wheelScroller = new kokomi.WheelScroller();
+    // wheelScroller.listenForScroll();
+
+    // let progressOffset = 0;
+    // let posOffset = 0;
+
+    // let targetProgressOffset = 0;
+    // let targetPosOffset = 0;
+
+    // const syncGallery = () => {
+    //   wheelScroller.syncScroll();
+
+    //   if (gallary.makuGroup) {
+    //     gallary.makuGroup.makus.forEach((maku, i) => {
+    //       const sc = wheelScroller.scroll.current;
+
+    //       targetPosOffset = sc * 0.25;
+    //       targetProgressOffset = sc * 0.001;
+
+    //       progressOffset = THREE.MathUtils.lerp(
+    //         progressOffset,
+    //         targetProgressOffset,
+    //         0.02
+    //       );
+    //       posOffset = THREE.MathUtils.lerp(posOffset, targetPosOffset, 0.1);
+
+    //       maku.mesh.material.uniforms.uProgress.value = progressOffset;
+    //       maku.mesh.position.x -= posOffset;
+
+    //       pointGroup.position.x = -posOffset;
+    //     });
+    //   }
+    // };
+
+    // this.update(() => {
+    //   syncGallery();
+    // });
   }
 }

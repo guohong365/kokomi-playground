@@ -14,26 +14,19 @@ uniform float uProgress;
 uniform float uHover;
 
 void main(){
-    vec2 uv=gl_FragCoord.xy/iResolution.xy*uDevicePixelRatio;
-    float aspect=iResolution.x/iResolution.y;
-    vec2 s=vec2(1.);
-    if(aspect<1.){
-        s=vec2(1.,1./aspect);
-    }else{
-        s=vec2(aspect,1.);
-    }
-    uv=(uv-vec2(.5))*s/1.2+vec2(.5);
-    uv.x+=uMeshPosition.x/iResolution.x;
-    uv.x-=.2;
+    vec2 p=vUv;
+    // vec2 p=gl_FragCoord.xy/iResolution.xy;
     
-    uv.x+=uProgress;
+    float scale=mix(1.,1.2,uHover);
+    p-=vec2(.5);
+    p/=scale;
+    p+=vec2(.5);
     
-    float scale=mix(1.2,1.4,uHover);
-    uv=2.*uv-1.;
-    uv/=scale;
-    uv=(uv+1.)*.5;
+    p*=-1.;
     
-    vec4 tex=texture(uTexture,uv);
+    // p.x+=uProgress;
+    
+    vec4 tex=texture(uTexture,p);
     
     float alpha=mix(.6,1.,uHover);
     tex.a*=alpha;
