@@ -9,9 +9,13 @@ varying vec2 vUv;
 uniform vec2 uMeshSize;
 uniform vec2 uMeshPosition;
 
+uniform float uProgress;
+
 void main(){
     vec2 uv=gl_FragCoord.xy/iResolution.xy;
     uv.x*=iResolution.x/iResolution.y;
+    
+    uv.x+=uProgress;
     
     vec4 tex=texture(uTexture,uv);
     

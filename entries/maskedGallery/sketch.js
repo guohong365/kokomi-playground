@@ -51,10 +51,15 @@ class Point extends kokomi.Component {
 
 class Sketch extends kokomi.Base {
   async create() {
+    const config = {
+      noise: 4,
+      debug: false,
+    };
+
     const screenCamera = new kokomi.ScreenCamera(this);
     screenCamera.addExisting();
 
-    new kokomi.OrbitControls(this);
+    // new kokomi.OrbitControls(this);
 
     const gallary = new kokomi.Gallery(this, {
       vertexShader,
@@ -74,6 +79,9 @@ class Sketch extends kokomi.Base {
         },
         uMeshPosition: {
           value: new THREE.Vector2(0, 0),
+        },
+        uProgress: {
+          value: 0,
         },
       },
     });
@@ -126,7 +134,9 @@ class Sketch extends kokomi.Base {
       })
     );
     this.scene.add(testSphere);
-    // testSphere.visible = false;
+    if (!config.debug) {
+      testSphere.visible = false;
+    }
 
     // points
     // const points = [...Array(4)].map((_) => {
@@ -144,6 +154,8 @@ class Sketch extends kokomi.Base {
     //     point.syncMousePos(p);
     //   });
     // });
+
+    // return;
 
     const makuMeshes = gallary.makuGroup.makus.map((maku) => maku.mesh);
     this.container.addEventListener("mousemove", (e) => {
@@ -163,7 +175,7 @@ class Sketch extends kokomi.Base {
         const x = arr[axis.x] * maku.mesh.scale.x - maku.mesh.position.x;
         const y = arr[axis.y] * maku.mesh.scale.y;
 
-        const noise = kokomi.computeCurl(x, y, 0).multiplyScalar(4);
+        const noise = kokomi.computeCurl(x, y, 0).multiplyScalar(config.noise);
 
         const point = new Point(this, {
           x: x + noise.x,
@@ -176,7 +188,48 @@ class Sketch extends kokomi.Base {
         this.update(() => {
           point.syncMousePos(p);
         });
+
+        if (!config.debug) {
+          point.mesh.visible = false;
+        }
       });
+    });
+
+    // horizontal scroll
+    const wheelScroller = new kokomi.WheelScroller();
+    wheelScroller.listenForScroll();
+
+    let progressOffset = 0;
+    let posOffset = 0;
+
+    let targetProgressOffset = 0;
+    let targetPosOffset = 0;
+
+    const syncGallery = () => {
+      wheelScroller.syncScroll();
+
+      if (gallary.makuGroup) {
+        gallary.makuGroup.makus.forEach((maku, i) => {
+          const sc = wheelScroller.scroll.current;
+
+          targetPosOffset = sc * 0.25;
+          targetProgressOffset = sc * 0.001;
+
+          progressOffset = THREE.MathUtils.lerp(
+            progressOffset,
+            targetProgressOffset,
+            0.02
+          );
+          posOffset = THREE.MathUtils.lerp(posOffset, targetPosOffset, 0.1);
+
+          maku.mesh.material.uniforms.uProgress.value = progressOffset;
+          maku.mesh.position.x -= posOffset;
+        });
+      }
+    };
+
+    this.update(() => {
+      syncGallery();
     });
   }
 }
