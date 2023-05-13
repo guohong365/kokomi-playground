@@ -125,6 +125,8 @@ class Sketch extends kokomi.Base {
 
     let p = new THREE.Vector3(0, 0, 0);
 
+    let currentMesh = null;
+
     // test sphere
     const testSphere = new THREE.Mesh(
       new THREE.SphereGeometry(10, 10, 10),
@@ -161,7 +163,9 @@ class Sketch extends kokomi.Base {
     this.container.addEventListener("mousemove", (e) => {
       const intersects = rs.getInterSects(makuMeshes);
       if (intersects.length > 0) {
-        p = intersects[0].point;
+        const intersect = intersects[0];
+        p = intersect.point;
+        currentMesh = intersect.object;
         testSphere.position.copy(p);
       }
     });
