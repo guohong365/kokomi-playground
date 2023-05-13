@@ -163,7 +163,14 @@ class Sketch extends kokomi.Base {
         const x = arr[axis.x] * maku.mesh.scale.x - maku.mesh.position.x;
         const y = arr[axis.y] * maku.mesh.scale.y;
 
-        const point = new Point(this, { x, y, mesh: maku.mesh, index: i });
+        const noise = kokomi.computeCurl(x, y, 0).multiplyScalar(4);
+
+        const point = new Point(this, {
+          x: x + noise.x,
+          y: y + noise.y,
+          mesh: maku.mesh,
+          index: i,
+        });
         point.addExisting();
 
         this.update(() => {
