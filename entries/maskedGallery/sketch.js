@@ -145,6 +145,17 @@ class Sketch extends kokomi.Base {
     //   });
     // });
 
+    const makuMeshes = gallary.makuGroup.makus.map((maku) => maku.mesh);
+    this.container.addEventListener("mousemove", (e) => {
+      const intersects = rs.getInterSects(makuMeshes);
+      if (intersects.length > 0) {
+        p = intersects[0].point;
+        testSphere.position.copy(p);
+      }
+    });
+
+    await kokomi.sleep(100);
+
     gallary.makuGroup.makus.forEach((maku) => {
       const posBuffer = maku.mesh.geometry.attributes.position.array;
       maku.mesh.geometry.attributes.position.needsUpdate = true;
@@ -159,15 +170,6 @@ class Sketch extends kokomi.Base {
           point.syncMousePos(p);
         });
       });
-    });
-
-    const makuMeshes = gallary.makuGroup.makus.map((maku) => maku.mesh);
-    this.container.addEventListener("mousemove", (e) => {
-      const intersects = rs.getInterSects(makuMeshes);
-      if (intersects.length > 0) {
-        p = intersects[0].point;
-        testSphere.position.copy(p);
-      }
     });
   }
 }
