@@ -5,9 +5,9 @@
   "devDependencies": {
     "@types/three": "^0.149.0",
     "d3": "^7.8.4",
-    "gsap": "^3.11.4",
+    "gsap": "^3.12.1",
     "kd-tree-javascript": "^1.0.3",
-    "kokomi.js": "^1.9.74",
+    "kokomi.js": "^1.9.76",
     "lil-gui": "^0.17.0",
     "meshline": "^3.1.6",
     "postprocessing": "^6.29.3"

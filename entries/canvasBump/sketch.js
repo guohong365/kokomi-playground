@@ -32,14 +32,10 @@ class Sketch extends kokomi.Base {
     const height = 1000;
     const maxDepth = 100;
 
-    const camera = new THREE.OrthographicCamera(
-      -width / 2,
-      width / 2,
-      height / 2,
-      -height / 2,
-      0,
-      1000
-    );
+    const camera = new kokomi.OrthographicCamera({
+      frustum: width,
+      useAspect: false,
+    });
     camera.position.set(0, 0, 500);
     this.camera = camera;
     this.interactionManager.camera = camera;

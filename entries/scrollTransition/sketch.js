@@ -6,14 +6,10 @@ import * as dat from "lil-gui";
 class Sketch extends kokomi.Base {
   create() {
     const frustum = 1;
-    const orthoCamera = new THREE.OrthographicCamera(
-      frustum * -0.5,
-      frustum * 0.5,
-      frustum * 0.5,
-      frustum * -0.5,
-      0.1,
-      2000
-    );
+    const orthoCamera = new kokomi.OrthographicCamera({
+      frustum,
+      useAspect: false,
+    });
     this.camera = orthoCamera;
     this.camera.position.z = 3;
 
